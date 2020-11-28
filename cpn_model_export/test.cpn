@@ -8,47 +8,7 @@
 		<globbox/>
 		<page id="{PLACE_HOLDER}">
 			<pageattr name="Page"/>
-			<place id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>sink</text>
-				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-			</place>
-			<place id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>p_6</text>
-				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-			</place>
-			<place id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>p_8</text>
-				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-			</place>
-			<place id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>p_5</text>
-				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-			</place>
-			<place id="{PLACE_HOLDER}">
+			<place id="source">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
@@ -57,28 +17,56 @@
 				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
+				<initmark id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</initmark>
 			</place>
-			<place id="{PLACE_HOLDER}">
+			<place id="p_6">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
-				<text>p_9</text>
+				<text>p_6</text>
 				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
 			</place>
-			<place id="{PLACE_HOLDER}">
+			<place id="sink">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
-				<text>p_11</text>
+				<text>sink</text>
 				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
 			</place>
-			<place id="{PLACE_HOLDER}">
+			<place id="p_4">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
@@ -87,8 +75,32 @@
 				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
 			</place>
-			<place id="{PLACE_HOLDER}">
+			<place id="p_9">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_9</text>
+				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
+			</place>
+			<place id="p_10">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
@@ -97,56 +109,66 @@
 				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
 			</place>
-			<trans id="{PLACE_HOLDER}">
+			<place id="p_8">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
-				<text>check ticket</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
+				<text>p_8</text>
+				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
+			</place>
+			<place id="p_5">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
-				<text>decide</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
+				<text>p_5</text>
+				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
+			</place>
+			<place id="p_11">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
-				<text>reinitiate request</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>register request</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>examine casually</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>reject request</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
+				<text>p_11</text>
+				<ellipse w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+				<token x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<marking x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<type id="{PLACE_HOLDER}">
+					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>{PLACE_HOLDER}</text>
+				</type>
+			</place>
+			<trans id="skip_5">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
@@ -154,23 +176,15 @@
 				<text>skip_5</text>
 				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 			</trans>
-			<trans id="{PLACE_HOLDER}">
+			<trans id="550a5ce8-5b8e-4655-aac9-483771bcd0d9">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
-				<text>tauSplit_3</text>
+				<text>check ticket</text>
 				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 			</trans>
-			<trans id="{PLACE_HOLDER}">
-				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
-				<fillattr colour="White" pattern="Solid" filled="false"/>
-				<lineattr colour="Black" thick="2" type="Solid"/>
-				<textattr colour="Black" bold="false"/>
-				<text>pay compensation</text>
-				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
-			</trans>
-			<trans id="{PLACE_HOLDER}">
+			<trans id="bf1f9724-0098-421a-bacf-9f54eadafd12">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
@@ -178,14 +192,70 @@
 				<text>examine thoroughly</text>
 				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
 			</trans>
+			<trans id="723b21cf-6195-4d19-bf55-69c9ecf270e2">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>register request</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
+			<trans id="10607079-c984-4c15-adb3-349a6877e4d1">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>decide</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
+			<trans id="4ff835b7-5990-47e5-b6fc-09e3091ad08e">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>reject request</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
+			<trans id="tauSplit_3">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>tauSplit_3</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
+			<trans id="f365a02f-6456-498e-8569-aed5df7cc816">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>examine casually</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
+			<trans id="0cd95fc7-e637-461a-b734-d7bb297637d1">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>reinitiate request</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
+			<trans id="1bc4840e-e979-4baa-b5c7-442b2693016e">
+				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>pay compensation</text>
+				<box w="{PLACE_HOLDER}" h="{PLACE_HOLDER}"/>
+			</trans>
 			<arc id="{PLACE_HOLDER}" orientation="{PLACE_HOLDER}">
 				<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 				<fillattr colour="White" pattern="Solid" filled="false"/>
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="skip_5"/>
+				<placeend idref="p_6"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -200,8 +270,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="1bc4840e-e979-4baa-b5c7-442b2693016e"/>
+				<placeend idref="p_4"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -216,8 +286,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="4ff835b7-5990-47e5-b6fc-09e3091ad08e"/>
+				<placeend idref="sink"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -232,8 +302,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="tauSplit_3"/>
+				<placeend idref="p_8"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -248,8 +318,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="10607079-c984-4c15-adb3-349a6877e4d1"/>
+				<placeend idref="p_9"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -264,8 +334,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="skip_5"/>
+				<placeend idref="p_4"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -280,8 +350,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="bf1f9724-0098-421a-bacf-9f54eadafd12"/>
+				<placeend idref="p_10"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -296,8 +366,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="1bc4840e-e979-4baa-b5c7-442b2693016e"/>
+				<placeend idref="sink"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -312,8 +382,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="0cd95fc7-e637-461a-b734-d7bb297637d1"/>
+				<placeend idref="p_6"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -328,8 +398,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="723b21cf-6195-4d19-bf55-69c9ecf270e2"/>
+				<placeend idref="p_5"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -344,8 +414,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="tauSplit_3"/>
+				<placeend idref="p_5"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -360,8 +430,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="550a5ce8-5b8e-4655-aac9-483771bcd0d9"/>
+				<placeend idref="p_8"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -376,8 +446,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="f365a02f-6456-498e-8569-aed5df7cc816"/>
+				<placeend idref="p_11"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -392,8 +462,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="723b21cf-6195-4d19-bf55-69c9ecf270e2"/>
+				<placeend idref="source"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -408,8 +478,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="tauSplit_3"/>
+				<placeend idref="p_10"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -424,8 +494,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="4ff835b7-5990-47e5-b6fc-09e3091ad08e"/>
+				<placeend idref="p_4"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -440,8 +510,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="bf1f9724-0098-421a-bacf-9f54eadafd12"/>
+				<placeend idref="p_11"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -456,8 +526,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="550a5ce8-5b8e-4655-aac9-483771bcd0d9"/>
+				<placeend idref="p_9"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -472,8 +542,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="0cd95fc7-e637-461a-b734-d7bb297637d1"/>
+				<placeend idref="p_5"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -488,8 +558,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="10607079-c984-4c15-adb3-349a6877e4d1"/>
+				<placeend idref="p_6"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -504,8 +574,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="10607079-c984-4c15-adb3-349a6877e4d1"/>
+				<placeend idref="p_11"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
@@ -520,8 +590,8 @@
 				<lineattr colour="Black" thick="2" type="Solid"/>
 				<textattr colour="Black" bold="false"/>
 				<arrowattr headsize="{PLACE_HOLDER}" currentcyckle="{PLACE_HOLDER}"/>
-				<transend idref="{PLACE_HOLDER}"/>
-				<placeend idref="{PLACE_HOLDER}"/>
+				<transend idref="f365a02f-6456-498e-8569-aed5df7cc816"/>
+				<placeend idref="p_10"/>
 				<annot id="{PLACE_HOLDER}">
 					<posattr x="{PLACE_HOLDER}" y="{PLACE_HOLDER}"/>
 					<fillattr colour="White" pattern="Solid" filled="false"/>
