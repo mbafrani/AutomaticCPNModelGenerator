@@ -12,18 +12,28 @@ class PetriNetService:
 
   def discover_process(self, event_log_id):
 
-    # TODO: check event log file extension dynamically
-    xes_file_extension = "xes"
-    event_log_file_path = os.path.join(
-      current_app.config['UPLOAD_FOLDER'], 
-      event_log_id, 
-      current_app.config["EVENT_LOG_DEFAULT_NAME"] + "." + xes_file_extension
-    )
-    is_event_log_exists = os.path.isfile(event_log_file_path)
+    # dynamically check event log file extension (XES or CSV)
+    log_file_extension = None
+    for filename in os.listdir(os.path.join(current_app.config['UPLOAD_FOLDER'], event_log_id)):
+      if filename.endswith("." + constants.XES_EXTENSION):
+        log_file_extension = constants.XES_EXTENSION
+      elif filename.endswith("." + constants.CSV_EXTENSION):
+        log_file_extension = constants.CSV_EXTENSION
+
+    is_event_log_exists = log_file_extension is not None
     if not is_event_log_exists:
       raise NotFound(constants.ERROR_EVENT_LOG_DOESNT_EXIST)
 
-    self.petri_net.import_event_log(event_log_file_path)
+    event_log_file_path = os.path.join(
+      current_app.config['UPLOAD_FOLDER'], 
+      event_log_id, 
+      current_app.config["EVENT_LOG_DEFAULT_NAME"] + "." + log_file_extension
+    )
+    if log_file_extension == constants.XES_EXTENSION:
+      self.petri_net.import_xes_log(event_log_file_path)
+    elif log_file_extension == constants.CSV_EXTENSION:
+      self.petri_net.import_csv_log(event_log_file_path)
+    
     self.petri_net.discover_process_model()
     self.petri_net.visualize_process_model(enrich_performance=True)
 

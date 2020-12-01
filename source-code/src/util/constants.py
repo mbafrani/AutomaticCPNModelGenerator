@@ -7,8 +7,10 @@ ERROR_EVENT_LOG_DOESNT_EXIST = "Event log doesn't exist"
 # Messages
 MESSAGE_EVENT_LOG_UPLOAD_SUCCESS = "Event log uploaded successfully"
 
-# Dictionary constants
-ALLOWED_EXTENSIONS = {'xes', 'csv'}
+# File extension constants
+XES_EXTENSION = "xes"
+CSV_EXTENSION = "csv"
+ALLOWED_EXTENSIONS = {XES_EXTENSION, CSV_EXTENSION}
 
 # dictionary keys
 DICT_KEY_OBJECTS_CONSTANT = "objects"

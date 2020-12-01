@@ -1,8 +1,11 @@
 import pm4py
 from pm4py.objects.log.importer.xes import importer as xes_importer
+from pm4py.objects.log.util import dataframe_utils
+from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.visualization.petrinet import visualizer
 import json
+import pandas as pd
 
 from util import constants, convert_perf_label_to_seconds
 
@@ -15,9 +18,16 @@ class PetriNet:
     self.final_marking = final_marking
     self.gviz = gviz
 
-  def import_event_log(self, file_path):
+  def import_xes_log(self, file_path):
     self.log = xes_importer.apply(file_path)
     return self.log
+
+  def import_csv_log(self, file_path):
+      log_csv = pd.read_csv(file_path)
+      log_csv = dataframe_utils.convert_timestamp_columns_in_df(log_csv)
+      log_csv = log_csv.sort_values('time:timestamp')
+      self.log = log_converter.apply(log_csv)
+      return self.log
 
   def discover_process_model(self):
     self.net, self.initial_marking, self.final_marking = inductive_miner.apply(self.log)
