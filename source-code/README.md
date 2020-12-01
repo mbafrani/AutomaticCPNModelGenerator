@@ -24,10 +24,8 @@ $ flask run
 ├── src                      # Application source code
 │   ├── models               # Python model classes
 │   ├── services             # Python classes allowing you to interact with models
-│   ├── static               # Static resources such as images etc
+│   ├── data                 # Place to store event-logs and intermediate files
 │   ├── routes               # Routes definitions
-│   │   ├── __init__.py      # Contains every blueprint of your API
-│   │   └── cpn_export.py    # The blueprint related to the cpn export
 │   ├── util                 # Useful Python functions for the project
 │   ├── config.py            # Project configuration settings
 │   └── app.py               # App/Server configuration

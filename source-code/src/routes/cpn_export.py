@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, request, jsonify, make_response
+from flask import Blueprint, current_app, request, jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 import os
 
@@ -31,8 +31,8 @@ def export_cpn_file():
         # save the cpn file to uploads/event-log-id/
         cpn_export_service.save_cpn_model(cpn_model, event_log_id)
         
-        # TODO: Return CPN model file
-        return "CPN Model generated successfully"
+        cpn_file_path = cpn_export_service.get_cpn_file_path(event_log_id)
+        return send_file(cpn_file_path, as_attachment=True)
 
     except HTTPException as exception:
         message = exception.description

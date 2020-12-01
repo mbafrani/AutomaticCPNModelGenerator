@@ -375,11 +375,11 @@ class CPNExportService:
         annot_tag.appendChild(textattr_tag)
         
         text_tag = document.createElement("text")
-        # TODO: "@+2" is a dummy. Needs to be removed later
+        # TODO: "@+0" is a dummy. Needs to be removed later
         # For now there's no execution time information on the arc transition->place, 
-        # Once it's implemented replace the dummy "@+2" by the execution time stored in arc.properties[PERFORMANCE_INFORMATION_PETRI]
+        # Once it's implemented replace the dummy "@+0" by the execution time stored in arc.properties[PERFORMANCE_INFORMATION_PETRI]
         if(is_target_place):
-            text_tag.appendChild(document.createTextNode(str(constants.DECLARATION_COLOR_REQUEST_VARIABLE) + "@+2"))
+            text_tag.appendChild(document.createTextNode(str(constants.DECLARATION_COLOR_REQUEST_VARIABLE) + "@+0"))
         else:
             text_tag.appendChild(document.createTextNode(str(constants.DECLARATION_COLOR_REQUEST_VARIABLE)))   
         annot_tag.appendChild(text_tag)
