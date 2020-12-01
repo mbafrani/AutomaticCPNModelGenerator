@@ -7,6 +7,7 @@ HOST = os.getenv("APPLICATION_HOST")
 PORT = int(os.getenv("APPLICATION_PORT", "5000"))
 
 UPLOAD_FOLDER = os.path.join('data', 'uploads')
+TEMP_FOLDER = os.path.join('data', 'tmp')
 EVENT_LOG_DEFAULT_NAME = "event-log"
 PROCESS_MODEL_DEFAULT_NAME = "process-model-inductive"
 CPN_MODEL_DEFAULT_NAME = "cpn-model"

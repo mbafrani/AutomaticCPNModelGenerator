@@ -1,11 +1,11 @@
 from flask import current_app
-from werkzeug.exceptions import NotFound, UnsupportedMediaType
+from werkzeug.exceptions import NotFound, UnsupportedMediaType, BadRequest
 from werkzeug.utils import secure_filename
 import os
 import uuid
 
 from util import constants
-from models import EventLog
+from models import EventLog, PetriNet
 
 class EventLogService:
   
@@ -19,9 +19,21 @@ class EventLogService:
     if file.filename == '':
         raise NotFound(constants.ERROR_FILE_NOT_FOUND_IN_REQUEST)
     if file and EventLogService.allowed_file(file.filename):
-        # TODO: Validate the log file before saving
-
         file_extension = secure_filename(file.filename).split('.')[1]
+
+        # Validate the contents of the log file before saving
+        tmp_file_name = str(uuid.uuid1())
+        tmp_file_path = os.path.join(current_app.config['TEMP_FOLDER'], tmp_file_name+ "." + file_extension)
+        file.save(tmp_file_path) # temporarily store the file for processing
+        try:
+          petri_net = PetriNet()
+          if file_extension == constants.XES_EXTENSION:
+            petri_net.import_xes_log(tmp_file_path)
+          elif file_extension == constants.CSV_EXTENSION:
+            petri_net.import_csv_log(tmp_file_path)
+        except Exception:
+          raise BadRequest(constants.ERROR_INVALID_FILE)
+        
         folder_name = str(uuid.uuid1())
         os.makedirs(os.path.join(current_app.config['UPLOAD_FOLDER'], folder_name))
         file.save(
