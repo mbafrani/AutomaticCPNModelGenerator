@@ -17,6 +17,10 @@ $ flask run
 ```
 
 
+## Linting/Style guide
+PEP8
+
+
 ## Application Structure
 
 ```

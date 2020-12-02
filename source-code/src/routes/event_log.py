@@ -6,6 +6,7 @@ from services import EventLogService
 
 event_log_page = Blueprint("event_log", __name__)
 
+
 @event_log_page.route('/event-log', methods=['POST'])
 def import_event_log_file():
     # check if the post request has the file part
@@ -13,7 +14,7 @@ def import_event_log_file():
         return make_response(jsonify(
             message=constants.ERROR_FILE_NOT_FOUND_IN_REQUEST
         ), BadRequest.code)
-    
+
     file = request.files['file']
 
     try:
@@ -27,4 +28,4 @@ def import_event_log_file():
         status_code = exception.code
         return make_response(jsonify(
             message=message
-        ), status_code)  
+        ), status_code)
