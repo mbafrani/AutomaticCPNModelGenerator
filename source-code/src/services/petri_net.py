@@ -11,6 +11,17 @@ class PetriNetService:
     def __init__(self):
         self.petri_net = PetriNet()
 
+    def get_process_model_image_path(self, event_log_id):
+        image_file_extension = "png"
+        image_file_path = os.path.join(
+            current_app.config['UPLOAD_FOLDER'],
+            event_log_id,
+            current_app.config["PROCESS_MODEL_DEFAULT_NAME"] +
+            "." +
+            image_file_extension)
+
+        return image_file_path
+
     def discover_process(self, event_log_id):
 
         # dynamically check event log file extension (XES or CSV)
@@ -42,13 +53,7 @@ class PetriNetService:
         self.petri_net.discover_process_model()
         self.petri_net.visualize_process_model(enrich_performance=True)
 
-        image_file_extension = "png"
-        image_file_path = os.path.join(
-            current_app.config['UPLOAD_FOLDER'],
-            event_log_id,
-            current_app.config["PROCESS_MODEL_DEFAULT_NAME"] +
-            "." +
-            image_file_extension)
+        image_file_path = self.get_process_model_image_path(event_log_id)
         self.petri_net.save_petrinet_as_image(image_file_path)
 
         return self.petri_net
