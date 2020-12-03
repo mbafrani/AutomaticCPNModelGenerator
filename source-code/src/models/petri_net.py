@@ -6,7 +6,7 @@ from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.visualization.petrinet import visualizer
 import json
 import pandas as pd
-
+from models.enrich_petri_net import EnrichPetriNet
 from util import constants, convert_perf_label_to_seconds
 
 
@@ -36,25 +36,9 @@ class PetriNet:
              = inductive_miner.apply(self.log)
         return self.net, self.initial_marking, self.final_marking
 
-    def visualize_process_model(self, enrich_performance=False):
-        if (enrich_performance):
-            parameters = {
-                visualizer.Variants.WO_DECORATION.value.Parameters.DEBUG: True,
-                visualizer.Variants.PERFORMANCE.value.Parameters.FORMAT: "png"
-            }
-            self.gviz = visualizer.apply(
-                self.net,
-                self.initial_marking,
-                self.final_marking,
-                parameters=parameters,
-                variant=visualizer.Variants.PERFORMANCE, log=self.log
-            )
-        else:
-            self.gviz = visualizer.apply(
-                self.net,
-                self.initial_marking,
-                self.final_marking
-            )
+    def visualize_process_model(self):
+        enrich_petri_obj = EnrichPetriNet(self.log, self.net, self.initial_marking, self.final_marking,self.gviz)
+        self.gviz =  enrich_petri_obj.enrich_petri_net_perf_info()
         return self.gviz
 
     def save_petrinet_as_image(self, file_path):

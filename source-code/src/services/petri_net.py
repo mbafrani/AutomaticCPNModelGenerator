@@ -51,7 +51,7 @@ class PetriNetService:
             self.petri_net.import_csv_log(event_log_file_path)
 
         self.petri_net.discover_process_model()
-        self.petri_net.visualize_process_model(enrich_performance=True)
+        self.petri_net.visualize_process_model()
 
         image_file_path = self.get_process_model_image_path(event_log_id)
         self.petri_net.save_petrinet_as_image(image_file_path)
