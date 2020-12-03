@@ -1,7 +1,6 @@
 from flask import Blueprint, current_app, request,\
      jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
-import os
 
 from util import constants
 from services import PetriNetService, CPNExportService
@@ -20,7 +19,7 @@ def export_cpn_file():
 
     try:
         petri_net_service = PetriNetService()
-        petri_net_service.discover_process(event_log_id)
+        petri_net_service.discover_process_old(event_log_id)
         # extract layout information from graphviz to insert
         # into petrinet place/transitions properties
         petri_net = petri_net_service.\

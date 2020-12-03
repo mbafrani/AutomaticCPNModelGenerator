@@ -1,4 +1,4 @@
-from statistics import median, mean, stdev
+from statistics import mean, stdev
 from enum import Enum
 from pm4py.objects.conversion.log import converter as log_conversion
 from pm4py.objects.petri.petrinet import PetriNet
@@ -6,20 +6,16 @@ from pm4py.util import exec_utils, xes_constants, constants
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
 from pm4py.statistics.variants.log import get as variants_get
 from pm4py.visualization.petrinet.util import performance_map
-from pm4py.objects.log.importer.xes import importer as xes_importer
-from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
-from pm4py.objects.log.util import dataframe_utils
 from pm4py.visualization.petrinet import visualizer
 import pm4py.visualization.petrinet.common.visualize as vis_petrinet
-import os
-import pandas as pd
 
 
 class Parameters(Enum):
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
     START_TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_START_TIMESTAMP_KEY
     TIMESTAMP_KEY = constants.PARAMETER_CONSTANT_TIMESTAMP_KEY
+
 
 class EnrichPetriNet:
     def __init__(self, log=None, net=None, initial_marking=None,
@@ -30,7 +26,7 @@ class EnrichPetriNet:
         self.final_marking = final_marking
         self.gviz = gviz
 
-    def get_perf_dict_for_petri_net_decoration(self,stats_dict, activities):
+    def get_perf_dict_for_petri_net_decoration(self, stats_dict, activities):
         perf_dict = {}
         for key, value in stats_dict.items():
             transition = key.split("(t)", 1)[1]
@@ -45,8 +41,7 @@ class EnrichPetriNet:
 
         return perf_dict
 
-
-    def aggregate_stats(self,statistics, elem, aggregation_measure):
+    def aggregate_stats(self, statistics, elem, aggregation_measure):
         aggr_stat = 0
         if aggregation_measure == "mean" or aggregation_measure is None:
             aggr_stat = mean(statistics[elem]["performance"])
@@ -55,80 +50,94 @@ class EnrichPetriNet:
                 aggr_stat = stdev(statistics[elem]["performance"])
         return aggr_stat
 
-
-    def aggregate_statistics(self,statistics, aggregation_measure=None, activities=None):
+    def aggregate_statistics(self, statistics, aggregation_measure=None):
         aggregated_statistics = {}
         for elem in statistics.keys():
             if type(elem) is PetriNet.Arc:
                 if statistics[elem]["performance"]:
-                    aggr_stat = self.aggregate_stats(statistics, elem, aggregation_measure)
+                    aggr_stat = self.aggregate_stats(statistics, elem,
+                                                     aggregation_measure)
                     aggr_stat_hr = round(aggr_stat / 60, 2)
                     aggregated_statistics[str(elem)] = aggr_stat_hr
             elif type(elem) is PetriNet.Place:
                 pass
         return aggregated_statistics
 
-
-    def get_service_time_single_timestamps(self,log, net, initial_marking, final_marking, parameters=None,
-                                        ht_perf_method="last"):
+    def get_service_time_single_timestamps(self, log, net, initial_marking,
+                                           final_marking, parameters=None,
+                                           ht_perf_method="last"):
         if parameters is None:
             parameters = {}
 
         if log is not None:
-            log = log_conversion.apply(log, parameters, log_conversion.TO_EVENT_LOG)
-            activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
-            timestamp_key = exec_utils.get_param_value(Parameters.TIMESTAMP_KEY, parameters,
-                                                    xes_constants.DEFAULT_TIMESTAMP_KEY)
-            activities = [ev[activity_key] for trace in log for ev in trace]
+            log = log_conversion.apply(log, parameters,
+                                       log_conversion.TO_EVENT_LOG)
+            act_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY,
+                                                 parameters,
+                                                 xes_constants.DEFAULT_NAME_KEY)
+            ts_key = exec_utils.get_param_value(Parameters.TIMESTAMP_KEY,
+                                                parameters,
+                                                xes_constants.DEFAULT_TIMESTAMP_KEY)
+            activities = [ev[act_key] for trace in log for ev in trace]
 
             variants_idx = variants_get.get_variants_from_log_trace_idx(log, parameters=parameters)
             variants = variants_get.convert_variants_trace_idx_to_trace_obj(log, variants_idx)
 
-            parameters_tr = {token_replay.Variants.TOKEN_REPLAY.value.Parameters.ACTIVITY_KEY: activity_key,
-                            token_replay.Variants.TOKEN_REPLAY.value.Parameters.VARIANTS: variants}
+            parameters_tr = {token_replay.Variants.TOKEN_REPLAY.value.Parameters.ACTIVITY_KEY: act_key,
+                             token_replay.Variants.TOKEN_REPLAY.value.Parameters.VARIANTS: variants}
 
             # do the replay
-            aligned_traces = token_replay.apply(log, net, initial_marking, final_marking, parameters=parameters_tr)
+            aligned_traces = token_replay.apply(log, net, initial_marking,
+                                                final_marking,
+                                                parameters=parameters_tr)
 
-            element_statistics = performance_map.single_element_statistics(log, net, initial_marking,
-                                                                        aligned_traces, variants_idx,
-                                                                        activity_key=activity_key,
-                                                                        timestamp_key=timestamp_key,
-                                                                        ht_perf_method=ht_perf_method)
-            aggregated_statistics = self.aggregate_statistics(element_statistics, aggregation_measure="mean")
-            aggregated_statistics_stdev = self.aggregate_statistics(element_statistics, aggregation_measure="stdev")
+            element_statistics \
+                = performance_map.single_element_statistics(log, net, initial_marking,
+                                                            aligned_traces, variants_idx,
+                                                            activity_key=act_key,
+                                                            timestamp_key=ts_key,
+                                                            ht_perf_method=ht_perf_method)
+            aggregated_statistics = self.aggregate_statistics(element_statistics,
+                                                              aggregation_measure="mean")
+            aggregated_statistics_stdev = self.aggregate_statistics(element_statistics,
+                                                                    aggregation_measure="stdev")
 
-            aggregated_statistics = self.get_perf_dict_for_petri_net_decoration(aggregated_statistics, list(set(activities)))
-            aggregated_statistics_stdev = self.get_perf_dict_for_petri_net_decoration(aggregated_statistics_stdev,
-                                                                                list(set(activities)))
+            aggregated_statistics \
+                = self.get_perf_dict_for_petri_net_decoration(aggregated_statistics,
+                                                              list(set(activities)))
+            aggregated_statistics_stdev \
+                = self.get_perf_dict_for_petri_net_decoration(aggregated_statistics_stdev,
+                                                              list(set(activities)))
 
         return aggregated_statistics, aggregated_statistics_stdev
 
-
-    def get_service_time_two_timestamps(self,log, parameters=None):
+    def get_service_time_two_timestamps(self, log, parameters=None):
         if parameters is None:
             parameters = {}
 
         log = log_conversion.apply(log, parameters=parameters)
 
-        activity_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, parameters, xes_constants.DEFAULT_NAME_KEY)
-        start_timestamp_key = exec_utils.get_param_value(Parameters.START_TIMESTAMP_KEY, parameters,
-                                                        xes_constants.DEFAULT_TIMESTAMP_KEY)
-        timestamp_key = exec_utils.get_param_value(Parameters.TIMESTAMP_KEY, parameters,
-                                                xes_constants.DEFAULT_TIMESTAMP_KEY)
+        act_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY,
+                                             parameters,
+                                             xes_constants.DEFAULT_NAME_KEY)
+        start_ts_key = exec_utils.get_param_value(Parameters.START_TIMESTAMP_KEY,
+                                                  parameters,
+                                                  xes_constants.DEFAULT_TIMESTAMP_KEY)
+        ts_key = exec_utils.get_param_value(Parameters.TIMESTAMP_KEY, parameters,
+                                            xes_constants.DEFAULT_TIMESTAMP_KEY)
 
         durations_dict_mean = {}
         durations_dict_stdev = {}
-        activities = [ev[activity_key] for trace in log for ev in trace]
+        activities = [ev[act_key] for trace in log for ev in trace]
         for act in activities:
             durations_dict_mean[act] = []
             durations_dict_stdev[act] = []
 
         for trace in log:
             for event in trace:
-                activity = event[activity_key]
-                start_time = event[start_timestamp_key].timestamp()
-                complete_time = event[timestamp_key].timestamp()
+                activity = event[act_key]
+                start_time = event[start_ts_key].timestamp()
+                complete_time = event[ts_key].timestamp()
                 durations_dict_mean[activity].append(complete_time - start_time)
                 durations_dict_stdev[activity].append(complete_time - start_time)
 
@@ -140,21 +149,23 @@ class EnrichPetriNet:
 
         return durations_dict_mean, durations_dict_stdev
 
-
     def enrich_petri_net_perf_info(self):
         if "start_timestamp" in str(self.log):
-            mean_dict, stdev_dict = self.get_service_time_two_timestamps(self.log, parameters={
+            mean_dict, stdev_dict \
+                = self.get_service_time_two_timestamps(self.log, parameters={
                 soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp",
                 soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp"})
         else:
-            mean_dict, stdev_dict = self.get_service_time_single_timestamps(self.log, self.net, self.initial_marking, self.final_marking)
+            mean_dict, stdev_dict \
+                = self.get_service_time_single_timestamps(self.log, self.net,
+                                                          self.initial_marking,
+                                                          self.final_marking)
 
-        # Enrich
-        # mean_single_dict, stdev_single_dict = get_service_time_single_timestamps(log, net, initial_marking, final_marking)
         normalDict = {}
         for key in mean_dict.keys():
             if key in stdev_dict:
-                normalDict[key] = ("N(" + str(mean_dict[key]) + ", " + str(stdev_dict[key]) + ")")
+                normalDict[key] = ("N(" + str(mean_dict[key]) + ", " +
+                                   str(stdev_dict[key]) + ")")
 
         decorations = {}
         for val in self.net._PetriNet__transitions:
@@ -163,5 +174,8 @@ class EnrichPetriNet:
                 decorations[val] = {"color": "#b3b6b7 ", "label": label}
 
         parameters = {visualizer.wo_decoration: True}
-        self.gviz = vis_petrinet.apply(self.net, self.initial_marking, self.final_marking, parameters=parameters, decorations=decorations)
+        self.gviz = vis_petrinet.apply(self.net, self.initial_marking,
+                                       self.final_marking,
+                                       parameters=parameters,
+                                       decorations=decorations)
         return self.gviz
