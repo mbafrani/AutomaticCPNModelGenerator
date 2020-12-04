@@ -8,6 +8,7 @@
       "name": "Python: Flask",
       "type": "python",
       "request": "launch",
+      "cwd": "${workspaceFolder}/src",
       "module": "flask",
       "env": {
         "FLASK_APP": "src/app.py",

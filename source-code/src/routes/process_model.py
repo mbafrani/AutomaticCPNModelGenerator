@@ -9,7 +9,7 @@ process_model_page = Blueprint("process_model", __name__)
 
 @process_model_page.route('/process-model', methods=['POST'])
 def discover_process_model():
-    if 'event_log_id' not in request.json:
+    if not request.json or 'event_log_id' not in request.json:
         return make_response(jsonify(
             message=constants.ERROR_EVENT_LOG_ID_NOT_FOUND_IN_REQUEST
         ), BadRequest.code)
