@@ -40,7 +40,7 @@ class PetriNet:
         enrich_petri_obj = EnrichPetriNet(self.log, self.net,
                                           self.initial_marking,
                                           self.final_marking, self.gviz)
-        self.gviz = enrich_petri_obj.enrich_petri_net_perf_info()
+        self.gviz = enrich_petri_obj.enrich_petri_net()
         return self.gviz
 
     def visualize_process_model_old(self, enrich_performance=False):
