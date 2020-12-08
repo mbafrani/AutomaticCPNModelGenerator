@@ -16,7 +16,9 @@ from pm4py.algo.enhancement.decision.algorithm import (
 )
 
 freq_dict_key = "successor_frequencies"
-
+performance_dict_key = "performance_information"
+mean_dict_key = 'mean'
+std_dict_key = 'std'
 
 class Parameters(Enum):
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
@@ -158,7 +160,9 @@ class EnrichPetriNet:
 
     def get_successor_frequencies(self, dps):
         # Gather information on the log and net.
-        I, _ = get_decisions_table(self.log, self.net, self.initial_marking, self.final_marking)
+        I, _ = get_decisions_table(
+            self.log, self.net, self.initial_marking, self.final_marking
+        )
 
         decision_points_succsessor_frequencies = {}
         for dp in dps:
@@ -168,7 +172,9 @@ class EnrichPetriNet:
 
             # Get successors to the place from the log and restrict them to the possible transitions
             successors = [el[1] for el in I[dp.name]]
-            restricted_successors = [succ for succ in successors if succ in successor_names]
+            restricted_successors = [
+                succ for succ in successors if succ in successor_names
+            ]
 
             # Calculate Frequencies
             successor_count = Counter(restricted_successors)
@@ -181,64 +187,90 @@ class EnrichPetriNet:
 
         return decision_points_succsessor_frequencies
 
-    def enrich_petrinet_decision_probabilities(self):
+    def get_decision_points(self):
         decision_point_names = list(get_decision_points(self.net).keys())
-        decision_points = [dp for dp in self.net.places if dp.name in decision_point_names]
+        decision_points = [
+            dp for dp in self.net.places if dp.name in decision_point_names
+        ]
+        return decision_points
 
+    def enrich_petrinet_decision_probabilities(self):
+        decision_points = self.get_decision_points()
         successor_frequencies = self.get_successor_frequencies(decision_points)
 
         # Enrich decision points
         for dp in decision_points:
             dp.properties[freq_dict_key] = successor_frequencies[dp.name]
-        return decision_points
 
-    def get_decision_point_arc_decorations(self, decision_points):
+    def get_decision_point_arc_decorations(self):
+        decision_points = self.get_decision_points()
         decorations = {}
         for dp in decision_points:
             freq_dict = dp.properties[freq_dict_key]
             for arc in dp.out_arcs:
                 target_frequency = freq_dict.get(arc.target.name)
                 if not target_frequency:
-                    target_frequency = freq_dict.get(arc.target.label)                
+                    target_frequency = freq_dict.get(arc.target.label)
                 if target_frequency:
                     label = "{:.2%}".format(target_frequency)
-                    decorations[arc] = {"color": "#000000", "penwidth": "1", "label": label}
+                    decorations[arc] = {
+                        "color": "#000000",
+                        "penwidth": "1",
+                        "label": label,
+                    }
+        return decorations
+
+    def enrich_activity_times(self):
+        # Get activity times
+        if "start_timestamp" in str(self.log):
+            mean_dict, stdev_dict = self.get_service_time_two_timestamps(
+                self.log,
+                parameters={
+                    soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp",
+                    soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp",
+                },
+            )
+        else:
+            mean_dict, stdev_dict = self.get_service_time_single_timestamps(
+                self.log, self.net, self.initial_marking, self.final_marking
+            )
+
+        # Enrich Petri Net with Activity Times
+        for transition in self.net.transitions:
+            trans_name = str(transition)
+            mean = mean_dict.get(trans_name)
+            std = stdev_dict.get(trans_name)
+            if mean is not None and std is not None:
+                transition.properties[performance_dict_key] = {mean_dict_key: mean, std_dict_key: std}
+
+    def get_performance_decorations(self):
+        decorations = {}
+        for val in self.net.transitions:
+            perf_info = val.properties.get(performance_dict_key)
+            if perf_info is None:
+                continue
+            mean, std = perf_info[mean_dict_key], perf_info[std_dict_key]
+            label = f"{val}\nN({mean}, {std})"
+            decorations[val] = {"color": "#b3b6b7 ", "label": label}
         return decorations
 
     def enrich_petri_net(self):
-        if "start_timestamp" in str(self.log):
-            mean_dict, stdev_dict \
-                = self.get_service_time_two_timestamps(self.log, parameters={
-                soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp",
-                soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp"})
-        else:
-            mean_dict, stdev_dict \
-                = self.get_service_time_single_timestamps(self.log, self.net,
-                                                          self.initial_marking,
-                                                          self.final_marking)
+        self.enrich_activity_times()
+        self.enrich_petrinet_decision_probabilities()
 
-        normalDict = {}
-        for key in mean_dict.keys():
-            if key in stdev_dict:
-                normalDict[key] = ("N(" + str(mean_dict[key]) + ", " +
-                                   str(stdev_dict[key]) + ")")
+    def viz_petri_net(self):
+        perf_decorations = self.get_performance_decorations()
+        dp_decorations = self.get_decision_point_arc_decorations()
 
-        decorations = {}
-        for val in self.net._PetriNet__transitions:
-            if str(val) in normalDict.keys():
-                label = str(val) + "\n" + normalDict.get(str(val))
-                decorations[val] = {"color": "#b3b6b7 ", "label": label}
-
-        
-        # Add decision point probabilities
-        decision_points = self.enrich_petrinet_decision_probabilities()
-        dp_decorations = self.get_decision_point_arc_decorations(decision_points)
-        decorations.update(dp_decorations)
-
+        decorations = {**perf_decorations, **dp_decorations}
 
         parameters = {visualizer.wo_decoration: True}
-        self.gviz = vis_petrinet.apply(self.net, self.initial_marking,
-                                       self.final_marking,
-                                       parameters=parameters,
-                                       decorations=decorations)
+        self.gviz = vis_petrinet.apply(
+            self.net,
+            self.initial_marking,
+            self.final_marking,
+            parameters=parameters,
+            decorations=decorations,
+        )
         return self.gviz
+
