@@ -1,7 +1,8 @@
 # Error messages
 ERROR_FILE_NOT_FOUND_IN_REQUEST = "'file' not found in request body"
 ERROR_INVALID_FILE = "Invalid file"
-ERROR_EVENT_LOG_ID_NOT_FOUND_IN_REQUEST = "'event_log_id' not found in request body"
+ERROR_EVENT_LOG_ID_NOT_FOUND_IN_REQUEST = "'event_log_id' not found \
+  in request body"
 ERROR_EVENT_LOG_DOESNT_EXIST = "Event log doesn't exist"
 
 # Messages
@@ -15,8 +16,14 @@ ALLOWED_EXTENSIONS = {XES_EXTENSION, CSV_EXTENSION}
 # dictionary keys
 DICT_KEY_OBJECTS_CONSTANT = "objects"
 DICT_KEY_EDGES_CONSTANT = "edges"
-LAYOUT_INFORMATION_PETRI = "layout_information_petri"
-PERFORMANCE_INFORMATION_PETRI = "performance_information_petri"
+DICT_KEY_LAYOUT_INFO_PETRI = "LAYOUT_INFORMATION_PETRI"
+DICT_KEY_LAYOUT_X = "x"
+DICT_KEY_LAYOUT_Y = "y"
+DICT_KEY_LAYOUT_HEIGHT = "height"
+DICT_KEY_LAYOUT_WIDTH = "width"
+DICT_KEY_PERF_INFO_PETRI = "PERFORMANCE_INFORMATION_PETRI"
+DICT_KEY_PERF_MEAN = "mean"
+DICT_KEY_PERF_STDEV = "stdev"
 
 # declaration constants
 DECLARATION_COLOR_REQUEST = "REQUEST"

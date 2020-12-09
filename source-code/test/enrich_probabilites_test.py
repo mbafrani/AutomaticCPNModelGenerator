@@ -7,14 +7,14 @@ from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
-from enrich_petri_net import EnrichPetriNet, freq_dict_key  # noqa: E402
+from petri_net import PetriNet, freq_dict_key  # noqa: E402
 
 
 def mine_petrinet(path):
     # Discover Net
     log = xes_importer.apply(path)
     net, init_marking, final_marking = inductive_miner.apply(log)
-    petrinet = EnrichPetriNet(log, net, init_marking, final_marking)
+    petrinet = PetriNet(log, net, init_marking, final_marking)
     return petrinet
 
 

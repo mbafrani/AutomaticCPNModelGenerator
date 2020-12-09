@@ -71,7 +71,6 @@ class CPNExportService:
 
     # page element in the cpn file contains all the places, transitions and
     # arcs
-
     def create_page_element_for_document(
             self,
             document,
@@ -95,9 +94,19 @@ class CPNExportService:
 
             posattr_tag = document.createElement("posattr")
             posattr_tag.setAttribute(
-                "x", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][0][0]))
+                "x",
+                str(
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_X]
+                )
+            )
             posattr_tag.setAttribute(
-                "y", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][0][1]))
+                "y",
+                str(
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_Y]
+                )
+            )
             place_tag.appendChild(posattr_tag)
 
             # set fill color for places: Teal(Source), Red(Sink) and
@@ -130,9 +139,19 @@ class CPNExportService:
 
             ellipse_tag = document.createElement("ellipse")
             ellipse_tag.setAttribute(
-                "h", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][1][0]))
+                "h",
+                str(
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_HEIGHT]
+                )
+            )
             ellipse_tag.setAttribute(
-                "w", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]))
+                "w",
+                str(
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_WIDTH]
+                )
+            )
             place_tag.appendChild(ellipse_tag)
 
             # TODO: Handle tokens
@@ -155,13 +174,19 @@ class CPNExportService:
             posattr_tag = document.createElement("posattr")
             # attribute position_x = place_position_x + place_width
             posattr_tag.setAttribute("x", str(
-                place.properties[constants.LAYOUT_INFORMATION_PETRI][0][0] +
-                place.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_X] +
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_WIDTH]
             ))
             # attribute position_y = place_y_position - place_height/2
             posattr_tag.setAttribute("y", str(
-                place.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] -
-                (place.properties[constants.LAYOUT_INFORMATION_PETRI][1][0] / 2)
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_Y] -
+                (
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                )
             ))
             type_tag.appendChild(posattr_tag)
 
@@ -198,14 +223,20 @@ class CPNExportService:
                 posattr_tag = document.createElement("posattr")
                 # initial_marking position_x = place_x_position + place_width
                 posattr_tag.setAttribute("x", str(
-                    place.properties[constants.LAYOUT_INFORMATION_PETRI][0][0] +
-                    place.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_X] +
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_WIDTH]
                 ))
                 # initial_marking position_y = place_y_position +
                 # place_height/2
                 posattr_tag.setAttribute("y", str(
-                    place.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] +
-                    (place.properties[constants.LAYOUT_INFORMATION_PETRI][1][0] / 2)
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_Y] +
+                    (
+                        place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                    )
                 ))
                 initmark_tag.appendChild(posattr_tag)
 
@@ -243,9 +274,19 @@ class CPNExportService:
 
             posattr_tag = document.createElement("posattr")
             posattr_tag.setAttribute(
-                "x", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][0]))
+                "x",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_X]
+                )
+            )
             posattr_tag.setAttribute(
-                "y", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][1]))
+                "y",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_Y]
+                )
+            )
             trans_tag.appendChild(posattr_tag)
 
             fillattr_tag = document.createElement("fillattr")
@@ -271,51 +312,20 @@ class CPNExportService:
 
             box_tag = document.createElement("box")
             box_tag.setAttribute(
-                "h", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][0]))
+                "h",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_HEIGHT]
+                )
+            )
             box_tag.setAttribute(
-                "w", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]))
+                "w",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_WIDTH]
+                )
+            )
             trans_tag.appendChild(box_tag)
-
-            time_tag = document.createElement("time")
-            time_tag.setAttribute("id", str(uuid.uuid1().hex))
-
-            posattr_tag = document.createElement("posattr")
-            # time position_x = place_x_position + place_width/1.5
-            posattr_tag.setAttribute("x", str(
-                trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][0] +
-                (trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][1] / 1.5)
-            ))
-            # time position_y = place_y_position - place_height/1.5
-            posattr_tag.setAttribute("y", str(
-                trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] -
-                (trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][0] / 1.5)
-            ))
-            time_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            time_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Teal")
-            lineattr_tag.setAttribute("thick", "0")
-            lineattr_tag.setAttribute("type", "Solid")
-            time_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Teal")
-            textattr_tag.setAttribute("bold", "false")
-            time_tag.appendChild(textattr_tag)
-
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode("@+" + str(
-                trans.properties[constants.PERFORMANCE_INFORMATION_PETRI]
-            )))
-            time_tag.appendChild(text_tag)
-
-            trans_tag.appendChild(time_tag)
 
             page_tag.appendChild(trans_tag)
 
@@ -328,9 +338,11 @@ class CPNExportService:
                 arc.target, pm4py.objects.petri.petrinet.PetriNet.Place)
 
             # identify orientation of the arc, Place->Trans or Trans->Place
-            orientation = constants.PLACE_TO_TRANS_ORIENTATION if is_target_trans else constants.TRANS_TO_PLACE_ORIENTATION
+            orientation = constants.PLACE_TO_TRANS_ORIENTATION \
+                if is_target_trans else constants.TRANS_TO_PLACE_ORIENTATION
 
-            # remove hypens from the transend_idref (since we removed the same from transition id above)
+            # remove hypens from the transend_idref (since we removed
+            # the same from transition id above)
             # these id's are references to <place> and <transition> tags
             # generated above
             transend_idref = str(
@@ -390,11 +402,21 @@ class CPNExportService:
 
             posattr_tag = document.createElement("posattr")
             posattr_tag.setAttribute(
-                "x", str(arc.properties[constants.LAYOUT_INFORMATION_PETRI][0][0]))
+                "x",
+                str(
+                    arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_X]
+                )
+            )
             # move y position by 5 else the arc annotation will end up lying on
             # the arc
             posattr_tag.setAttribute(
-                "y", str(arc.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] + 5))
+                "y",
+                str(
+                    arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_Y] + 5
+                )
+            )
             annot_tag.appendChild(posattr_tag)
 
             fillattr_tag = document.createElement("fillattr")
@@ -415,13 +437,18 @@ class CPNExportService:
             annot_tag.appendChild(textattr_tag)
 
             text_tag = document.createElement("text")
-            # TODO: "@+0" is a dummy. Needs to be removed later
-            # For now there's no execution time information on the arc transition->place,
-            # Once it's implemented replace the dummy "@+0" by the execution
-            # time stored in arc.properties[PERFORMANCE_INFORMATION_PETRI]
+            # TODO: add standard deviation
+            # Show execution time information on the arc transition->place
             if(is_target_place):
+                execution_time_mean = int(
+                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                    [constants.DICT_KEY_PERF_MEAN]
+                )
                 text_tag.appendChild(document.createTextNode(
-                    str(constants.DECLARATION_COLOR_REQUEST_VARIABLE) + "@+0"))
+                    str(
+                        constants.DECLARATION_COLOR_REQUEST_VARIABLE) +
+                    "@+" +
+                    str(execution_time_mean)))
             else:
                 text_tag.appendChild(document.createTextNode(
                     str(constants.DECLARATION_COLOR_REQUEST_VARIABLE)))
@@ -434,7 +461,6 @@ class CPNExportService:
         return page_tag
 
     # Genarates a cpn dom object filled with information from the petri net
-
     def create_cpn_model_from_petri_net(
             self,
             petri_net,
@@ -444,7 +470,8 @@ class CPNExportService:
 
         custom_dom_imp = DOMImplementation()
 
-        # <!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://www.daimi.au.dk/~cpntools/bin/DTD/2/cpn.dtd">
+        # <!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN"
+        # "http://www.daimi.au.dk/~cpntools/bin/DTD/2/cpn.dtd">
         doctype = custom_dom_imp.createDocumentType(
             qualifiedName="workspaceElements",
             publicId="-//CPN//DTD CPNXML 1.0//EN",
@@ -474,7 +501,12 @@ class CPNExportService:
 
         # <page>
         page_tag = self.create_page_element_for_document(
-            document, petri_net, initial_marking, final_marking, parameters=None)
+            document,
+            petri_net,
+            initial_marking,
+            final_marking,
+            parameters=None
+        )
         cpnet_tag.appendChild(page_tag)
 
         return document

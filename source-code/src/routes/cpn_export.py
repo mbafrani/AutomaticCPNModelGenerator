@@ -19,7 +19,7 @@ def export_cpn_file():
 
     try:
         petri_net_service = PetriNetService()
-        petri_net_service.discover_process_old(event_log_id)
+        petri_net_service.discover_process(event_log_id)
         # extract layout information from graphviz to insert
         # into petrinet place/transitions properties
         petri_net = petri_net_service.\
@@ -43,3 +43,8 @@ def export_cpn_file():
         return make_response(jsonify(
             message=message
         ), status_code)
+    except Exception as exp:
+        message = exp.args[1]
+        return make_response(jsonify(
+            message=message
+        ), InternalServerError.code)

@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
-from werkzeug.exceptions import HTTPException, BadRequest
+from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 
 from util import constants
 from services import PetriNetService
@@ -29,3 +29,8 @@ def discover_process_model():
         return make_response(jsonify(
             message=message
         ), status_code)
+    except Exception as exp:
+        message = exp.args[1]
+        return make_response(jsonify(
+            message=message
+        ), InternalServerError.code)

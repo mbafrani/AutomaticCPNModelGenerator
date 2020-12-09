@@ -6,13 +6,14 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
 
-from models.enrich_petri_net import EnrichPetriNet
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
+from models import PetriNet
 
 
 def mine_petrinet(path):
     log = xes_importer.apply(path)
     net, im, fm = inductive_miner.apply(log)
-    petrinet = EnrichPetriNet(log, net, im, fm)
+    petrinet = PetriNet(log, net, im, fm)
     return petrinet, log, net, im, fm
 
 
