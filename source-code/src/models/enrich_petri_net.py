@@ -270,7 +270,7 @@ class EnrichPetriNet:
         perf_decorations = self.get_performance_decorations()
         dp_decorations = self.get_decision_point_arc_decorations()
 
-        decorations = {**perf_decorations, **dp_decorations}
+        decorations = {**dp_decorations, **perf_decorations}
 
         parameters = {visualizer.wo_decoration: True}
         self.gviz = vis_petrinet.apply(
