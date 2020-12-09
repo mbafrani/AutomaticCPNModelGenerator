@@ -14,13 +14,8 @@ from pm4py.algo.enhancement.decision.algorithm import (
     get_decision_points,
     get_decisions_table,
 )
+from util.constants import PetriNetDictKeys
 
-
-# TODO: Constants
-freq_dict_key = "successor_frequencies"
-performance_dict_key = "performance_information"
-mean_dict_key = 'mean'
-std_dict_key = 'std'
 
 class Parameters(Enum):
     ACTIVITY_KEY = constants.PARAMETER_CONSTANT_ACTIVITY_KEY
@@ -174,8 +169,7 @@ class EnrichPetriNet:
         decision_points_succsessor_frequencies = {}
         for dp in dps:
             # Get names of transitions that directly follow the decision point
-            successor_names = [arc.target.name for arc in dp.out_arcs]
-            successor_names += [arc.target.label for arc in dp.out_arcs]
+            successor_names = [str(arc.target) for arc in dp.out_arcs]
 
             # Get successors to the place from the log and restrict them to the possible transitions
             successors = [el[1] for el in I[dp.name]]
@@ -207,17 +201,15 @@ class EnrichPetriNet:
 
         # Enrich decision points
         for dp in decision_points:
-            dp.properties[freq_dict_key] = successor_frequencies[dp.name]
+            dp.properties[PetriNetDictKeys.frequencies] = successor_frequencies[dp.name]
 
     def get_decision_point_arc_decorations(self):
         decision_points = self.get_decision_points()
         decorations = {}
         for dp in decision_points:
-            freq_dict = dp.properties[freq_dict_key]
+            freq_dict = dp.properties[PetriNetDictKeys.frequencies]
             for arc in dp.out_arcs:
-                target_frequency = freq_dict.get(arc.target.name)
-                if not target_frequency:
-                    target_frequency = freq_dict.get(arc.target.label)
+                target_frequency = freq_dict.get(str(arc.target))
                 if target_frequency:
                     label = "{:.2%}".format(target_frequency)
                     decorations[arc] = {
@@ -225,9 +217,13 @@ class EnrichPetriNet:
                         "penwidth": "1",
                         "label": label,
                     }
+                    decorations[arc.target] = {
+                        "color": "#b3b6b7",
+                        "label": str(arc.target)
+                    }
             decorations[dp] = {
-                    "color": "#b3b6b7",
-                    "label": str(dp),
+                "color": "#b3b6b7",
+                "label": str(dp),
             }
 
         return decorations
@@ -253,15 +249,15 @@ class EnrichPetriNet:
             mean = mean_dict.get(trans_name)
             std = stdev_dict.get(trans_name)
             if mean is not None and std is not None:
-                transition.properties[performance_dict_key] = {mean_dict_key: mean, std_dict_key: std}
+                transition.properties[PetriNetDictKeys.performance] = {PetriNetDictKeys.mean: mean, PetriNetDictKeys.std: std}
 
     def get_performance_decorations(self):
         decorations = {}
         for val in self.net.transitions:
-            perf_info = val.properties.get(performance_dict_key)
+            perf_info = val.properties.get(PetriNetDictKeys.performance)
             if perf_info is None:
                 continue
-            mean, std = perf_info[mean_dict_key], perf_info[std_dict_key]
+            mean, std = perf_info[PetriNetDictKeys.mean], perf_info[PetriNetDictKeys.std]
             label = f"{val}\nN({mean}, {std})"
             decorations[val] = {"color": "#b3b6b7", "label": label}
         return decorations

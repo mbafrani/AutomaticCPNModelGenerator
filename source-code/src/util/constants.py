@@ -2,7 +2,9 @@
 ERROR_FILE_NOT_FOUND_IN_REQUEST = "'file' not found in request body"
 ERROR_INVALID_FILE = "Invalid file"
 ERROR_EVENT_LOG_ID_NOT_FOUND_IN_REQUEST = "'event_log_id' not found in request body"
-ERROR_EVENT_LOG_DOESNT_EXIST = "Event log doesn't exist"
+ERROR_EVENT_LOG_DOESNT_EXIST = "An event log with the provided ID does not exist."
+ERROR_MISSING_PARAMETER_PERFORMANCE = "One of the parameters 'transition', 'mean', or 'std' is missing."
+ERROR_MISSING_PARAMETER_FREQUENCY = "One of the parameters 'place', 'frequencies' is missing."
 
 # Messages
 MESSAGE_EVENT_LOG_UPLOAD_SUCCESS = "Event log uploaded successfully"
@@ -30,3 +32,19 @@ DECLARATION_COLOR_REQUEST_INSTANCES = DECLARATION_COLOR_REQUEST + ".all()"
 # orientation constants
 PLACE_TO_TRANS_ORIENTATION = "PtoT"
 TRANS_TO_PLACE_ORIENTATION = "TtoP"
+
+
+class PetriNetDictKeys:
+    frequencies = "successor_frequencies"
+    performance = "performance_information"
+    mean = "mean"
+    std = "std"
+
+
+class RequestJsonKeys:
+    event_log_id = "event_log_id"
+    place = "place"
+    frequencies = "frequencies"
+    transition = "transition"
+    mean = "mean"
+    std = "std"

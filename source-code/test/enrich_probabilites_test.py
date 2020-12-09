@@ -14,7 +14,7 @@ def mine_petrinet(path):
     # Discover Net
     log = xes_importer.apply(path)
     net, init_marking, final_marking = inductive_miner.apply(log)
-    petrinet = EnrichPetriNet(log, net, init_marking, final_marking)
+    petrinet = EnrichPetriNet(log=log, net=net, initial_marking=init_marking, final_marking=final_marking)
     return petrinet
 
 
@@ -27,7 +27,8 @@ running_example_path = os.path.join(base_path, "running-example.xes")
 class test_enrich_probability(unittest.TestCase):
     def test_etm_configuration1(self):
         petrinet = mine_petrinet(em_configuration1_path)
-        dps = petrinet.enrich_petrinet_decision_probabilities()
+        petrinet.enrich_petrinet_decision_probabilities()
+        dps = petrinet.get_decision_points()
 
         self.assertEqual(len(dps), 2)
         dp_dict = {dp.name: dp for dp in dps}
@@ -48,7 +49,9 @@ class test_enrich_probability(unittest.TestCase):
 
     def test_etm_configuration2(self):
         petrinet = mine_petrinet(em_configuration2_path)
-        dps = petrinet.enrich_petrinet_decision_probabilities()
+        petrinet.enrich_petrinet_decision_probabilities()
+        dps = petrinet.get_decision_points()
+
         self.assertEqual(len(dps), 1)
         dp_dict = {dp.name: dp for dp in dps}
         self.assertIn("p_7", dp_dict)
@@ -61,7 +64,9 @@ class test_enrich_probability(unittest.TestCase):
 
     def test_running_example(self):
         petrinet = mine_petrinet(running_example_path)
-        dps = petrinet.enrich_petrinet_decision_probabilities()
+        petrinet.enrich_petrinet_decision_probabilities()
+        dps = petrinet.get_decision_points()
+
         self.assertEqual(len(dps), 3)
         dp_dict = {dp.name: dp for dp in dps}
         self.assertIn("p_4", dp_dict)
@@ -88,4 +93,8 @@ class test_enrich_probability(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    t = test_enrich_probability()
+    t.test_etm_configuration1()
+    t.test_etm_configuration1()
+    t.test_etm_configuration2()
     unittest.main()

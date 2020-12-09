@@ -18,8 +18,8 @@ def export_cpn_file():
     event_log_id = request.json['event_log_id']
 
     try:
-        petri_net_service = PetriNetService()
-        petri_net_service.discover_process_old(event_log_id)
+        petri_net_service = PetriNetService(event_log_id)
+        petri_net_service.discover_process_old()
         # extract layout information from graphviz to insert
         # into petrinet place/transitions properties
         petri_net = petri_net_service.\
@@ -34,7 +34,7 @@ def export_cpn_file():
         # save the cpn file to uploads/event-log-id/
         cpn_export_service.save_cpn_model(cpn_model, event_log_id)
 
-        cpn_file_path = cpn_export_service.get_cpn_file_path(event_log_id)
+        cpn_file_path = cpn_export_service.get_cpn_file_path()
         return send_file(cpn_file_path, as_attachment=True)
 
     except HTTPException as exception:

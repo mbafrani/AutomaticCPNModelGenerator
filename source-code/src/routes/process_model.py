@@ -17,10 +17,10 @@ def discover_process_model():
     event_log_id = request.json['event_log_id']
 
     try:
-        petri_net_service = PetriNetService()
-        petri_net_service.get_petri_net(event_log_id)
+        petri_net_service = PetriNetService(event_log_id)
+        petri_net_service.get_petri_net()
         process_model_file_path = \
-            petri_net_service.get_process_model_image_path(event_log_id)
+            petri_net_service.get_process_model_image_path()
         return send_file(process_model_file_path, as_attachment=True)
 
     except HTTPException as exception:

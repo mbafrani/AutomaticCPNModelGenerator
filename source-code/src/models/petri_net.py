@@ -178,8 +178,8 @@ class PetriNet:
 
 
 def get_petri_net_paths(folder, name):
-    net_path = os.path.join(folder, name+".pnml")     
-    dict_path = os.path.join(folder, name+"_properties.json")
+    net_path = os.path.join(folder, name + ".pnml")
+    dict_path = os.path.join(folder, name + "_properties.json")
     return net_path, dict_path
 
 
