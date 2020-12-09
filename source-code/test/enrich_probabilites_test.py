@@ -5,9 +5,11 @@ import sys
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
-from petri_net import PetriNet, freq_dict_key  # noqa: E402
+from models import PetriNet  # noqa: E402
+
+sys.path.insert(1, os.path.join(os.path.dirname(__file__), "..", "src", "util"))
+from util import constants   # noqa: E402
 
 
 def mine_petrinet(path):
@@ -35,13 +37,13 @@ class test_enrich_probability(unittest.TestCase):
         self.assertIn("p_9", dp_dict)
 
         p4 = dp_dict["p_4"]
-        freq_dict = p4.properties[freq_dict_key]
+        freq_dict = p4.properties[constants.DICT_KEY_FREQUENCY]
         self.assertEqual(len(freq_dict), 2)
         self.assertAlmostEqual(freq_dict["E"], 0.2)
         self.assertAlmostEqual(freq_dict["F"], 0.8)
 
         p9 = dp_dict["p_9"]
-        freq_dict = p9.properties[freq_dict_key]
+        freq_dict = p9.properties[constants.DICT_KEY_FREQUENCY]
         self.assertEqual(len(freq_dict), 2)
         self.assertAlmostEqual(freq_dict["D"], 0.9)
         self.assertAlmostEqual(freq_dict["skip_3"], 0.1)
@@ -54,7 +56,7 @@ class test_enrich_probability(unittest.TestCase):
         self.assertIn("p_7", dp_dict)
 
         p7 = dp_dict["p_7"]
-        freq_dict = p7.properties[freq_dict_key]
+        freq_dict = p7.properties[constants.DICT_KEY_FREQUENCY]
         self.assertEqual(len(freq_dict), 2)
         self.assertAlmostEqual(freq_dict["E"], 0.29, 2)
         self.assertAlmostEqual(freq_dict["F"], 0.71, 2)
@@ -69,19 +71,19 @@ class test_enrich_probability(unittest.TestCase):
         self.assertIn("p_10", dp_dict)
 
         dp = dp_dict["p_4"]
-        freq_dict = dp.properties[freq_dict_key]
+        freq_dict = dp.properties[constants.DICT_KEY_FREQUENCY]
         self.assertEqual(len(freq_dict), 2)
         self.assertAlmostEqual(freq_dict["reject request"], 0.50, 2)
         self.assertAlmostEqual(freq_dict["pay compensation"], 0.50, 2)
 
         dp = dp_dict["p_6"]
-        freq_dict = dp.properties[freq_dict_key]
+        freq_dict = dp.properties[constants.DICT_KEY_FREQUENCY]
         self.assertEqual(len(freq_dict), 2)
         self.assertAlmostEqual(freq_dict["skip_5"], 0.67, 2)
         self.assertAlmostEqual(freq_dict["reinitiate request"], 0.33, 2)
 
         dp = dp_dict["p_10"]
-        freq_dict = dp.properties[freq_dict_key]
+        freq_dict = dp.properties[constants.DICT_KEY_FREQUENCY]
         self.assertEqual(len(freq_dict), 2)
         self.assertAlmostEqual(freq_dict["examine thoroughly"], 0.33, 2)
         self.assertAlmostEqual(freq_dict["examine casually"], 0.67, 2)

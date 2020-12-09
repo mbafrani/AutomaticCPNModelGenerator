@@ -1,13 +1,13 @@
 import unittest
-
+import sys
 import os
 
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
-from models import PetriNet
+# sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
+from ..src.models import PetriNet  # noqa: E402
 
 
 def mine_petrinet(path):
