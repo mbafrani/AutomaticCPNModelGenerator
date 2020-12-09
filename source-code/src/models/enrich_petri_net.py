@@ -239,7 +239,7 @@ class EnrichPetriNet:
                 },
             )
         else:
-            mean_dict, stdev_dict = self.get_service_time_single_timestamps(
+            mean_dict, stdev_dict = self.get_service_time_single_timestamps (
                 self.log, self.net, self.initial_marking, self.final_marking
             )
 
