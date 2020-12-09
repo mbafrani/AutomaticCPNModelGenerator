@@ -437,18 +437,34 @@ class CPNExportService:
             annot_tag.appendChild(textattr_tag)
 
             text_tag = document.createElement("text")
-            # TODO: add standard deviation
-            # Show execution time information on the arc transition->place
+            # Show execution time normal distribution
+            # on the arc transition->place
             if(is_target_place):
-                execution_time_mean = int(
+                execution_time_mean = str(
                     arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
                     [constants.DICT_KEY_PERF_MEAN]
+                )
+                execution_time_stdev = str(
+                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                    [constants.DICT_KEY_PERF_STDEV]
+                )
+                normal_distrib = str(
+                    "normal(" +
+                    execution_time_mean +
+                    "," +
+                    execution_time_stdev +
+                    ")"
                 )
                 text_tag.appendChild(document.createTextNode(
                     str(
                         constants.DECLARATION_COLOR_REQUEST_VARIABLE) +
                     "@+" +
-                    str(execution_time_mean)))
+                    str(
+                        "Real.round(" +
+                        normal_distrib +
+                        ")"
+                    )
+                ))
             else:
                 text_tag.appendChild(document.createTextNode(
                     str(constants.DECLARATION_COLOR_REQUEST_VARIABLE)))

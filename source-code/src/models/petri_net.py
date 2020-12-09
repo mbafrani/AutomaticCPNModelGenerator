@@ -67,6 +67,9 @@ class PetriNet:
                                                           self.initial_marking,
                                                           self.final_marking)
 
+        # store transition's perf information in the properties dictionary
+        self.extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict)
+
         # Add decision point probabilities
         decision_points = self.enrich_petrinet_decision_probabilities()
 
@@ -118,10 +121,6 @@ class PetriNet:
                     aggr_stat_hr = round(aggr_stat / 60, 2)
                     aggregated_statistics[str(elem)] = aggr_stat_hr
 
-                    # insert the perf info into element properties
-                    if constants.DICT_KEY_PERF_INFO_PETRI not in elem.target.properties:
-                        elem.target.properties[constants.DICT_KEY_PERF_INFO_PETRI] = {}
-                    elem.target.properties[constants.DICT_KEY_PERF_INFO_PETRI][aggregation_measure] = aggr_stat_hr
             elif isinstance(
                     elem, pm4py.objects.petri.petrinet.PetriNet.Place):
                 pass
@@ -255,9 +254,24 @@ class PetriNet:
                     decorations[arc] = {"color": "#000000", "penwidth": "1", "label": label}
         return decorations
 
+    # extracts the perf information - execution time mean and std deviation
+    # and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
+    def extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict):
+        for trans in self.net.transitions:
+            # insert the perf info into trans properties
+            if constants.DICT_KEY_PERF_INFO_PETRI not in trans.properties:
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI] = {}
+            if str(trans) in mean_dict and str(trans) in stdev_dict:
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN] = mean_dict[str(trans)]
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV] = stdev_dict[str(trans)]
+            else:
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN] = \
+                    constants.PERF_MEAN_DEFAULT_VALUE
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV] = \
+                    constants.PERF_STDEV_DEFAULT_VALUE
+
     # extracts the layout information - x_position, y_position, height and
-    # width of graph elements
-    # and stores them in the
+    # width of graph elements and stores them in the
     # place/transition/arc .properties[DICT_KEY_LAYOUT_INFO_PETRI]
     # This is needs to be inserted into the cpn file for cpn tools to
     # accurately place the elements in the UI
