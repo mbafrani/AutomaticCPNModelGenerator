@@ -4,10 +4,15 @@ from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.visualization.petrinet import visualizer
+import os
 import json
 import pandas as pd
 from models.enrich_petri_net import EnrichPetriNet
 from util import constants, convert_perf_label_to_seconds
+from pm4py.objects.petri.importer import importer as pnml_importer
+from pm4py.objects.petri.exporter import exporter as pnml_exporter
+
+
 
 
 class PetriNet:
@@ -37,11 +42,8 @@ class PetriNet:
         return self.net, self.initial_marking, self.final_marking
 
     def visualize_process_model(self):
-        enrich_petri_obj = EnrichPetriNet(self.log, self.net,
-                                          self.initial_marking,
-                                          self.final_marking, self.gviz)
-        enrich_petri_obj.enrich_petri_net()
-        self.gviz = enrich_petri_obj.viz_petri_net()
+        net_enricher = EnrichPetriNet(self)
+        self.gviz = net_enricher.viz_petri_net()
         return self.gviz
 
     def visualize_process_model_old(self, enrich_performance=False):
@@ -162,3 +164,40 @@ class PetriNet:
                 arc.properties[constants.PERFORMANCE_INFORMATION_PETRI]\
                    = convert_perf_label_to_seconds(
                     item["label"])
+    
+    def save_net(self, folder, name="petri_net"):
+        net_path, dict_path = get_petri_net_paths(folder, name)
+
+        pnml_exporter.apply(self.net, self.initial_marking, net_path, final_marking=self.final_marking)
+
+        property_dict = {}
+        property_dict["transitions"] = {str(elm): elm.properties for elm in self.net.transitions}
+        property_dict["places"] = {str(elm): elm.properties for elm in self.net.places}
+        with open(dict_path, "w") as fp:
+            json.dump(property_dict, fp)
+
+
+def get_petri_net_paths(folder, name):
+    net_path = os.path.join(folder, name+".pnml")     
+    dict_path = os.path.join(folder, name+"_properties.json")
+    return net_path, dict_path
+
+
+def load_net(folder, name="petri_net"):
+    net_path, dict_path = get_petri_net_paths(folder, name)
+
+    net, initial_marking, final_marking = pnml_importer.apply(net_path)
+    with open(dict_path) as infile:
+        property_dict = json.load(infile)
+
+    def update_dict(in_dict, elements):
+        for element in elements:
+            props = in_dict.get(str(element))
+            if props is not None:
+                element.properties.update(props)
+
+    update_dict(property_dict["transitions"], net.transitions)
+    update_dict(property_dict["places"], net.places)
+    petrinet = PetriNet(None, net, initial_marking, final_marking)
+
+    return petrinet

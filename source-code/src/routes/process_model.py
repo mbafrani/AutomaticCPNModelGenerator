@@ -18,7 +18,7 @@ def discover_process_model():
 
     try:
         petri_net_service = PetriNetService()
-        petri_net_service.discover_process(event_log_id)
+        petri_net_service.get_petri_net(event_log_id)
         process_model_file_path = \
             petri_net_service.get_process_model_image_path(event_log_id)
         return send_file(process_model_file_path, as_attachment=True)

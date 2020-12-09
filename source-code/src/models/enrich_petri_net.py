@@ -15,6 +15,8 @@ from pm4py.algo.enhancement.decision.algorithm import (
     get_decisions_table,
 )
 
+
+# TODO: Constants
 freq_dict_key = "successor_frequencies"
 performance_dict_key = "performance_information"
 mean_dict_key = 'mean'
@@ -27,13 +29,18 @@ class Parameters(Enum):
 
 
 class EnrichPetriNet:
-    def __init__(self, log=None, net=None, initial_marking=None,
-                 final_marking=None, gviz=None):
-        self.log = log
-        self.net = net
-        self.initial_marking = initial_marking
-        self.final_marking = final_marking
-        self.gviz = gviz
+    def __init__(self, petri_net=None, log=None, net=None, initial_marking=None,
+                 final_marking=None):
+        if petri_net:
+            self.log = petri_net.log
+            self.net = petri_net.net
+            self.initial_marking = petri_net.initial_marking
+            self.final_marking = petri_net.final_marking
+        else:
+            self.log = log
+            self.net = net
+            self.initial_marking = initial_marking
+            self.final_marking = final_marking
 
     def get_perf_dict_for_petri_net_decoration(self, stats_dict, activities):
         perf_dict = {}
@@ -218,6 +225,11 @@ class EnrichPetriNet:
                         "penwidth": "1",
                         "label": label,
                     }
+            decorations[dp] = {
+                    "color": "#b3b6b7",
+                    "label": str(dp),
+            }
+
         return decorations
 
     def enrich_activity_times(self):
@@ -251,7 +263,7 @@ class EnrichPetriNet:
                 continue
             mean, std = perf_info[mean_dict_key], perf_info[std_dict_key]
             label = f"{val}\nN({mean}, {std})"
-            decorations[val] = {"color": "#b3b6b7 ", "label": label}
+            decorations[val] = {"color": "#b3b6b7", "label": label}
         return decorations
 
     def enrich_petri_net(self):
@@ -273,4 +285,3 @@ class EnrichPetriNet:
             decorations=decorations,
         )
         return self.gviz
-

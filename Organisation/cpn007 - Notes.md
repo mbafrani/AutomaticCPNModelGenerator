@@ -24,4 +24,22 @@ Let the users change the information of the petri net
     * Directly discover Petri Net
     * Directly enrich Petri Net  
     * Save Petri Net
-    * 
+
+
+
+
+## Message
+
+Hey everybody,
+
+in order to enable the user to change the performance and probability information, we have to actually store the petri nets on the server
+This should include all of the additional information.
+I have experimented with saving petri nets into a file and it is relatively simple.
+I have altered the enrich_petri_net class a bit, so that the performance information and probability information is now calculated seperately form the gviz visualization.
+We call petrinet.enrich_petri_net() to add the information and petrinet.viz_petri_net() to get the gviz instance.
+
+
+Thus, I propose that we change the process a bit:
+1. Upon uploading of the XES file to the server, we immedeately discover the process model, enrich it and save it into a file.
+2. If a user calls for the visualization of the petri net, we only visualize and do not discover or enrich.
+3. When a user posts a change to the data, we just change our saved petri net.
