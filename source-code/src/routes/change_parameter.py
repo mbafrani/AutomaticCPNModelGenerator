@@ -25,8 +25,13 @@ def change_parameter(request, check_parameter_fun, update_parameter_fun):
     petri_net_service = PetriNetService(event_log_id)
     try:
         update_parameter_fun(petri_net_service, event_log_id)
+
         petri_net_service.generate_petrinet_image()
+        if request.json.get("test"):
+            prop_dict = petri_net_service.petri_net.construct_prop_dict_for_saving()
+            return make_response(prop_dict)
         process_model_file_path = petri_net_service.get_process_model_image_path()
+
         return send_file(process_model_file_path, as_attachment=True)
 
     except HTTPException as exception:
@@ -57,7 +62,10 @@ def change_transition():
 @change_decision_point_page.route("/change-decision-point", methods=["POST"])
 def change_decision_point():
     def check_parameters(request):
-        if JsonKeys.place not in request.json or JsonKeys.frequencies not in request.json:
+        if (
+            JsonKeys.place not in request.json
+            or JsonKeys.frequencies not in request.json
+        ):
             raise BadRequest(message=constants.ERROR_MISSING_PARAMETER_FREQUENCY)
 
     def update_parameters(petri_net_service, event_log_id):

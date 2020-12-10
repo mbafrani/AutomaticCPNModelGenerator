@@ -165,14 +165,18 @@ class PetriNet:
                    = convert_perf_label_to_seconds(
                     item["label"])
     
+    def construct_prop_dict_for_saving(self):
+        property_dict = {}
+        property_dict["transitions"] = {str(elm): elm.properties for elm in self.net.transitions}
+        property_dict["places"] = {str(elm): elm.properties for elm in self.net.places}
+        return property_dict
+
     def save_net(self, folder, name="petri_net"):
         net_path, dict_path = get_petri_net_paths(folder, name)
 
         pnml_exporter.apply(self.net, self.initial_marking, net_path, final_marking=self.final_marking)
 
-        property_dict = {}
-        property_dict["transitions"] = {str(elm): elm.properties for elm in self.net.transitions}
-        property_dict["places"] = {str(elm): elm.properties for elm in self.net.places}
+        property_dict = self.construct_prop_dict_for_saving()
         with open(dict_path, "w") as fp:
             json.dump(property_dict, fp)
 

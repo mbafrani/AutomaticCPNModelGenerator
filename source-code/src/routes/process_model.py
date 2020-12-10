@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
+from pm4py.visualization import petrinet
 from werkzeug.exceptions import HTTPException, BadRequest
 
 from util import constants
@@ -19,8 +20,12 @@ def discover_process_model():
     try:
         petri_net_service = PetriNetService(event_log_id)
         petri_net_service.get_petri_net()
+        if request.json.get("test"):
+            prop_dict = petri_net_service.petri_net.construct_prop_dict_for_saving()
+            return make_response(prop_dict)
         process_model_file_path = \
             petri_net_service.get_process_model_image_path()
+            
         return send_file(process_model_file_path, as_attachment=True)
 
     except HTTPException as exception:
