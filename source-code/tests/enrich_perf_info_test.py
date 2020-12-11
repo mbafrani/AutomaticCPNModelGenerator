@@ -6,8 +6,8 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
 
-# sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
-from ..src.models import PetriNet  # noqa: E402
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from models import PetriNet  # noqa: E402
 
 
 def mine_petrinet(path):
@@ -42,8 +42,8 @@ class TestEnrichPerfInfo(unittest.TestCase):
         stats_mean, stats_stdev \
             = petrinet.get_service_time_single_timestamps(log, net, im, fm)
         self.assertEqual(len(stats_mean), len(stats_stdev))
-        self.assertEqual(len(stats_mean), 8)
-        self.assertEqual(len(stats_stdev), 8)
+        self.assertEqual(len(stats_mean), 10)
+        self.assertEqual(len(stats_stdev), 10)
         self.assertIn("decide", stats_mean)
         self.assertAlmostEqual(stats_mean['decide'], 4564.27, 2)
         self.assertIn("decide", stats_stdev)

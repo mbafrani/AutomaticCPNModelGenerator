@@ -2,7 +2,6 @@ import pm4py
 from flask import current_app
 from xml.dom.minidom import DOMImplementation
 import os
-import json
 import uuid
 
 from util import constants

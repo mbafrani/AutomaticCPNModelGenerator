@@ -120,11 +120,14 @@ class PetriNet:
                     aggr_stat = self.aggregate_stats(statistics, elem,
                                                      aggregation_measure)
                     aggr_stat_hr = round(aggr_stat / 60, 2)
-                    aggregated_statistics[str(elem.target)] = aggr_stat_hr
+                    aggregated_statistics.setdefault(str(elem.target), []).append(aggr_stat_hr)
 
             elif isinstance(
                     elem, pm4py.objects.petri.petrinet.PetriNet.Place):
                 pass
+        for key, value in aggregated_statistics.items():
+            aggregated_statistics[key] = mean(value)
+
         return aggregated_statistics
 
     def get_service_time_single_timestamps(self, log, net, initial_marking, final_marking, parameters=None, ht_perf_method="last"):

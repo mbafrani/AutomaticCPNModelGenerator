@@ -1,2 +1,2 @@
-from .event_log import EventLog
-from .petri_net import PetriNet
+from .event_log_model import EventLog
+from .petri_net_model import PetriNet

@@ -5,10 +5,8 @@ import sys
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src", "models"))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from models import PetriNet  # noqa: E402
-
-sys.path.insert(1, os.path.join(os.path.dirname(__file__), "..", "src", "util"))
 from util import constants   # noqa: E402
 
 
