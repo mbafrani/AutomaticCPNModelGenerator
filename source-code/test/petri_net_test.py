@@ -7,7 +7,7 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.log.log import EventLog
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from models import PetriNet # noqa: E402
+from models import PetriNet  # noqa: E402
 
 base_path = os.path.join(os.path.dirname(__file__), "input_data")
 

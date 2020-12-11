@@ -1,4 +1,4 @@
-from flask import Blueprint, current_app, request,\
+from flask import Blueprint, request,\
      jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 

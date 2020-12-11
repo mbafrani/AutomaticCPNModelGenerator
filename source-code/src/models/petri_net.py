@@ -20,11 +20,12 @@ import pandas as pd
 from statistics import mean, stdev
 from enum import Enum
 from collections import Counter
-from util import constants, convert_perf_label_to_seconds
+from util import constants
 from pm4py.objects.petri.importer import importer as pnml_importer
 from pm4py.objects.petri.exporter import exporter as pnml_exporter
 
 PetriNetDictKeys = constants.PetriNetDictKeys
+
 
 class Parameters(Enum):
     ACTIVITY_KEY = pm4py_constants.PARAMETER_CONSTANT_ACTIVITY_KEY
@@ -109,7 +110,9 @@ class PetriNet:
         property_dict[PetriNetDictKeys.transitions] = {
             str(elm): elm.properties for elm in self.net.transitions
         }
-        property_dict[PetriNetDictKeys.places] = {str(elm): elm.properties for elm in self.net.places}
+        property_dict[PetriNetDictKeys.places] = {
+            str(elm): elm.properties for elm in self.net.places
+        }
         return property_dict
 
     def save_net(self, folder, name="petri_net"):
@@ -485,4 +488,3 @@ class PetriNetDecisionPointEnricher(PetriNetContainer):
         # Enrich decision points
         for dp in decision_points:
             dp.properties[constants.DICT_KEY_FREQUENCY] = successor_frequencies[dp.name]
-

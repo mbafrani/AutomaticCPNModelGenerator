@@ -1,12 +1,12 @@
 import os
 import sys
 import unittest
-from flask import jsonify
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from util.constants import RequestJsonKeys,PetriNetDictKeys
-from app import app
+from util.constants import RequestJsonKeys, PetriNetDictKeys # noqa E402
+from app import app # noqa E402
+
 
 class test_parameter_change(unittest.TestCase):
     def __init__(self, *args, **kwargs):

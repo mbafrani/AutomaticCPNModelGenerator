@@ -106,8 +106,7 @@ class PetriNetService:
                 break
         else:  # nobreak
             raise Exception(f"Could not find transition with name '{transition_name}'.")
-        
-        
+
         # Update Performance Information
         perf_dict = transition.properties[PetriNetDictKeys.performance]
         perf_dict[PetriNetDictKeys.mean] = mean
@@ -153,4 +152,3 @@ class PetriNetService:
 
         # Save Petri Net
         self._save_petri_net()
-
