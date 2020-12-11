@@ -17,8 +17,19 @@ ALLOWED_EXTENSIONS = {XES_EXTENSION, CSV_EXTENSION}
 # dictionary keys
 DICT_KEY_OBJECTS_CONSTANT = "objects"
 DICT_KEY_EDGES_CONSTANT = "edges"
-LAYOUT_INFORMATION_PETRI = "layout_information_petri"
-PERFORMANCE_INFORMATION_PETRI = "performance_information_petri"
+DICT_KEY_LAYOUT_INFO_PETRI = "LAYOUT_INFORMATION_PETRI"
+DICT_KEY_LAYOUT_X = "x"
+DICT_KEY_LAYOUT_Y = "y"
+DICT_KEY_LAYOUT_HEIGHT = "height"
+DICT_KEY_LAYOUT_WIDTH = "width"
+DICT_KEY_PERF_INFO_PETRI = "PERFORMANCE_INFORMATION_PETRI"
+DICT_KEY_PERF_MEAN = "mean"
+DICT_KEY_PERF_STDEV = "stdev"
+DICT_KEY_FREQUENCY = "successor_frequencies"
+
+# default performance values
+PERF_MEAN_DEFAULT_VALUE = 0.0
+PERF_STDEV_DEFAULT_VALUE = 0.0
 
 # declaration constants
 DECLARATION_COLOR_REQUEST = "REQUEST"
@@ -36,9 +47,11 @@ TRANS_TO_PLACE_ORIENTATION = "TtoP"
 
 class PetriNetDictKeys:
     frequencies = "successor_frequencies"
-    performance = "performance_information"
-    mean = "mean"
-    std = "std"
+    performance = DICT_KEY_PERF_INFO_PETRI
+    mean = DICT_KEY_PERF_MEAN
+    std = DICT_KEY_PERF_STDEV
+    places = "places"
+    transitions = "transitions"
 
 
 class RequestJsonKeys:
@@ -46,5 +59,5 @@ class RequestJsonKeys:
     place = "place"
     frequencies = "frequencies"
     transition = "transition"
-    mean = "mean"
-    std = "std"
+    mean = DICT_KEY_PERF_MEAN
+    std = DICT_KEY_PERF_STDEV

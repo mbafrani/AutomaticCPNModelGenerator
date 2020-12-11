@@ -5,8 +5,8 @@ from flask import jsonify
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
+from util.constants import RequestJsonKeys,PetriNetDictKeys
 from app import app
-
 
 class test_parameter_change(unittest.TestCase):
     def __init__(self, *args, **kwargs):
@@ -16,17 +16,17 @@ class test_parameter_change(unittest.TestCase):
 
     def check_transition_data(self, transitions, trans_name, exp_mean, exp_std):
         self.assertIn(trans_name, transitions)
-        trans = transitions[trans_name]["performance_information"]
-        self.assertIn("mean", trans)
-        self.assertIn("std", trans)
-        mean = trans["mean"]
-        std = trans["std"]
+        trans = transitions[trans_name][PetriNetDictKeys.performance]
+        self.assertIn(PetriNetDictKeys.mean, trans)
+        self.assertIn(PetriNetDictKeys.std, trans)
+        mean = trans[PetriNetDictKeys.mean]
+        std = trans[PetriNetDictKeys.std]
         self.assertAlmostEqual(mean, exp_mean, 2)
         self.assertAlmostEqual(std, exp_std, 2)
 
     def check_decision_point_data(self, places, name, probs):
         self.assertIn(name, places)
-        dp = places[name]["successor_frequencies"]
+        dp = places[name][PetriNetDictKeys.frequencies]
         for key, value in dp.items():
             self.assertAlmostEqual(probs.get(key), value, 2)
 
@@ -41,11 +41,11 @@ class test_parameter_change(unittest.TestCase):
             "/event-log", content_type="multipart/form-data", data=data
         )
         self.assertIn(b"Event log uploaded successfully", response.data)
-        event_log_id = response.json.get("event_log_id")
+        event_log_id = response.json.get(RequestJsonKeys.event_log_id)
         self.assertIsNotNone(event_log_id)
 
         # 2. Check Enrichments
-        data = {"event_log_id": event_log_id, "test": True}
+        data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
         response = self.client.post("/process-model", json=data)
 
         transitions = response.json["transitions"]
@@ -64,36 +64,38 @@ class test_parameter_change(unittest.TestCase):
 
         # 3. Update transition, check correct update
         data = {
-            "event_log_id": event_log_id,
+            RequestJsonKeys.event_log_id: event_log_id,
             "test": True,
-            "transition": "B",
-            "mean": 3,
-            "std": 3,
+            RequestJsonKeys.transition: "B",
+            RequestJsonKeys.mean: 3,
+            RequestJsonKeys.std: 3,
         }
         response = self.client.post("/change-transition", json=data)
-        transitions = response.json["transitions"]
+        transitions = response.json[PetriNetDictKeys.transitions]
         self.check_transition_data(transitions, "B", 3, 3)
 
         # 4. Update decision point, check correct update
         frequencies = {"D": 0.8, "skip_3": 0.2}
         data = {
-            "event_log_id": event_log_id,
+            RequestJsonKeys.event_log_id: event_log_id,
             "test": True,
-            "place": "p_9",
-            "frequencies":frequencies,
+            RequestJsonKeys.place: "p_9",
+            RequestJsonKeys.frequencies: frequencies,
         }
         response = self.client.post("/change-decision-point", json=data)
-        places = response.json["places"]
+        places = response.json[PetriNetDictKeys.places]
         self.check_decision_point_data(places, "p_9", frequencies)
 
         # 5. Check if the update is saved on the server
-        data = {"event_log_id": event_log_id, "test": True}
+        data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
         response = self.client.post("/process-model", json=data)
-        transitions = response.json["transitions"]
-        places = response.json["places"]
+        transitions = response.json[PetriNetDictKeys.transitions]
+        places = response.json[PetriNetDictKeys.places]
         self.check_decision_point_data(places, "p_9", frequencies)
         self.check_transition_data(transitions, "B", 3, 3)
 
 
 if __name__ == "__main__":
+    t = test_parameter_change()
+    t.test_parameter_change()
     unittest.main()

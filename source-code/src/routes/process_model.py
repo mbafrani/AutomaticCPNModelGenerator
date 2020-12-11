@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
-from pm4py.visualization import petrinet
-from werkzeug.exceptions import HTTPException, BadRequest
+from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 
 from util import constants
 from services import PetriNetService
@@ -19,7 +18,7 @@ def discover_process_model():
 
     try:
         petri_net_service = PetriNetService(event_log_id)
-        petri_net_service.get_petri_net()
+        petri_net_service.load_petri_net()
         if request.json.get("test"):
             prop_dict = petri_net_service.petri_net.construct_prop_dict_for_saving()
             return make_response(prop_dict)
@@ -34,3 +33,8 @@ def discover_process_model():
         return make_response(jsonify(
             message=message
         ), status_code)
+    except Exception as exp:
+        message = exp.args[1]
+        return make_response(jsonify(
+            message=message
+        ), InternalServerError.code)

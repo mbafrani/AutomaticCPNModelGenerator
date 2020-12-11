@@ -69,9 +69,396 @@ class CPNExportService:
 
         return globbox_tag
 
+    # place element containing place layout information
+    def create_place_element_for_page(
+     self, place, initial_marking, final_marking, document):
+        place_tag = document.createElement("place")
+        place_tag.setAttribute("id", str(place.name))
+
+        posattr_tag = document.createElement("posattr")
+        posattr_tag.setAttribute(
+            "x",
+            str(
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_X]
+            )
+        )
+        posattr_tag.setAttribute(
+            "y",
+            str(
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_Y]
+            )
+        )
+        place_tag.appendChild(posattr_tag)
+
+        # set fill color for places: Teal(Source), Red(Sink) and
+        # White(Others)
+        fillattr_tag = document.createElement("fillattr")
+        if place in initial_marking.keys():
+            fillattr_tag.setAttribute("colour", "Teal")
+        elif place in final_marking.keys():
+            fillattr_tag.setAttribute("colour", "Red")
+        else:
+            fillattr_tag.setAttribute("colour", "White")
+        fillattr_tag.setAttribute("pattern", "Solid")
+        fillattr_tag.setAttribute("filled", "false")
+        place_tag.appendChild(fillattr_tag)
+
+        lineattr_tag = document.createElement("lineattr")
+        lineattr_tag.setAttribute("colour", "Black")
+        lineattr_tag.setAttribute("thick", "2")
+        lineattr_tag.setAttribute("type", "Solid")
+        place_tag.appendChild(lineattr_tag)
+
+        textattr_tag = document.createElement("textattr")
+        textattr_tag.setAttribute("colour", "Black")
+        textattr_tag.setAttribute("bold", "false")
+        place_tag.appendChild(textattr_tag)
+
+        text_tag = document.createElement("text")
+        text_tag.appendChild(document.createTextNode(str(place)))
+        place_tag.appendChild(text_tag)
+
+        ellipse_tag = document.createElement("ellipse")
+        ellipse_tag.setAttribute(
+            "h",
+            str(
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_HEIGHT]
+            )
+        )
+        ellipse_tag.setAttribute(
+            "w",
+            str(
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_WIDTH]
+            )
+        )
+        place_tag.appendChild(ellipse_tag)
+
+        # TODO: Handle tokens
+        token_tag = document.createElement("token")
+        token_tag.setAttribute("x", "0.000000")
+        token_tag.setAttribute("y", "0.000000")
+        place_tag.appendChild(token_tag)
+
+        # TODO: Handle markings
+        marking_tag = document.createElement("marking")
+        marking_tag.setAttribute("x", "0.000000")
+        marking_tag.setAttribute("y", "0.000000")
+        place_tag.appendChild(marking_tag)
+
+        type_tag = document.createElement("type")
+        type_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+        # color set type for places, setup type tag at bottom-right of the
+        # place
+        posattr_tag = document.createElement("posattr")
+        # attribute position_x = place_position_x + place_width
+        posattr_tag.setAttribute("x", str(
+            place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+            [constants.DICT_KEY_LAYOUT_X] +
+            place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+            [constants.DICT_KEY_LAYOUT_WIDTH]
+        ))
+        # attribute position_y = place_y_position - place_height/2
+        posattr_tag.setAttribute("y", str(
+            place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+            [constants.DICT_KEY_LAYOUT_Y] -
+            (
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+            )
+        ))
+        type_tag.appendChild(posattr_tag)
+
+        fillattr_tag = document.createElement("fillattr")
+        fillattr_tag.setAttribute("colour", "White")
+        fillattr_tag.setAttribute("pattern", "Solid")
+        fillattr_tag.setAttribute("filled", "false")
+        type_tag.appendChild(fillattr_tag)
+
+        lineattr_tag = document.createElement("lineattr")
+        lineattr_tag.setAttribute("colour", "Black")
+        lineattr_tag.setAttribute("thick", "0")
+        lineattr_tag.setAttribute("type", "Solid")
+        type_tag.appendChild(lineattr_tag)
+
+        textattr_tag = document.createElement("textattr")
+        textattr_tag.setAttribute("colour", "Black")
+        textattr_tag.setAttribute("bold", "false")
+        type_tag.appendChild(textattr_tag)
+
+        text_tag = document.createElement("text")
+        text_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_COLOR_REQUEST)))
+        type_tag.appendChild(text_tag)
+
+        place_tag.appendChild(type_tag)
+
+        # for places that are initial_marking, setup initial_marking tag at
+        # top-right of the place
+        if place in initial_marking.keys():
+            initmark_tag = document.createElement("initmark")
+            initmark_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+            posattr_tag = document.createElement("posattr")
+            # initial_marking position_x = place_x_position + place_width
+            posattr_tag.setAttribute("x", str(
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_X] +
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_WIDTH]
+            ))
+            # initial_marking position_y = place_y_position +
+            # place_height/2
+            posattr_tag.setAttribute("y", str(
+                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_Y] +
+                (
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                )
+            ))
+            initmark_tag.appendChild(posattr_tag)
+
+            fillattr_tag = document.createElement("fillattr")
+            fillattr_tag.setAttribute("colour", "White")
+            fillattr_tag.setAttribute("pattern", "Solid")
+            fillattr_tag.setAttribute("filled", "false")
+            initmark_tag.appendChild(fillattr_tag)
+
+            lineattr_tag = document.createElement("lineattr")
+            lineattr_tag.setAttribute("colour", "Black")
+            lineattr_tag.setAttribute("thick", "0")
+            lineattr_tag.setAttribute("type", "Solid")
+            initmark_tag.appendChild(lineattr_tag)
+
+            textattr_tag = document.createElement("textattr")
+            textattr_tag.setAttribute("colour", "Black")
+            textattr_tag.setAttribute("bold", "false")
+            initmark_tag.appendChild(textattr_tag)
+
+            text_tag = document.createElement("text")
+            text_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_COLOR_REQUEST_INSTANCES)))
+            initmark_tag.appendChild(text_tag)
+
+            place_tag.appendChild(initmark_tag)
+
+        return place_tag
+
+    # trans element containg transition layout information
+    def create_trans_element_for_page(self, trans, document):
+        trans_tag = document.createElement("trans")
+        # remove hypens from the guid (or else cpntool will crash)
+        trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
+
+        posattr_tag = document.createElement("posattr")
+        posattr_tag.setAttribute(
+            "x",
+            str(
+                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_X]
+            )
+        )
+        posattr_tag.setAttribute(
+            "y",
+            str(
+                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_Y]
+            )
+        )
+        trans_tag.appendChild(posattr_tag)
+
+        fillattr_tag = document.createElement("fillattr")
+        fillattr_tag.setAttribute("colour", "Silver")
+        fillattr_tag.setAttribute("pattern", "Solid")
+        fillattr_tag.setAttribute("filled", "false")
+        trans_tag.appendChild(fillattr_tag)
+
+        lineattr_tag = document.createElement("lineattr")
+        lineattr_tag.setAttribute("colour", "Black")
+        lineattr_tag.setAttribute("thick", "2")
+        lineattr_tag.setAttribute("type", "Solid")
+        trans_tag.appendChild(lineattr_tag)
+
+        textattr_tag = document.createElement("textattr")
+        textattr_tag.setAttribute("colour", "Black")
+        textattr_tag.setAttribute("bold", "false")
+        trans_tag.appendChild(textattr_tag)
+
+        text_tag = document.createElement("text")
+        text_tag.appendChild(document.createTextNode(str(trans)))
+        trans_tag.appendChild(text_tag)
+
+        box_tag = document.createElement("box")
+        box_tag.setAttribute(
+            "h",
+            str(
+                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_HEIGHT]
+            )
+        )
+        box_tag.setAttribute(
+            "w",
+            str(
+                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_WIDTH]
+            )
+        )
+        trans_tag.appendChild(box_tag)
+
+        return trans_tag
+
+    # arc element containg arc layout information
+    def create_arc_element_for_page(self, arc, document):
+        # identify the place and transition ends of the arc
+        is_target_trans = isinstance(
+            arc.target, pm4py.objects.petri.petrinet.PetriNet.Transition)
+        is_target_place = isinstance(
+            arc.target, pm4py.objects.petri.petrinet.PetriNet.Place)
+
+        # identify orientation of the arc, Place->Trans or Trans->Place
+        orientation = constants.PLACE_TO_TRANS_ORIENTATION \
+            if is_target_trans else constants.TRANS_TO_PLACE_ORIENTATION
+
+        # remove hypens from the transend_idref (since we removed
+        # the same from transition id above)
+        # these id's are references to <place> and <transition> tags
+        # generated above
+        transend_idref = str(
+            arc.target.name).replace(
+            '-',
+            '') if is_target_trans else str(
+            arc.source.name).replace(
+            '-',
+            '')
+        placeend_idref = str(
+            arc.target.name) if is_target_place else str(
+            arc.source.name)
+
+        arc_tag = document.createElement("arc")
+        arc_tag.setAttribute("id", str(uuid.uuid1().hex))
+        arc_tag.setAttribute("orientation", orientation)
+
+        posattr_tag = document.createElement("posattr")
+        posattr_tag.setAttribute("x", "0.000000")
+        posattr_tag.setAttribute("y", "0.000000")
+        arc_tag.appendChild(posattr_tag)
+
+        fillattr_tag = document.createElement("fillattr")
+        fillattr_tag.setAttribute("colour", "White")
+        fillattr_tag.setAttribute("pattern", "Solid")
+        fillattr_tag.setAttribute("filled", "false")
+        arc_tag.appendChild(fillattr_tag)
+
+        lineattr_tag = document.createElement("lineattr")
+        lineattr_tag.setAttribute("colour", "Black")
+        lineattr_tag.setAttribute("thick", "2")
+        lineattr_tag.setAttribute("type", "Solid")
+        arc_tag.appendChild(lineattr_tag)
+
+        textattr_tag = document.createElement("textattr")
+        textattr_tag.setAttribute("colour", "Black")
+        textattr_tag.setAttribute("bold", "false")
+        arc_tag.appendChild(textattr_tag)
+
+        arrowattr_tag = document.createElement("arrowattr")
+        arrowattr_tag.setAttribute("headsize", "1.000000")
+        arrowattr_tag.setAttribute("currentcyckle", "2")
+        arc_tag.appendChild(arrowattr_tag)
+
+        transend_tag = document.createElement("transend")
+        transend_tag.setAttribute("idref", transend_idref)
+        arc_tag.appendChild(transend_tag)
+
+        placeend_tag = document.createElement("placeend")
+        placeend_tag.setAttribute("idref", placeend_idref)
+        arc_tag.appendChild(placeend_tag)
+
+        # TODO: <bendpoint> - do we need this?
+
+        annot_tag = document.createElement("annot")
+        annot_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+        posattr_tag = document.createElement("posattr")
+        posattr_tag.setAttribute(
+            "x",
+            str(
+                arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_X]
+            )
+        )
+        # move y position by 5 else the arc annotation will end up lying on
+        # the arc
+        posattr_tag.setAttribute(
+            "y",
+            str(
+                arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                [constants.DICT_KEY_LAYOUT_Y] + 5
+            )
+        )
+        annot_tag.appendChild(posattr_tag)
+
+        fillattr_tag = document.createElement("fillattr")
+        fillattr_tag.setAttribute("colour", "White")
+        fillattr_tag.setAttribute("pattern", "Solid")
+        fillattr_tag.setAttribute("filled", "false")
+        annot_tag.appendChild(fillattr_tag)
+
+        lineattr_tag = document.createElement("lineattr")
+        lineattr_tag.setAttribute("colour", "Black")
+        lineattr_tag.setAttribute("thick", "0")
+        lineattr_tag.setAttribute("type", "Solid")
+        annot_tag.appendChild(lineattr_tag)
+
+        textattr_tag = document.createElement("textattr")
+        textattr_tag.setAttribute("colour", "Teal")
+        textattr_tag.setAttribute("bold", "false")
+        annot_tag.appendChild(textattr_tag)
+
+        text_tag = document.createElement("text")
+        # Show execution time normal distribution
+        # on the arc transition->place
+        if(is_target_place):
+            execution_time_mean = str(
+                arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                [constants.DICT_KEY_PERF_MEAN]
+            )
+            execution_time_stdev = str(
+                arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                [constants.DICT_KEY_PERF_STDEV]
+            )
+            normal_distrib = str(
+                "normal(" +
+                execution_time_mean +
+                "," +
+                execution_time_stdev +
+                ")"
+            )
+            text_tag.appendChild(document.createTextNode(
+                str(
+                    constants.DECLARATION_COLOR_REQUEST_VARIABLE) +
+                "@+" +
+                str(
+                    "Real.round(" +
+                    normal_distrib +
+                    ")"
+                )
+            ))
+        else:
+            text_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_COLOR_REQUEST_VARIABLE)))
+        annot_tag.appendChild(text_tag)
+
+        arc_tag.appendChild(annot_tag)
+
+        return arc_tag
+
     # page element in the cpn file contains all the places, transitions and
     # arcs
-
     def create_page_element_for_document(
             self,
             document,
@@ -90,351 +477,27 @@ class CPNExportService:
 
         # <place>, setup for place ellipses
         for place in petri_net.places:
-            place_tag = document.createElement("place")
-            place_tag.setAttribute("id", str(place.name))
-
-            posattr_tag = document.createElement("posattr")
-            posattr_tag.setAttribute(
-                "x", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][0][0]))
-            posattr_tag.setAttribute(
-                "y", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][0][1]))
-            place_tag.appendChild(posattr_tag)
-
-            # set fill color for places: Teal(Source), Red(Sink) and
-            # White(Others)
-            fillattr_tag = document.createElement("fillattr")
-            if place in initial_marking.keys():
-                fillattr_tag.setAttribute("colour", "Teal")
-            elif place in final_marking.keys():
-                fillattr_tag.setAttribute("colour", "Red")
-            else:
-                fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            place_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Black")
-            lineattr_tag.setAttribute("thick", "2")
-            lineattr_tag.setAttribute("type", "Solid")
-            place_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
-            textattr_tag.setAttribute("bold", "false")
-            place_tag.appendChild(textattr_tag)
-
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode(str(place)))
-            place_tag.appendChild(text_tag)
-
-            ellipse_tag = document.createElement("ellipse")
-            ellipse_tag.setAttribute(
-                "h", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][1][0]))
-            ellipse_tag.setAttribute(
-                "w", str(place.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]))
-            place_tag.appendChild(ellipse_tag)
-
-            # TODO: Handle tokens
-            token_tag = document.createElement("token")
-            token_tag.setAttribute("x", "0.000000")
-            token_tag.setAttribute("y", "0.000000")
-            place_tag.appendChild(token_tag)
-
-            # TODO: Handle markings
-            marking_tag = document.createElement("marking")
-            marking_tag.setAttribute("x", "0.000000")
-            marking_tag.setAttribute("y", "0.000000")
-            place_tag.appendChild(marking_tag)
-
-            type_tag = document.createElement("type")
-            type_tag.setAttribute("id", str(uuid.uuid1().hex))
-
-            # color set type for places, setup type tag at bottom-right of the
-            # place
-            posattr_tag = document.createElement("posattr")
-            # attribute position_x = place_position_x + place_width
-            posattr_tag.setAttribute("x", str(
-                place.properties[constants.LAYOUT_INFORMATION_PETRI][0][0] +
-                place.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]
-            ))
-            # attribute position_y = place_y_position - place_height/2
-            posattr_tag.setAttribute("y", str(
-                place.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] -
-                (place.properties[constants.LAYOUT_INFORMATION_PETRI][1][0] / 2)
-            ))
-            type_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            type_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Black")
-            lineattr_tag.setAttribute("thick", "0")
-            lineattr_tag.setAttribute("type", "Solid")
-            type_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
-            textattr_tag.setAttribute("bold", "false")
-            type_tag.appendChild(textattr_tag)
-
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode(
-                str(constants.DECLARATION_COLOR_REQUEST)))
-            type_tag.appendChild(text_tag)
-
-            place_tag.appendChild(type_tag)
-
-            # for places that are initial_marking, setup initial_marking tag at
-            # top-right of the place
-            if place in initial_marking.keys():
-                initmark_tag = document.createElement("initmark")
-                initmark_tag.setAttribute("id", str(uuid.uuid1().hex))
-
-                posattr_tag = document.createElement("posattr")
-                # initial_marking position_x = place_x_position + place_width
-                posattr_tag.setAttribute("x", str(
-                    place.properties[constants.LAYOUT_INFORMATION_PETRI][0][0] +
-                    place.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]
-                ))
-                # initial_marking position_y = place_y_position +
-                # place_height/2
-                posattr_tag.setAttribute("y", str(
-                    place.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] +
-                    (place.properties[constants.LAYOUT_INFORMATION_PETRI][1][0] / 2)
-                ))
-                initmark_tag.appendChild(posattr_tag)
-
-                fillattr_tag = document.createElement("fillattr")
-                fillattr_tag.setAttribute("colour", "White")
-                fillattr_tag.setAttribute("pattern", "Solid")
-                fillattr_tag.setAttribute("filled", "false")
-                initmark_tag.appendChild(fillattr_tag)
-
-                lineattr_tag = document.createElement("lineattr")
-                lineattr_tag.setAttribute("colour", "Black")
-                lineattr_tag.setAttribute("thick", "0")
-                lineattr_tag.setAttribute("type", "Solid")
-                initmark_tag.appendChild(lineattr_tag)
-
-                textattr_tag = document.createElement("textattr")
-                textattr_tag.setAttribute("colour", "Black")
-                textattr_tag.setAttribute("bold", "false")
-                initmark_tag.appendChild(textattr_tag)
-
-                text_tag = document.createElement("text")
-                text_tag.appendChild(document.createTextNode(
-                    str(constants.DECLARATION_COLOR_REQUEST_INSTANCES)))
-                initmark_tag.appendChild(text_tag)
-
-                place_tag.appendChild(initmark_tag)
-
+            place_tag = self.create_place_element_for_page(
+                place,
+                initial_marking,
+                final_marking,
+                document
+            )
             page_tag.appendChild(place_tag)
 
         # <trans>, setup for transition rectangles
         for trans in petri_net.transitions:
-            trans_tag = document.createElement("trans")
-            # remove hypens from the guid (or else cpntool will crash)
-            trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
-
-            posattr_tag = document.createElement("posattr")
-            posattr_tag.setAttribute(
-                "x", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][0]))
-            posattr_tag.setAttribute(
-                "y", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][1]))
-            trans_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            trans_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Black")
-            lineattr_tag.setAttribute("thick", "2")
-            lineattr_tag.setAttribute("type", "Solid")
-            trans_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
-            textattr_tag.setAttribute("bold", "false")
-            trans_tag.appendChild(textattr_tag)
-
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode(str(trans)))
-            trans_tag.appendChild(text_tag)
-
-            box_tag = document.createElement("box")
-            box_tag.setAttribute(
-                "h", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][0]))
-            box_tag.setAttribute(
-                "w", str(trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][1]))
-            trans_tag.appendChild(box_tag)
-
-            time_tag = document.createElement("time")
-            time_tag.setAttribute("id", str(uuid.uuid1().hex))
-
-            posattr_tag = document.createElement("posattr")
-            # time position_x = place_x_position + place_width/1.5
-            posattr_tag.setAttribute("x", str(
-                trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][0] +
-                (trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][1] / 1.5)
-            ))
-            # time position_y = place_y_position - place_height/1.5
-            posattr_tag.setAttribute("y", str(
-                trans.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] -
-                (trans.properties[constants.LAYOUT_INFORMATION_PETRI][1][0] / 1.5)
-            ))
-            time_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            time_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Teal")
-            lineattr_tag.setAttribute("thick", "0")
-            lineattr_tag.setAttribute("type", "Solid")
-            time_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Teal")
-            textattr_tag.setAttribute("bold", "false")
-            time_tag.appendChild(textattr_tag)
-
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode("@+" + str(
-                trans.properties[constants.PERFORMANCE_INFORMATION_PETRI]
-            )))
-            time_tag.appendChild(text_tag)
-
-            trans_tag.appendChild(time_tag)
-
+            trans_tag = self.create_trans_element_for_page(trans, document)
             page_tag.appendChild(trans_tag)
 
         # <arcs>, setup for arcs
         for arc in petri_net.arcs:
-            # identify the place and transition ends of the arc
-            is_target_trans = isinstance(
-                arc.target, pm4py.objects.petri.petrinet.PetriNet.Transition)
-            is_target_place = isinstance(
-                arc.target, pm4py.objects.petri.petrinet.PetriNet.Place)
-
-            # identify orientation of the arc, Place->Trans or Trans->Place
-            orientation = constants.PLACE_TO_TRANS_ORIENTATION if is_target_trans else constants.TRANS_TO_PLACE_ORIENTATION
-
-            # remove hypens from the transend_idref (since we removed the same from transition id above)
-            # these id's are references to <place> and <transition> tags
-            # generated above
-            transend_idref = str(
-                arc.target.name).replace(
-                '-',
-                '') if is_target_trans else str(
-                arc.source.name).replace(
-                '-',
-                '')
-            placeend_idref = str(
-                arc.target.name) if is_target_place else str(
-                arc.source.name)
-
-            arc_tag = document.createElement("arc")
-            arc_tag.setAttribute("id", str(uuid.uuid1().hex))
-            arc_tag.setAttribute("orientation", orientation)
-
-            posattr_tag = document.createElement("posattr")
-            posattr_tag.setAttribute("x", "0.000000")
-            posattr_tag.setAttribute("y", "0.000000")
-            arc_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            arc_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Black")
-            lineattr_tag.setAttribute("thick", "2")
-            lineattr_tag.setAttribute("type", "Solid")
-            arc_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
-            textattr_tag.setAttribute("bold", "false")
-            arc_tag.appendChild(textattr_tag)
-
-            arrowattr_tag = document.createElement("arrowattr")
-            arrowattr_tag.setAttribute("headsize", "1.000000")
-            arrowattr_tag.setAttribute("currentcyckle", "2")
-            arc_tag.appendChild(arrowattr_tag)
-
-            transend_tag = document.createElement("transend")
-            transend_tag.setAttribute("idref", transend_idref)
-            arc_tag.appendChild(transend_tag)
-
-            placeend_tag = document.createElement("placeend")
-            placeend_tag.setAttribute("idref", placeend_idref)
-            arc_tag.appendChild(placeend_tag)
-
-            # TODO: <bendpoint> - do we need this?
-
-            annot_tag = document.createElement("annot")
-            annot_tag.setAttribute("id", str(uuid.uuid1().hex))
-
-            posattr_tag = document.createElement("posattr")
-            posattr_tag.setAttribute(
-                "x", str(arc.properties[constants.LAYOUT_INFORMATION_PETRI][0][0]))
-            # move y position by 5 else the arc annotation will end up lying on
-            # the arc
-            posattr_tag.setAttribute(
-                "y", str(arc.properties[constants.LAYOUT_INFORMATION_PETRI][0][1] + 5))
-            annot_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            annot_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Black")
-            lineattr_tag.setAttribute("thick", "0")
-            lineattr_tag.setAttribute("type", "Solid")
-            annot_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
-            textattr_tag.setAttribute("bold", "false")
-            annot_tag.appendChild(textattr_tag)
-
-            text_tag = document.createElement("text")
-            # TODO: "@+0" is a dummy. Needs to be removed later
-            # For now there's no execution time information on the arc transition->place,
-            # Once it's implemented replace the dummy "@+0" by the execution
-            # time stored in arc.properties[PERFORMANCE_INFORMATION_PETRI]
-            if(is_target_place):
-                text_tag.appendChild(document.createTextNode(
-                    str(constants.DECLARATION_COLOR_REQUEST_VARIABLE) + "@+0"))
-            else:
-                text_tag.appendChild(document.createTextNode(
-                    str(constants.DECLARATION_COLOR_REQUEST_VARIABLE)))
-            annot_tag.appendChild(text_tag)
-
-            arc_tag.appendChild(annot_tag)
-
+            arc_tag = self.create_arc_element_for_page(arc, document)
             page_tag.appendChild(arc_tag)
 
         return page_tag
 
     # Genarates a cpn dom object filled with information from the petri net
-
     def create_cpn_model_from_petri_net(
             self,
             petri_net,
@@ -444,7 +507,8 @@ class CPNExportService:
 
         custom_dom_imp = DOMImplementation()
 
-        # <!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN" "http://www.daimi.au.dk/~cpntools/bin/DTD/2/cpn.dtd">
+        # <!DOCTYPE workspaceElements PUBLIC "-//CPN//DTD CPNXML 1.0//EN"
+        # "http://www.daimi.au.dk/~cpntools/bin/DTD/2/cpn.dtd">
         doctype = custom_dom_imp.createDocumentType(
             qualifiedName="workspaceElements",
             publicId="-//CPN//DTD CPNXML 1.0//EN",
@@ -474,7 +538,12 @@ class CPNExportService:
 
         # <page>
         page_tag = self.create_page_element_for_document(
-            document, petri_net, initial_marking, final_marking, parameters=None)
+            document,
+            petri_net,
+            initial_marking,
+            final_marking,
+            parameters=None
+        )
         cpnet_tag.appendChild(page_tag)
 
         return document
@@ -491,6 +560,13 @@ class CPNExportService:
 
     # export xml as cpn file
     def save_cpn_model(self, model, event_log_id):
+        """Saves the cpn model in the xml to a cpn file in \
+            the data/event_log_id folder
+
+        Args:
+            model (xml.dom.minidom.Document): cpn model as xml document
+            event_log_id (str): Unique event log used as folder name to store the cpn file
+        """
         cpn_file_path = self.get_cpn_file_path(event_log_id)
         # <?xml version="1.0" encoding="iso-8859-1"?>
         xml_str = model.toprettyxml(encoding="iso-8859-1")

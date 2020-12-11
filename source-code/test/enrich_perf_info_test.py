@@ -1,18 +1,19 @@
 import unittest
-
+import sys
 import os
 
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
 
-from models.enrich_petri_net import EnrichPetriNet
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
+from models import PetriNet, PetriNetPerformanceEnricher  # noqa: E402
 
 
 def mine_petrinet(path):
     log = xes_importer.apply(path)
     net, im, fm = inductive_miner.apply(log)
-    petrinet = EnrichPetriNet(log, net, im, fm)
+    petrinet = PetriNet(log, net, im, fm)
     return petrinet, log, net, im, fm
 
 
@@ -24,8 +25,9 @@ one_timestamp_log_example_path = os.path.join(base_path, "event-log.xes")
 class TestEnrichPerfInfo(unittest.TestCase):
     def test_interval_event_log(self):
         petrinet, log, net, im, fm = mine_petrinet(interval_event_log_path)
+        enricher = PetriNetPerformanceEnricher(petrinet)
         duration_dict_mean, duration_dict_stdev \
-            = petrinet.get_service_time_two_timestamps(log, parameters={
+            = enricher._get_service_time_two_timestamps(log, parameters={
                 soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp",
                 soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp"})
         self.assertEqual(len(duration_dict_mean), len(duration_dict_stdev))
@@ -38,8 +40,9 @@ class TestEnrichPerfInfo(unittest.TestCase):
 
     def test_one_timestamp_event_log(self):
         petrinet, log, net, im, fm = mine_petrinet(one_timestamp_log_example_path)
+        enricher = PetriNetPerformanceEnricher(petrinet)
         stats_mean, stats_stdev \
-            = petrinet.get_service_time_single_timestamps(log, net, im, fm)
+            = enricher._get_service_time_single_timestamps(log, net, im, fm)
         self.assertEqual(len(stats_mean), len(stats_stdev))
         self.assertEqual(len(stats_mean), 8)
         self.assertEqual(len(stats_stdev), 8)
@@ -54,4 +57,7 @@ class TestEnrichPerfInfo(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    t = TestEnrichPerfInfo()
+    t.test_interval_event_log()
+    t.test_one_timestamp_event_log()
     unittest.main()
