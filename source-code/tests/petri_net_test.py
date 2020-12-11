@@ -10,7 +10,7 @@ from pm4py.objects.petri.petrinet import PetriNet
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from models import PetriNet
 
-input_data_path = os.path.join(os.path.dirname(__file__), "input_data")
+input_data_path = os.path.join(os.path.dirname(__file__), "data", "input")
 
 
 class TestPetriNet(unittest.TestCase):

@@ -18,7 +18,7 @@ def mine_petrinet(path):
     return petrinet
 
 
-base_path = os.path.join(os.path.dirname(__file__), "input_data")
+base_path = os.path.join(os.path.dirname(__file__), "data", "input")
 em_configuration1_path = os.path.join(base_path, "ETM_Configuration1.xes")
 em_configuration2_path = os.path.join(base_path, "ETM_Configuration2.xes")
 running_example_path = os.path.join(base_path, "running-example.xes")

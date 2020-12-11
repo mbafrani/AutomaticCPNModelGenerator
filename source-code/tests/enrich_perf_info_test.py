@@ -17,7 +17,7 @@ def mine_petrinet(path):
     return petrinet, log, net, im, fm
 
 
-base_path = os.path.join(os.path.dirname(__file__), "input_data")
+base_path = os.path.join(os.path.dirname(__file__), "data", "input")
 interval_event_log_path = os.path.join(base_path, "interval_event_log.xes")
 one_timestamp_log_example_path = os.path.join(base_path, "event-log.xes")
 
