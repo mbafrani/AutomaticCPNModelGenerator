@@ -61,6 +61,7 @@ def change_transition():
 
 @change_decision_point_page.route("/change-decision-point", methods=["POST"])
 def change_decision_point():
+    # Todo: Remove this functionality, as it is not in the requirements.
     def check_parameters(request):
         if (
             JsonKeys.place not in request.json

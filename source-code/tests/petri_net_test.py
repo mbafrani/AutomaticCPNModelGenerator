@@ -9,28 +9,29 @@ from pm4py.objects.log.log import EventLog
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from models import PetriNet  # noqa: E402
 
-base_path = os.path.join(os.path.dirname(__file__), "input_data")
+
+input_data_path = os.path.join(os.path.dirname(__file__), "data", "input")
 
 
 class TestPetriNet(unittest.TestCase):
     def test_importing_xes(self):
         obj = PetriNet()
-        self.assertTrue(os.path.exists(os.path.join(base_path, "event-log.xes")))
-        log_func = obj.import_xes_log(os.path.join(base_path, "event-log.xes"))
-        log_lib = xes_importer.apply(os.path.join(base_path, "event-log.xes"))
+        self.assertTrue(os.path.exists(os.path.join(input_data_path, "event-log.xes")))
+        log_func = obj.import_xes_log(os.path.join(input_data_path, "event-log.xes"))
+        log_lib = xes_importer.apply(os.path.join(input_data_path, "event-log.xes"))
         self.assertEqual(len(log_func), len(log_lib))
         self.assertGreater(len(log_func), 0, "Empty log file")
         self.assertIsInstance(log_func, EventLog, "Not an instance of EventLog")
 
     def test_importing_csv(self):
         obj = PetriNet()
-        self.assertTrue(os.path.exists(os.path.join(base_path, "event-log.csv")))
-        log_func = obj.import_csv_log(os.path.join(base_path, "event-log.csv"))
+        self.assertTrue(os.path.exists(os.path.join(input_data_path, "event-log.csv")))
+        log_func = obj.import_csv_log(os.path.join(input_data_path, "event-log.csv"))
         self.assertGreater(len(log_func), 0, "Empty log file")
         self.assertIsInstance(log_func, EventLog, "Not an instance of EventLog")
 
     def test_discover_process_model(self):
-        log_lib = xes_importer.apply(os.path.join(base_path, "event-log.xes"))
+        log_lib = xes_importer.apply(os.path.join(input_data_path, "event-log.xes"))
         obj = PetriNet(log_lib)
         net, im, fm = obj.discover_process_model()
         self.assertEqual(len(im), 1)
@@ -43,5 +44,5 @@ class TestPetriNet(unittest.TestCase):
                            "No transitions in the petri net")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

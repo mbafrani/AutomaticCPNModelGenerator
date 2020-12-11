@@ -30,7 +30,11 @@ def discover_process_model():
     except HTTPException as exception:
         message = exception.description
         status_code = exception.code
-        return make_response(jsonify(message=message), status_code)
+        return make_response(jsonify(
+            message=message
+        ), status_code)
     except Exception as exp:
         message = exp.args[1]
-        return make_response(jsonify(message=message), InternalServerError.code)
+        return make_response(jsonify(
+            message=message
+        ), InternalServerError.code)
