@@ -59,5 +59,5 @@ class RequestJsonKeys:
     place = "place"
     frequencies = "frequencies"
     transition = "transition"
-    mean = DICT_KEY_PERF_MEAN
-    std = DICT_KEY_PERF_STDEV
+    mean = "mean"
+    std = "std"
