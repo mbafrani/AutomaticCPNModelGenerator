@@ -7,7 +7,7 @@ from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from models import PetriNet, PetriNetPerformanceEnricher  # noqa: E402
+from models import PetriNet, PetriNetPerformanceEnricher
 
 
 def mine_petrinet(path):

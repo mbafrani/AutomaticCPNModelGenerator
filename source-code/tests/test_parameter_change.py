@@ -4,8 +4,8 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from util.constants import RequestJsonKeys, PetriNetDictKeys # noqa E402
-from app import app # noqa E402
+from util.constants import RequestJsonKeys, PetriNetDictKeys
+from app import app
 
 
 class test_parameter_change(unittest.TestCase):
