@@ -73,6 +73,8 @@ class PetriNet:
 
         # Add decision point probabilities
         decision_points = self.enrich_petrinet_decision_probabilities()
+        # store transition's decision prob information in the properties dictionary
+        self.extract_prob_info_to_petri_net_properties(decision_points)
 
         decorations = {}
         # add new decorations for transitions with performance distribution
@@ -276,6 +278,21 @@ class PetriNet:
                     constants.PERF_MEAN_DEFAULT_VALUE
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV] = \
                     constants.PERF_STDEV_DEFAULT_VALUE
+
+    # extracts the decision prob information
+    # and stores them in the transition.properties[DICT_KEY_PROBA_INFO_PETRI]
+    def extract_prob_info_to_petri_net_properties(self, decision_points):
+        # TODO: Refactor this code
+        for dp in decision_points:
+            freq_dict = dp.properties[constants.DICT_KEY_FREQUENCY]
+            for arc in dp.out_arcs:
+                target_frequency = freq_dict.get(arc.target.name)
+                if not target_frequency:
+                    target_frequency = freq_dict.get(arc.target.label)
+                if target_frequency:
+                    arc.target.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = round(
+                        target_frequency * 100
+                    )
 
     # extracts the layout information - x_position, y_position, height and
     # width of graph elements and stores them in the
