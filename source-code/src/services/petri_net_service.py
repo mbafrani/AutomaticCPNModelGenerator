@@ -4,8 +4,10 @@ import os
 
 from util import constants
 from models import PetriNet, load_net
+from werkzeug.exceptions import BadRequest
 
 PetriNetDictKeys = constants.PetriNetDictKeys
+RequestJsonKeys = constants.RequestJsonKeys
 
 
 class PetriNetService:
@@ -93,62 +95,27 @@ class PetriNetService:
         self.petri_net.extract_layout_info_to_petri_net_properties()
         return self.petri_net
 
-    def update_transition(self, transition_name, mean, std):
-        # Todo: Move into petri net class
+    def update_arrivalrate(self, arrivalrate):
+        self.petri_net = self.load_petri_net()
+        self.petri_net.update_arrivalrate(arrivalrate)
+
+    def update_transitions(self, transitions):
+        # Read the json and create input for petri net
+        trans_names, means, stds = [], [], []
+
+        for transition in transitions:
+            trans_name = transition.get(RequestJsonKeys.transition)
+            mean = transition.get(RequestJsonKeys.mean)
+            std = transition.get(RequestJsonKeys.std)
+            if trans_name is None or mean is None or std is None:
+                raise BadRequest(constants.ERROR_MISSING_PARAMETER_PERFORMANCE)
+            trans_names.append(trans_name)
+            means.append(mean)
+            stds.append(std)
+
         # Load Petri Net
         self.petri_net = self.load_petri_net()
-        net = self.petri_net.net
-
-        # Find Transition
-        for trans in net.transitions:
-            if str(trans) == transition_name:
-                transition = trans
-                break
-        else:  # nobreak
-            raise Exception(f"Could not find transition with name '{transition_name}'.")
-
-        # Update Performance Information
-        perf_dict = transition.properties[PetriNetDictKeys.performance]
-        perf_dict[PetriNetDictKeys.mean] = mean
-        perf_dict[PetriNetDictKeys.std] = std
-
-        # Save Petri Net
-        self._save_petri_net()
-
-    def update_decision_point(self, place_name, frequencies):
-        # Todo: Move into petri net class
-        # Load Petri Net
-        self.petri_net = self.load_petri_net()
-        net = self.petri_net.net
-
-        # Find Place
-        for place in net.places:
-            if str(place) == place_name:
-                decision_point = place
-                break
-        else:  # nobreak
-            raise Exception(f"Could not find the specified place.")
-
-        # Check if transitions are feasible
-        following_transitions = [str(arc.target) for arc in place.out_arcs]
-        proposed_transitions = list(frequencies.keys())
-
-        if len(following_transitions) != len(proposed_transitions):
-            raise Exception("List of outgoing arcs does not match the petri net.")
-
-        following_transitions.sort()
-        proposed_transitions.sort()
-        for following, proposed in zip(following_transitions, proposed_transitions):
-            if following != proposed:
-                raise Exception("List of outgoing arcs does not match the petri net.")
-
-        # Normalize Frequencies to sum = 1
-        freq_sum = sum(frequencies.values())
-        for freq in frequencies:
-            frequencies[freq] /= freq_sum
-
-        # Update Probability Information
-        decision_point.properties[PetriNetDictKeys.frequencies] = frequencies
+        self.petri_net.update_transitions(trans_names, means, stds)
 
         # Save Petri Net
         self._save_petri_net()
