@@ -7,8 +7,5 @@ __pycache__/
 .ipynb_checkpoints/
 **/.ipynb_checkpoints/
 
-# VS Code configs
-.vscode/
-
 # Server logs
 server.log

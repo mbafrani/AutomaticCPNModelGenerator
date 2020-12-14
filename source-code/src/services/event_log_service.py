@@ -16,6 +16,11 @@ class EventLogService:
             filename.rsplit('.', 1)[1].lower() in constants.ALLOWED_EXTENSIONS
 
     @staticmethod
+    def is_event_log_id_feasible(event_log_id):
+        path = os.path.join(current_app.config['UPLOAD_FOLDER'], event_log_id)
+        return os.path.exists(path)
+
+    @staticmethod
     def save_log_file(file):
         if file.filename == '':
             raise NotFound(constants.ERROR_FILE_NOT_FOUND_IN_REQUEST)
