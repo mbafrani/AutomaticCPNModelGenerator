@@ -1,10 +1,12 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, NotFound
+from services.petri_net_service import RequestJsonKeys
 
 from util import constants
 from services import PetriNetService, EventLogService
 
 JsonKeys = constants.RequestJsonKeys
+PetriNetDictKeys = constants.PetriNetDictKeys
 
 change_parameter_page = Blueprint("change_parameter", __name__)
 
@@ -42,6 +44,47 @@ def change_parameter():
         process_model_file_path = petri_net_service.get_process_model_image_path()
 
         return send_file(process_model_file_path, as_attachment=True)
+
+    except HTTPException as exception:
+        message = exception.description
+        status_code = exception.code
+        return make_response(jsonify(message=message), status_code)
+    except Exception as exp:
+        message = exp.args[1]
+        return make_response(jsonify(message=message), InternalServerError.code)
+
+
+@change_parameter_page.route("/change-parameter", methods=["GET"])
+def get_parameters():
+    check_request_json(request)
+
+    event_log_id = request.json["event_log_id"]
+    if not EventLogService.is_event_log_id_feasible(event_log_id):
+        raise NotFound(constants.ERROR_EVENT_LOG_DOESNT_EXIST)
+    try:
+        petri_net_service = PetriNetService(event_log_id)
+        prop_dict = petri_net_service.generate_enrichment_dict()
+        result = {}
+
+        result[JsonKeys.event_log_id] = event_log_id
+
+        result[JsonKeys.arrivalrate] = prop_dict[PetriNetDictKeys.net].get(
+            PetriNetDictKeys.arrivalrate
+        )
+
+        transitions = []
+        for trans_name, _mean_std in prop_dict[PetriNetDictKeys.transitions].items():
+            mean_std = _mean_std[PetriNetDictKeys.performance]
+            transition = {
+                RequestJsonKeys.transition: trans_name,
+                RequestJsonKeys.mean: mean_std[PetriNetDictKeys.mean],
+                RequestJsonKeys.std: mean_std[PetriNetDictKeys.std],
+            }
+            transitions.append(transition)
+
+        result[JsonKeys.transitions] = transitions
+
+        return make_response(result)
 
     except HTTPException as exception:
         message = exception.description
