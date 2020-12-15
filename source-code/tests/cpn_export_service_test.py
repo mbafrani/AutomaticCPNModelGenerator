@@ -519,6 +519,54 @@ class TestCPNExportService(unittest.TestCase):
         self.assertIn('p_1', arcs.keys())
         self.assertIn('p_3', arcs.keys())
 
+    def test_update_trans_element_with_guard_cond(self):
+        cpn_export_service = CPNExportService()
+        trans_tag = Element('trans')
+        trans_obj = MagicMock()
+        trans_obj.name = "trans-1-abc"
+        trans_obj.label = "trans1"
+        trans_obj.__str__ = MagicMock(return_value="trans1")
+        trans_obj.properties = {
+            constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                constants.DICT_KEY_LAYOUT_X: 10,
+                constants.DICT_KEY_LAYOUT_Y: 20,
+                constants.DICT_KEY_LAYOUT_HEIGHT: 30,
+                constants.DICT_KEY_LAYOUT_WIDTH: 50
+            },
+            constants.DICT_KEY_PROBA_INFO_PETRI: 75
+        }
+        document = Document()
+
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p < 75]', cond_text[0].firstChild.nodeValue)
+
+        trans_tag = Element('trans')
+        trans_obj.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = 25
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p >= 75]', cond_text[0].firstChild.nodeValue)
+
+        trans_tag = Element('trans')
+        trans_obj.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = 50
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p >= 50]', cond_text[0].firstChild.nodeValue)
+
+        trans_tag = Element('trans')
+        trans_obj.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = 50
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p < 50]', cond_text[0].firstChild.nodeValue)
+
 
 if __name__ == '__main__':
     unittest.main()
