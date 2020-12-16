@@ -46,10 +46,12 @@ TRANS_TO_PLACE_ORIENTATION = "TtoP"
 
 
 class PetriNetDictKeys:
+    net = "net"
     frequencies = "successor_frequencies"
     performance = DICT_KEY_PERF_INFO_PETRI
     mean = DICT_KEY_PERF_MEAN
     std = DICT_KEY_PERF_STDEV
+    arrivalrate = "arrivalrate"
     places = "places"
     transitions = "transitions"
 
@@ -58,6 +60,8 @@ class RequestJsonKeys:
     event_log_id = "event_log_id"
     place = "place"
     frequencies = "frequencies"
+    arrivalrate = "arrivalrate"
+    transitions = "transitions"
     transition = "transition"
     mean = "mean"
     std = "std"

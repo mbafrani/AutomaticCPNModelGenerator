@@ -52,6 +52,7 @@ def load_net(folder, name="petri_net"):
             if props is not None:
                 element.properties.update(props)
 
+    net.properties.update(property_dict[PetriNetDictKeys.net])
     update_dict(property_dict[PetriNetDictKeys.transitions], net.transitions)
     update_dict(property_dict[PetriNetDictKeys.places], net.places)
     petrinet = PetriNet(None, net, initial_marking, final_marking)
@@ -107,6 +108,7 @@ class PetriNet:
 
     def construct_prop_dict_for_saving(self):
         property_dict = {}
+        property_dict[PetriNetDictKeys.net] = self.net.properties.copy()
         property_dict[PetriNetDictKeys.transitions] = {
             str(elm): elm.properties for elm in self.net.transitions
         }
@@ -215,6 +217,26 @@ class PetriNet:
                 constants.DICT_KEY_LAYOUT_X: float(pos[0]),
                 constants.DICT_KEY_LAYOUT_Y: float(pos[1]),
             }
+
+    def update_transitions(self, transitions, means, stds):
+        for transition_name, mean, std in zip(transitions, means, stds):
+            # Find Transition
+            for trans in self.net.transitions:
+                if str(trans) == transition_name:
+                    transition = trans
+                    break
+            else:  # nobreak
+                raise Exception(
+                    f"Could not find transition with name '{transition_name}'."
+                )
+
+            # Update Performance Information
+            perf_dict = transition.properties[PetriNetDictKeys.performance]
+            perf_dict[PetriNetDictKeys.mean] = mean
+            perf_dict[PetriNetDictKeys.std] = std
+
+    def update_arrivalrate(self, arrivalrate):
+        self.net.properties[PetriNetDictKeys.arrivalrate] = arrivalrate
 
 
 class PetriNetContainer:
