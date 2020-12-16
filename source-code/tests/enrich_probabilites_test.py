@@ -6,8 +6,8 @@ from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from models import PetriNet  # noqa: E402
-from util import constants   # noqa: E402
+from models import PetriNet, PetriNetDecisionPointEnricher
+from util import constants
 
 
 def mine_petrinet(path):
@@ -27,7 +27,9 @@ running_example_path = os.path.join(base_path, "running-example.xes")
 class test_enrich_probability(unittest.TestCase):
     def test_etm_configuration1(self):
         petrinet = mine_petrinet(em_configuration1_path)
-        dps = petrinet.enrich_petrinet_decision_probabilities()
+        enricher = PetriNetDecisionPointEnricher(petrinet)
+        enricher.enrich()
+        dps = petrinet.get_decision_points()
 
         self.assertEqual(len(dps), 2)
         dp_dict = {dp.name: dp for dp in dps}
@@ -48,7 +50,10 @@ class test_enrich_probability(unittest.TestCase):
 
     def test_etm_configuration2(self):
         petrinet = mine_petrinet(em_configuration2_path)
-        dps = petrinet.enrich_petrinet_decision_probabilities()
+        enricher = PetriNetDecisionPointEnricher(petrinet)
+        enricher.enrich()
+        dps = petrinet.get_decision_points()
+
         self.assertEqual(len(dps), 1)
         dp_dict = {dp.name: dp for dp in dps}
         self.assertIn("p_7", dp_dict)
@@ -61,7 +66,10 @@ class test_enrich_probability(unittest.TestCase):
 
     def test_running_example(self):
         petrinet = mine_petrinet(running_example_path)
-        dps = petrinet.enrich_petrinet_decision_probabilities()
+        enricher = PetriNetDecisionPointEnricher(petrinet)
+        enricher.enrich()
+        dps = petrinet.get_decision_points()
+
         self.assertEqual(len(dps), 3)
         dp_dict = {dp.name: dp for dp in dps}
         self.assertIn("p_4", dp_dict)
@@ -88,4 +96,8 @@ class test_enrich_probability(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    t = test_enrich_probability()
+    t.test_etm_configuration1()
+    t.test_etm_configuration1()
+    t.test_etm_configuration2()
     unittest.main()

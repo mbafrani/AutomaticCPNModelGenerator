@@ -1,14 +1,14 @@
 import unittest
-import sys
 import os
-
+import sys
 import pm4py
+
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.log.log import EventLog
-from pm4py.objects.petri.petrinet import PetriNet
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from models import PetriNet
+
 
 input_data_path = os.path.join(os.path.dirname(__file__), "data", "input")
 
