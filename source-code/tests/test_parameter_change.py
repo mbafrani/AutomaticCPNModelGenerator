@@ -46,7 +46,7 @@ class test_parameter_change(unittest.TestCase):
 
         # 2. Check Enrichments
         data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
-        response = self.client.post("/process-model", json=data)
+        response = self.client.post("/process-model/enrichment-dict", json=data)
 
         transitions = response.json["transitions"]
         places = response.json["places"]
@@ -88,7 +88,7 @@ class test_parameter_change(unittest.TestCase):
 
         # 5. Check if the update is saved on the server
         data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
-        response = self.client.post("/process-model", json=data)
+        response = self.client.post("/process-model/enrichment-dict", json=data)
         transitions = response.json[PetriNetDictKeys.transitions]
         places = response.json[PetriNetDictKeys.places]
         self.check_decision_point_data(places, "p_9", frequencies)

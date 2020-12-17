@@ -120,7 +120,6 @@ class PetriNetService:
         # Save Petri Net
         self._save_petri_net()
 
-        
     def generate_enrichment_dict(self):
         self.load_petri_net()
         return self.petri_net.construct_prop_dict_for_saving()
