@@ -33,7 +33,7 @@ class test_parameter_change(unittest.TestCase):
     def test_parameter_change(self):
         # 1. File upload
         file_name = "ETM_Configuration1.xes"
-        path = os.path.join("source-code/test/input_data/", file_name)
+        path = os.path.join(os.path.dirname(__file__), "data", "input", file_name)
 
         file = open(path, "rb")
         data = {"file": (file, file_name)}

@@ -173,10 +173,8 @@ class PetriNet:
             place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI] = {
                 constants.DICT_KEY_LAYOUT_X: float(pos[0]),
                 constants.DICT_KEY_LAYOUT_Y: float(pos[1]),
-                constants.DICT_KEY_LAYOUT_HEIGHT: float(obj["height"])
-                * HEIGHT_EXTENSION_CONSTANT,
-                constants.DICT_KEY_LAYOUT_WIDTH: float(obj["width"])
-                * WIDTH_EXTENSION_CONSTANT,
+                constants.DICT_KEY_LAYOUT_HEIGHT: float(obj["height"]) * HEIGHT_EXTENSION_CONSTANT,
+                constants.DICT_KEY_LAYOUT_WIDTH: float(obj["width"]) * WIDTH_EXTENSION_CONSTANT,
             }
 
         # store transition's layout information in the properties dictionary
@@ -193,10 +191,8 @@ class PetriNet:
             trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI] = {
                 constants.DICT_KEY_LAYOUT_X: float(pos[0]),
                 constants.DICT_KEY_LAYOUT_Y: float(pos[1]),
-                constants.DICT_KEY_LAYOUT_HEIGHT: float(obj["height"])
-                * HEIGHT_EXTENSION_CONSTANT,
-                constants.DICT_KEY_LAYOUT_WIDTH: float(obj["width"])
-                * WIDTH_EXTENSION_CONSTANT,
+                constants.DICT_KEY_LAYOUT_HEIGHT: float(obj["height"]) * HEIGHT_EXTENSION_CONSTANT,
+                constants.DICT_KEY_LAYOUT_WIDTH: float(obj["width"]) * WIDTH_EXTENSION_CONSTANT,
             }
 
         # store arc's layout information for annotations in the properties
@@ -209,8 +205,7 @@ class PetriNet:
             arc = next(
                 arc
                 for arc in self.net.arcs
-                if str(arc.source) == str(source["label"].split("\n")[0])
-                and str(arc.target) == str(target["label"].split("\n")[0])
+                if str(arc.source) == str(source["label"].split("\n")[0]) and str(arc.target) == str(target["label"].split("\n")[0])
             )
             pos = item["pos"].split(" ")[3].split(",")
             arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI] = {
@@ -304,11 +299,7 @@ class PetriNetVisualizer(PetriNetContainer):
             std_value = transition.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                 constants.DICT_KEY_PERF_STDEV
             ]
-            label = (
-                str(transition)
-                + "\n"
-                + ("N(" + str(mean_value) + ", " + str(std_value) + ")")
-            )
+            label = str(transition) + "\n" + ("N(" + str(mean_value) + ", " + str(std_value) + ")")
             decorations[transition] = {"color": "#FFFFFF ", "label": label}
         return decorations
 
@@ -348,10 +339,14 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                         statistics, elem, aggregation_measure
                     )
                     aggr_stat_hr = round(aggr_stat / 60, 2)
-                    aggregated_statistics[str(elem.target)] = aggr_stat_hr
+                    aggregated_statistics.setdefault(str(elem.target), []).append(aggr_stat_hr)
 
             elif isinstance(elem, pm4py.objects.petri.petrinet.PetriNet.Place):
                 pass
+
+        for key, value in aggregated_statistics.items():
+            aggregated_statistics[key] = mean(value)
+
         return aggregated_statistics
 
     def _get_service_time_single_timestamps(
@@ -510,3 +505,21 @@ class PetriNetDecisionPointEnricher(PetriNetContainer):
         # Enrich decision points
         for dp in decision_points:
             dp.properties[constants.DICT_KEY_FREQUENCY] = successor_frequencies[dp.name]
+
+        # store transition's decision prob information in the properties dictionary
+        self._extract_prob_info_to_petri_net_properties(decision_points)
+
+    # extracts the decision prob information
+    # and stores them in the transition.properties[DICT_KEY_PROBA_INFO_PETRI]
+    def _extract_prob_info_to_petri_net_properties(self, decision_points):
+        # TODO: Refactor this code
+        for dp in decision_points:
+            freq_dict = dp.properties[constants.DICT_KEY_FREQUENCY]
+            for arc in dp.out_arcs:
+                target_frequency = freq_dict.get(arc.target.name)
+                if not target_frequency:
+                    target_frequency = freq_dict.get(arc.target.label)
+                if target_frequency:
+                    arc.target.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = round(
+                        target_frequency * 100
+                    )

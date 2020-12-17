@@ -1,4 +1,5 @@
 import unittest
+import uuid
 from unittest.mock import MagicMock, patch
 import sys
 import os
@@ -21,16 +22,20 @@ class TestCPNExportService(unittest.TestCase):
         globbox_element = cpn_export_service.create_globbox_element_for_document(document)
 
         self.assertIsInstance(globbox_element, Element)
-        self.assertEqual(1, len(globbox_element.getElementsByTagName("color")))
+        self.assertEqual(2, len(globbox_element.getElementsByTagName("color")))
         self.assertEqual(1, len(globbox_element.getElementsByTagName("timed")))
+        self.assertEqual(2, len(globbox_element.getElementsByTagName("var")))
         ml_element = globbox_element.getElementsByTagName("ml")
         self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_ITER_INDEX_START), ml_element[0].firstChild.nodeValue)
         self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_ITER_INDEX_END), ml_element[1].firstChild.nodeValue)
         id_element = globbox_element.getElementsByTagName("id")
         self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), id_element[0].firstChild.nodeValue)
         self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_ITER_INSTANCE), id_element[1].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), id_element[2].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_VARIABLE), id_element[3].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[2].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), id_element[3].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_VARIABLE), id_element[4].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[5].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE), id_element[6].firstChild.nodeValue)
 
     def test_create_place_element_for_page(self):
         cpn_export_service = CPNExportService()
@@ -382,7 +387,8 @@ class TestCPNExportService(unittest.TestCase):
         cpn_export_service = CPNExportService()
         petri_net_obj = MagicMock()
         petri_net_obj.places = {'place1': {}, 'place2': {}}
-        petri_net_obj.transitions = {'trans1': {}, 'trans2': {}}
+        petri_net_obj.transitions = {pm4py.objects.petri.petrinet.PetriNet.Transition('trans_1'): {},
+                                     pm4py.objects.petri.petrinet.PetriNet.Transition('trans_2'): {}}
         petri_net_obj.arcs = {'arc1': {}, 'arc2': {}, 'arc3': {}, 'arc4': {}}
         document = Document()
         cpn_export_service.create_place_element_for_page = MagicMock(
@@ -393,6 +399,9 @@ class TestCPNExportService(unittest.TestCase):
         )
         cpn_export_service.create_arc_element_for_page = MagicMock(
             side_effect=[document.createElement("arc") for elem in petri_net_obj.arcs]
+        )
+        cpn_export_service.get_arcs_with_prob_info = MagicMock(
+            return_value={'p_1': MagicMock()}
         )
 
         page_element = cpn_export_service.create_page_element_for_document(
@@ -407,6 +416,21 @@ class TestCPNExportService(unittest.TestCase):
 
     def test_create_cpn_model_from_petri_net(self):
         cpn_export_service = CPNExportService()
+        obj = MagicMock()
+        arc1 = MagicMock()
+        obj.arcs = {arc1.source: pm4py.objects.petri.petrinet.PetriNet.Place(
+            'place1', None, None,
+            properties={
+                constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                    constants.DICT_KEY_LAYOUT_X: 10,
+                    constants.DICT_KEY_LAYOUT_Y: 20
+                },
+                constants.DICT_KEY_PERF_INFO_PETRI: {
+                    constants.DICT_KEY_PERF_MEAN: 30,
+                    constants.DICT_KEY_PERF_STDEV: 5
+                }
+            }
+        )}
         document = Document()
         cpn_export_service.create_globbox_element_for_document = MagicMock(
             return_value=document.createElement("globbox")
@@ -414,8 +438,14 @@ class TestCPNExportService(unittest.TestCase):
         cpn_export_service.create_page_element_for_document = MagicMock(
             return_value=document.createElement("page")
         )
+        cpn_export_service.get_arcs_with_prob_info = MagicMock(
+            return_value={'p_1': MagicMock()}
+        )
+        cpn_export_service.create_fusion_element_for_document = MagicMock(
+            return_value=document.createElement("fusion")
+        )
 
-        cpn_model = cpn_export_service.create_cpn_model_from_petri_net(None, None, None)
+        cpn_model = cpn_export_service.create_cpn_model_from_petri_net(obj, None, None)
 
         self.assertIsInstance(cpn_model, Document)
         self.assertEqual("workspaceElements", cpn_model.doctype.name)
@@ -426,6 +456,7 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(1, len(cpn_model.getElementsByTagName("cpnet")))
         self.assertEqual(1, len(cpn_model.getElementsByTagName("globbox")))
         self.assertEqual(1, len(cpn_model.getElementsByTagName("page")))
+        self.assertEqual(1, len(cpn_model.getElementsByTagName("fusion")))
 
     def test_get_cpn_file_path(self):
         app = flask.Flask(__name__)
@@ -452,6 +483,89 @@ class TestCPNExportService(unittest.TestCase):
 
         cpn_export_service.get_cpn_file_path.assert_called_with(event_log_id)
         model_obj.toprettyxml.assert_called_with(encoding="iso-8859-1")
+
+    def test_create_fusion_element_for_document(self):
+        cpn_export_service = CPNExportService()
+        document = Document()
+        fusions = ['prob_' + str(uuid.uuid1().hex), 'prob_' + str(uuid.uuid1().hex)]
+        fusion_name = 'prob_1'
+
+        fusion_element = cpn_export_service.create_fusion_element_for_document(document, fusions, fusion_name)
+
+        self.assertIsInstance(fusion_element, Element)
+        self.assertEqual(fusion_name, fusion_element.getAttribute('name'))
+        fusion_elm = fusion_element.getElementsByTagName('fusion_elm')
+        self.assertEqual(len(fusions), len(fusion_elm))
+        for i, elem in enumerate(fusion_elm):
+            self.assertEqual(fusions[i], elem.getAttribute('idref'))
+
+    def test_get_arcs_with_prob_info(self):
+        cpn_export_service = CPNExportService()
+        petri_net_obj = MagicMock()
+        petri_net_obj.arcs = []
+        for i in range(4):
+            arc = MagicMock()
+            arc.source = pm4py.objects.petri.petrinet.PetriNet.Place('p_' + str(i))
+            petri_net_obj.arcs.append(arc)
+        arc1 = MagicMock()
+        arc1.source = pm4py.objects.petri.petrinet.PetriNet.Place('p_1')
+        petri_net_obj.arcs.append(arc1)
+        arc3 = MagicMock()
+        arc3.source = pm4py.objects.petri.petrinet.PetriNet.Place('p_3')
+        petri_net_obj.arcs.append(arc3)
+
+        arcs = cpn_export_service.get_arcs_with_prob_info(petri_net_obj)
+        self.assertEqual(2, len(arcs))
+        self.assertIn('p_1', arcs.keys())
+        self.assertIn('p_3', arcs.keys())
+
+    def test_update_trans_element_with_guard_cond(self):
+        cpn_export_service = CPNExportService()
+        trans_tag = Element('trans')
+        trans_obj = MagicMock()
+        trans_obj.name = "trans-1-abc"
+        trans_obj.label = "trans1"
+        trans_obj.__str__ = MagicMock(return_value="trans1")
+        trans_obj.properties = {
+            constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                constants.DICT_KEY_LAYOUT_X: 10,
+                constants.DICT_KEY_LAYOUT_Y: 20,
+                constants.DICT_KEY_LAYOUT_HEIGHT: 30,
+                constants.DICT_KEY_LAYOUT_WIDTH: 50
+            },
+            constants.DICT_KEY_PROBA_INFO_PETRI: 75
+        }
+        document = Document()
+
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p < 75]', cond_text[0].firstChild.nodeValue)
+
+        trans_tag = Element('trans')
+        trans_obj.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = 25
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p >= 75]', cond_text[0].firstChild.nodeValue)
+
+        trans_tag = Element('trans')
+        trans_obj.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = 50
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p >= 50]', cond_text[0].firstChild.nodeValue)
+
+        trans_tag = Element('trans')
+        trans_obj.properties[constants.DICT_KEY_PROBA_INFO_PETRI] = 50
+        cpn_export_service.update_trans_element_with_guard_cond(trans_obj, trans_tag, document)
+        cond_tag = trans_tag.getElementsByTagName('cond')
+        self.assertEqual(1, len(cond_tag))
+        cond_text = cond_tag[0].getElementsByTagName('text')
+        self.assertEqual('[p < 50]', cond_text[0].firstChild.nodeValue)
 
 
 if __name__ == '__main__':
