@@ -2,20 +2,18 @@ from flask import Blueprint, request, jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 
 from util import constants
-from services import PetriNetService
+from services import PetriNetService, EventLogService
 
 process_model_page = Blueprint("process_model", __name__)
 
 
-@process_model_page.route("/process-model", methods=["POST"])
-def discover_process_model():
-    if not request.json or "event_log_id" not in request.json:
-        return make_response(
-            jsonify(message=constants.ERROR_EVENT_LOG_ID_NOT_FOUND_IN_REQUEST),
-            BadRequest.code,
-        )
+@process_model_page.route("/process-model/<string:event_log_id>", methods=["GET"])
+def discover_process_model(event_log_id):
 
-    event_log_id = request.json["event_log_id"]
+    if not EventLogService.is_event_log_id_feasible(event_log_id):
+        return make_response(
+            jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST), InternalServerError.code
+        )
 
     try:
         petri_net_service = PetriNetService(event_log_id)

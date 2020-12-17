@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
-from werkzeug.exceptions import HTTPException, BadRequest, NotFound
+from werkzeug.exceptions import HTTPException, BadRequest, NotFound, InternalServerError
 from services.petri_net_service import RequestJsonKeys
 
 from util import constants
@@ -31,7 +31,9 @@ def change_parameter():
 
     event_log_id = request.json["event_log_id"]
     if not EventLogService.is_event_log_id_feasible(event_log_id):
-        raise NotFound(constants.ERROR_EVENT_LOG_DOESNT_EXIST)
+        return make_response(
+            jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST), InternalServerError.code
+        )
 
     petri_net_service = PetriNetService(event_log_id)
     try:
@@ -54,13 +56,13 @@ def change_parameter():
         return make_response(jsonify(message=message), InternalServerError.code)
 
 
-@change_parameter_page.route("/change-parameter", methods=["GET"])
-def get_parameters():
-    check_request_json(request)
+@change_parameter_page.route("/change-parameter/<string:event_log_id>", methods=["GET"])
+def get_parameters(event_log_id):
 
-    event_log_id = request.json["event_log_id"]
     if not EventLogService.is_event_log_id_feasible(event_log_id):
-        raise NotFound(constants.ERROR_EVENT_LOG_DOESNT_EXIST)
+        return make_response(
+            jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST), InternalServerError.code
+        )
     try:
         petri_net_service = PetriNetService(event_log_id)
         prop_dict = petri_net_service.generate_enrichment_dict()
