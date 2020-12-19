@@ -5,10 +5,27 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>CPN Model Generation</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
   <link rel='stylesheet' type='text/css' media='screen' href='css/main.css'>
-  <script src='js/main.js'></script>
+  <script src="js/jquery-3.5.1.min.js"></script>
 </head>
 <body>
-  Hello world!
+  <header>
+    <div class="header-wrapper">
+      <div class="header-wrapper__title">CPN Model Generation</div>
+    </div>
+  </header>
+  <main>
+    <div id="wizard" class="wizard">
+      <div id="wizard-title" class="wizard__title"></div>
+      <div id="wizard-content" class="wizard__content"></div>
+      <div id="wizard-nav" class="wizard__nav">
+        <button id="wizard-nav-left-btn" class="wizard__nav__btn"></button>
+        <button id="wizard-nav-right-btn" class="wizard__nav__btn wizard__nav__btn-active"></button>
+      </div>
+    </div>
+  </main>
+  <footer>2020 © Team CPN</footer>
+  <script type="module" src='js/main.js'></script>
 </body>
 </html>
