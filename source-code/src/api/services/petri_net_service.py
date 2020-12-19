@@ -2,8 +2,8 @@ from flask import current_app
 from werkzeug.exceptions import NotFound
 import os
 
-from util import constants
-from models import PetriNet, load_net
+from api.util import constants
+from api.models import PetriNet, load_net
 from werkzeug.exceptions import BadRequest
 
 PetriNetDictKeys = constants.PetriNetDictKeys

@@ -1,6 +1,6 @@
 import pm4py
 
-from util import constants
+from api.util import constants
 
 
 class ProbabilityPlace(pm4py.objects.petri.petrinet.PetriNet.Place):

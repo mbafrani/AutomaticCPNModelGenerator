@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 
-from util import constants
-from services import PetriNetService, EventLogService
+from api.util import constants
+from api.services import PetriNetService, EventLogService
 
 process_model_page = Blueprint("process_model", __name__)
 
@@ -36,7 +36,7 @@ def discover_process_model(event_log_id):
 
 
 @process_model_page.route("/process-model/enrichment-dict", methods=["POST"])
-def discover_process_model(event_log_id):
+def discover_enrich_dict(event_log_id):
 
     if not request.json or "event_log_id" not in request.json:	
         if not EventLogService.is_event_log_id_feasible(event_log_id):

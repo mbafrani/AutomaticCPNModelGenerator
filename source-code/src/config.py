@@ -2,12 +2,13 @@ import logging
 import os
 
 DEBUG = os.getenv("ENVIRONMENT") == "DEV"
-APPLICATION_ROOT = os.getenv("APPLICATION_APPLICATION_ROOT", "/")
+WAPP_APPLICATION_ROOT = os.getenv("WAPP_APPLICATION_ROOT", "/")
+API_APPLICATION_ROOT = os.getenv("API_APPLICATION_ROOT", "/api/")
 HOST = os.getenv("APPLICATION_HOST")
 PORT = int(os.getenv("APPLICATION_PORT", "5000"))
 
-UPLOAD_FOLDER = os.path.join('data', 'uploads')
-TEMP_FOLDER = os.path.join('data', 'tmp')
+UPLOAD_FOLDER = os.path.join('api', 'data', 'uploads')
+TEMP_FOLDER = os.path.join('api', 'data', 'tmp')
 EVENT_LOG_DEFAULT_NAME = "event-log"
 PROCESS_MODEL_DEFAULT_NAME = "process-model-inductive"
 CPN_MODEL_DEFAULT_NAME = "cpn-model"

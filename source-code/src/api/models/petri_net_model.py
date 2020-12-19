@@ -20,7 +20,7 @@ import pandas as pd
 from statistics import mean, stdev
 from enum import Enum
 from collections import Counter
-from util import constants
+from api.util import constants
 from pm4py.objects.petri.importer import importer as pnml_importer
 from pm4py.objects.petri.exporter import exporter as pnml_exporter
 

@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify, make_response, send_file
 from werkzeug.exceptions import HTTPException, BadRequest, NotFound, InternalServerError
-from services.petri_net_service import RequestJsonKeys
+from api.services.petri_net_service import RequestJsonKeys
 
-from util import constants
-from services import PetriNetService, EventLogService
+from api.util import constants
+from api.services import PetriNetService, EventLogService
 
 JsonKeys = constants.RequestJsonKeys
 PetriNetDictKeys = constants.PetriNetDictKeys

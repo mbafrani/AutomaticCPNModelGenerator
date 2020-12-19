@@ -4,8 +4,8 @@ from werkzeug.utils import secure_filename
 import os
 import uuid
 
-from util import constants
-from models import EventLog, PetriNet
+from api.util import constants
+from api.models import EventLog, PetriNet
 
 
 class EventLogService:

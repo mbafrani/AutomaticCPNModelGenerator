@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify, make_response
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 
-from util import constants
-from services import EventLogService
+from api.util import constants
+from api.services import EventLogService
 
 event_log_page = Blueprint("event_log", __name__)
 
