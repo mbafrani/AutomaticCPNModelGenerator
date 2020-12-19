@@ -8,7 +8,7 @@ process_model_page = Blueprint("process_model", __name__)
 
 
 @process_model_page.route("/process-model/<string:event_log_id>", methods=["GET"])
-def discover_process_model(event_log_id):
+def get_process_model(event_log_id):
 
     if not EventLogService.is_event_log_id_feasible(event_log_id):
         return make_response(

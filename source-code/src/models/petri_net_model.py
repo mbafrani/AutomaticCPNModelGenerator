@@ -17,12 +17,14 @@ from pm4py.algo.enhancement.decision.algorithm import (
 )
 import json
 import pandas as pd
+import math
 from statistics import mean, stdev
 from enum import Enum
 from collections import Counter
 from util import constants
 from pm4py.objects.petri.importer import importer as pnml_importer
 from pm4py.objects.petri.exporter import exporter as pnml_exporter
+from pm4py.statistics.traces.log import case_arrival
 
 PetriNetDictKeys = constants.PetriNetDictKeys
 
@@ -108,13 +110,27 @@ class PetriNet:
 
     def construct_prop_dict_for_saving(self):
         property_dict = {}
+
+        # Add the petri net
         property_dict[PetriNetDictKeys.net] = self.net.properties.copy()
+
+        # Add arrival rate info from the source arc
+        for elm in self.net.arcs:
+            if str(elm.source) == 'source':
+                property_dict[PetriNetDictKeys.arcs] \
+                    = {str(elm): elm.properties}
+                break
+
+        # Add performance info from the transitions
         property_dict[PetriNetDictKeys.transitions] = {
             str(elm): elm.properties for elm in self.net.transitions
         }
+
+        # Add probability information from the places
         property_dict[PetriNetDictKeys.places] = {
             str(elm): elm.properties for elm in self.net.places
         }
+
         return property_dict
 
     def save_net(self, folder, name="petri_net"):
@@ -248,9 +264,11 @@ class PetriNetVisualizer(PetriNetContainer):
         dp_decorations = self._get_dp_arc_decorations()
         place_decorations = self._get_place_decorations()
         transition_decoration = self._get_transition_decoration()
+        source_arc_decoration = self._get_source_arc_decoration()
 
         # Order Ensures that the dp decorations do not overwrite the transition decorations.
-        decorations = {**dp_decorations, **transition_decoration, **place_decorations}
+        decorations = {**dp_decorations, **transition_decoration, **source_arc_decoration,
+                       **place_decorations}
 
         parameters = {visualizer.wo_decoration: True}
         self.gviz = vis_petrinet.apply(
@@ -303,6 +321,22 @@ class PetriNetVisualizer(PetriNetContainer):
             decorations[transition] = {"color": "#FFFFFF ", "label": label}
         return decorations
 
+    def _get_source_arc_decoration(self):
+        decorations = {}
+        for arc in self.net.arcs:
+            if str(arc.source) == 'source':
+                arrival_rate = arc.properties[constants.DICT_KEY_ARRIVAL_INFO_PETRI][
+                    constants.DICT_KEY_ARRIVAL_RATE]
+                label = "Arrival Rate \n {} minutes".format(arrival_rate)
+                decorations[arc] = {
+                        "color": "#000000",
+                        "penwidth": "1",
+                        "label": label,
+                    }
+                break
+
+        return decorations
+
 
 class PetriNetPerformanceEnricher(PetriNetContainer):
     def enrich(self):
@@ -312,14 +346,22 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                 parameters={
                     soj_time_get.Parameters.TIMESTAMP_KEY: "time:timestamp",
                     soj_time_get.Parameters.START_TIMESTAMP_KEY: "start_timestamp",
-                },
+                }
             )
         else:
             mean_dict, stdev_dict = self._get_service_time_single_timestamps(
                 self.log, self.net, self.initial_marking, self.final_marking
             )
+
+        # Get the average event log arrival rate
+        case_arrival_ratio = case_arrival.get_case_arrival_avg(
+            self.log,
+            parameters={case_arrival.Parameters.TIMESTAMP_KEY: "time:timestamp"})
+
+        arrival_rate = math.ceil(case_arrival_ratio/60)
+
         # store transition's perf information in the properties dictionary
-        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict)
+        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate)
 
     def _aggregate_stats(self, statistics, elem, aggregation_measure):
         aggr_stat = 0
@@ -447,7 +489,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
     # extracts the perf information - execution time mean and std deviation
     # and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
-    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict):
+    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate):
         for trans in self.net.transitions:
             # insert the perf info into trans properties
             if constants.DICT_KEY_PERF_INFO_PETRI not in trans.properties:
@@ -466,6 +508,15 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                     constants.DICT_KEY_PERF_STDEV
                 ] = constants.PERF_STDEV_DEFAULT_VALUE
+
+        for arc in self.net.arcs:
+            # Insert arrival info into arcs properties
+            if str(arc.source) == 'source' \
+                    and constants.DICT_KEY_ARRIVAL_INFO_PETRI not in arc.properties:
+                arc.properties[constants.DICT_KEY_ARRIVAL_INFO_PETRI] = {}
+                arc.properties[constants.DICT_KEY_ARRIVAL_INFO_PETRI][
+                    constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate
+                break
 
 
 class PetriNetDecisionPointEnricher(PetriNetContainer):
