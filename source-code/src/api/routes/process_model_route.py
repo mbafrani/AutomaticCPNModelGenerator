@@ -36,14 +36,13 @@ def discover_process_model(event_log_id):
 
 
 @process_model_page.route("/process-model/enrichment-dict", methods=["POST"])
-def discover_enrich_dict(event_log_id):
+def discover_enrich_dict():
 
-    if not request.json or "event_log_id" not in request.json:	
-        if not EventLogService.is_event_log_id_feasible(event_log_id):
-            return make_response(
-                jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST),
-                InternalServerError.code
-            )
+    if not request.json or "event_log_id" not in request.json:
+        return make_response(
+            jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST),
+            InternalServerError.code
+        )
 
     event_log_id = request.json["event_log_id"]
 

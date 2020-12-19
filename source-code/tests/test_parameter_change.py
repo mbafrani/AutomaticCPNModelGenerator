@@ -4,7 +4,7 @@ import unittest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
-from util.constants import RequestJsonKeys, PetriNetDictKeys
+from api.util.constants import RequestJsonKeys, PetriNetDictKeys
 from app import app
 
 
@@ -38,7 +38,7 @@ class test_parameter_change(unittest.TestCase):
         file = open(path, "rb")
         data = {"file": (file, file_name)}
         response = self.client.post(
-            "/event-log", content_type="multipart/form-data", data=data
+            "api/event-log", content_type="multipart/form-data", data=data
         )
         self.assertIn(b"Event log uploaded successfully", response.data)
         event_log_id = response.json.get(RequestJsonKeys.event_log_id)
@@ -46,7 +46,7 @@ class test_parameter_change(unittest.TestCase):
 
         # 2. Check Enrichments
         data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
-        response = self.client.post("/process-model/enrichment-dict", json=data)
+        response = self.client.post("api/process-model/enrichment-dict", json=data)
 
         transitions = response.json["transitions"]
         places = response.json["places"]
@@ -70,28 +70,15 @@ class test_parameter_change(unittest.TestCase):
             RequestJsonKeys.mean: 3,
             RequestJsonKeys.std: 3,
         }
-        response = self.client.post("/change-transition", json=data)
+        response = self.client.post("api/change-parameter", json=data)
         transitions = response.json[PetriNetDictKeys.transitions]
         self.check_transition_data(transitions, "B", 3, 3)
 
-        # 4. Update decision point, check correct update
-        frequencies = {"D": 0.8, "skip_3": 0.2}
-        data = {
-            RequestJsonKeys.event_log_id: event_log_id,
-            "test": True,
-            RequestJsonKeys.place: "p_9",
-            RequestJsonKeys.frequencies: frequencies,
-        }
-        response = self.client.post("/change-decision-point", json=data)
-        places = response.json[PetriNetDictKeys.places]
-        self.check_decision_point_data(places, "p_9", frequencies)
-
         # 5. Check if the update is saved on the server
         data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
-        response = self.client.post("/process-model/enrichment-dict", json=data)
+        response = self.client.post("api/process-model/enrichment-dict", json=data)
         transitions = response.json[PetriNetDictKeys.transitions]
         places = response.json[PetriNetDictKeys.places]
-        self.check_decision_point_data(places, "p_9", frequencies)
         self.check_transition_data(transitions, "B", 3, 3)
 
 

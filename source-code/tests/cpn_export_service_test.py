@@ -9,8 +9,8 @@ import flask
 from werkzeug.exceptions import NotFound, UnsupportedMediaType, BadRequest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from services import CPNExportService
-from util import constants
+from api.services import CPNExportService
+from api.util import constants
 
 
 class TestCPNExportService(unittest.TestCase):

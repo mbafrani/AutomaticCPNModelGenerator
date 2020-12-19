@@ -6,8 +6,8 @@ import flask
 from werkzeug.exceptions import NotFound, UnsupportedMediaType, BadRequest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
-from services import EventLogService
-from util import constants
+from api.services import EventLogService
+from api.util import constants
 
 
 class TestEventLogService(unittest.TestCase):
@@ -50,7 +50,7 @@ class TestEventLogService(unittest.TestCase):
         self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
     @patch('uuid.uuid1', return_value="12345-6789-abc")
-    @patch('models.PetriNet.import_xes_log', side_effect=Exception())
+    @patch('api.models.PetriNet.import_xes_log', side_effect=Exception())
     def test_save_log_file__file_xes_invalid(self, mocked_uuid1, mocked_import_xes_log):
         app = flask.Flask(__name__)
         with app.app_context():
@@ -67,7 +67,7 @@ class TestEventLogService(unittest.TestCase):
             self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
     @patch('uuid.uuid1', return_value="12345-6789-abc")
-    @patch('models.PetriNet.import_xes_log', return_value=True)
+    @patch('api.models.PetriNet.import_xes_log', return_value=True)
     @patch('os.stat', return_value=MagicMock(st_size=0))
     def test_save_log_file__file_empty(self, mocked_uuid1, mocked_import_xes_log, mocked_os_stat):
         app = flask.Flask(__name__)
@@ -85,7 +85,7 @@ class TestEventLogService(unittest.TestCase):
             self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
     @patch('uuid.uuid1', return_value="12345-6789-abc")
-    @patch('models.PetriNet.import_xes_log', return_value=True)
+    @patch('api.models.PetriNet.import_xes_log', return_value=True)
     @patch('os.stat')
     @patch('os.makedirs')
     @patch('os.rename')
@@ -105,7 +105,7 @@ class TestEventLogService(unittest.TestCase):
             self.assertEqual("xes", event_log.filetype)
 
     @patch('uuid.uuid1', return_value="12345-6789-abc")
-    @patch('models.PetriNet.import_csv_log', side_effect=Exception())
+    @patch('api.models.PetriNet.import_csv_log', side_effect=Exception())
     def test_save_log_file__file_csv_invalid(self, mocked_uuid1, mocked_import_csv_log):
         app = flask.Flask(__name__)
         with app.app_context():
@@ -122,7 +122,7 @@ class TestEventLogService(unittest.TestCase):
             self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
     @patch('uuid.uuid1', return_value="12345-6789-abc")
-    @patch('models.PetriNet.import_csv_log', return_value=True)
+    @patch('api.models.PetriNet.import_csv_log', return_value=True)
     @patch('os.stat')
     @patch('os.makedirs')
     @patch('os.rename')
