@@ -54,9 +54,19 @@ def load_net(folder, name="petri_net"):
             if props is not None:
                 element.properties.update(props)
 
+    def update_arrival_rate_dict(in_dict, elements):
+        for element in elements:
+            if str(element.source) == 'source':
+                props = in_dict.get(str(element))
+                if props is not None:
+                    element.properties.update(props)
+                    break
+
     net.properties.update(property_dict[PetriNetDictKeys.net])
     update_dict(property_dict[PetriNetDictKeys.transitions], net.transitions)
     update_dict(property_dict[PetriNetDictKeys.places], net.places)
+    update_arrival_rate_dict(property_dict[PetriNetDictKeys.arcs], net.arcs)
+
     petrinet = PetriNet(None, net, initial_marking, final_marking)
 
     return petrinet

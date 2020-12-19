@@ -63,6 +63,7 @@ class PetriNetDictKeys:
     places = "places"
     transitions = "transitions"
     arcs = "arcs"
+    arrivalinfo = DICT_KEY_ARRIVAL_INFO_PETRI
 
 
 class RequestJsonKeys:
