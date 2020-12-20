@@ -58,7 +58,6 @@ def change_parameter():
 
 @change_parameter_page.route("/change-parameter/<string:event_log_id>", methods=["GET"])
 def get_parameters(event_log_id):
-
     if not EventLogService.is_event_log_id_feasible(event_log_id):
         return make_response(
             jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST), InternalServerError.code
@@ -66,13 +65,9 @@ def get_parameters(event_log_id):
     try:
         petri_net_service = PetriNetService(event_log_id)
         prop_dict = petri_net_service.generate_enrichment_dict()
-        result = {}
-
-        result[JsonKeys.event_log_id] = event_log_id
-
-        result[JsonKeys.arrivalrate] = prop_dict[PetriNetDictKeys.net].get(
-            PetriNetDictKeys.arrivalrate
-        )
+        result = {JsonKeys.event_log_id: event_log_id,
+                  JsonKeys.arrivalrate: prop_dict[PetriNetDictKeys.net].get
+                  (PetriNetDictKeys.arrivalrate)}
 
         transitions = []
         for trans_name, _mean_std in prop_dict[PetriNetDictKeys.transitions].items():

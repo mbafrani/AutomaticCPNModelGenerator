@@ -98,6 +98,8 @@ class PetriNetService:
     def update_arrivalrate(self, arrivalrate):
         self.petri_net = self.load_petri_net()
         self.petri_net.update_arrivalrate(arrivalrate)
+        # Save Petri Net
+        self._save_petri_net()
 
     def update_transitions(self, transitions):
         # Read the json and create input for petri net
