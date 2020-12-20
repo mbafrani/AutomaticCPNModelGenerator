@@ -257,7 +257,12 @@ class PetriNet:
             perf_dict[PetriNetDictKeys.std] = std
 
     def update_arrivalrate(self, arrivalrate):
-        self.net.properties[PetriNetDictKeys.arrivalrate] = arrivalrate
+        for arc in self.net.arcs:
+            if str(arc.source) == 'source':
+                arc_dict = arc.properties[PetriNetDictKeys.arrivalinfo]
+                # Update arrival rate for the source arc
+                arc_dict[PetriNetDictKeys.arrivalrate] = arrivalrate
+                break
 
 
 class PetriNetContainer:
