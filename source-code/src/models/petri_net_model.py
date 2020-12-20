@@ -54,18 +54,9 @@ def load_net(folder, name="petri_net"):
             if props is not None:
                 element.properties.update(props)
 
-    def update_arrival_rate_dict(in_dict, elements):
-        for element in elements:
-            if str(element.source) == 'source':
-                props = in_dict.get(str(element))
-                if props is not None:
-                    element.properties.update(props)
-                    break
-
     net.properties.update(property_dict[PetriNetDictKeys.net])
     update_dict(property_dict[PetriNetDictKeys.transitions], net.transitions)
     update_dict(property_dict[PetriNetDictKeys.places], net.places)
-    update_arrival_rate_dict(property_dict[PetriNetDictKeys.arcs], net.arcs)
 
     petrinet = PetriNet(None, net, initial_marking, final_marking)
 
@@ -121,15 +112,8 @@ class PetriNet:
     def construct_prop_dict_for_saving(self):
         property_dict = {}
 
-        # Add the petri net
+        # Add the petri net - arrival rate information
         property_dict[PetriNetDictKeys.net] = self.net.properties.copy()
-
-        # Add arrival rate info from the source arc
-        for elm in self.net.arcs:
-            if str(elm.source) == 'source':
-                property_dict[PetriNetDictKeys.arcs] \
-                    = {str(elm): elm.properties}
-                break
 
         # Add performance info from the transitions
         property_dict[PetriNetDictKeys.transitions] = {
@@ -257,12 +241,7 @@ class PetriNet:
             perf_dict[PetriNetDictKeys.std] = std
 
     def update_arrivalrate(self, arrivalrate):
-        for arc in self.net.arcs:
-            if str(arc.source) == 'source':
-                arc_dict = arc.properties[PetriNetDictKeys.arrivalinfo]
-                # Update arrival rate for the source arc
-                arc_dict[PetriNetDictKeys.arrivalrate] = arrivalrate
-                break
+        self.net.properties[PetriNetDictKeys.arrivalrate] = arrivalrate
 
 
 class PetriNetContainer:
@@ -340,8 +319,7 @@ class PetriNetVisualizer(PetriNetContainer):
         decorations = {}
         for arc in self.net.arcs:
             if str(arc.source) == 'source':
-                arrival_rate = arc.properties[constants.DICT_KEY_ARRIVAL_INFO_PETRI][
-                    constants.DICT_KEY_ARRIVAL_RATE]
+                arrival_rate = self.net.properties[constants.DICT_KEY_ARRIVAL_RATE]
                 label = "Arrival Rate \n {} minutes".format(arrival_rate)
                 decorations[arc] = {
                         "color": "#000000",
@@ -524,14 +502,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                     constants.DICT_KEY_PERF_STDEV
                 ] = constants.PERF_STDEV_DEFAULT_VALUE
 
-        for arc in self.net.arcs:
-            # Insert arrival info into arcs properties
-            if str(arc.source) == 'source' \
-                    and constants.DICT_KEY_ARRIVAL_INFO_PETRI not in arc.properties:
-                arc.properties[constants.DICT_KEY_ARRIVAL_INFO_PETRI] = {}
-                arc.properties[constants.DICT_KEY_ARRIVAL_INFO_PETRI][
-                    constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate
-                break
+        self.net.properties[constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate
 
 
 class PetriNetDecisionPointEnricher(PetriNetContainer):

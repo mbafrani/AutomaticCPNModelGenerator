@@ -28,7 +28,6 @@ DICT_KEY_PERF_STDEV = "stdev"
 DICT_KEY_PROBA_INFO_PETRI = "DECISION_PROBABILITY_INFORMATION_PETRI"
 DICT_KEY_FREQUENCY = "successor_frequencies"
 DICT_KEY_PLACE_PROB_INDEX = "DICT_KEY_PLACE_PROB_INDEX"
-DICT_KEY_ARRIVAL_INFO_PETRI = "ARRIVAL_INFORMATION_PETRI"
 DICT_KEY_ARRIVAL_RATE = "arrivalrate"
 
 # default performance values
@@ -62,8 +61,6 @@ class PetriNetDictKeys:
     arrivalrate = DICT_KEY_ARRIVAL_RATE
     places = "places"
     transitions = "transitions"
-    arcs = "arcs"
-    arrivalinfo = DICT_KEY_ARRIVAL_INFO_PETRI
 
 
 class RequestJsonKeys:

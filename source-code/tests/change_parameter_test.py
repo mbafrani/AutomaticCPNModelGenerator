@@ -48,8 +48,9 @@ class test_parameter_change(unittest.TestCase):
         data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
         response = self.client.post("/process-model/enrichment-dict", json=data)
 
-        transitions = response.json["transitions"]
-        places = response.json["places"]
+        transitions = response.json[PetriNetDictKeys.transitions]
+        places = response.json[PetriNetDictKeys.places]
+        arrival_rate = response.json[PetriNetDictKeys.net][PetriNetDictKeys.arrivalrate]
 
         self.check_transition_data(transitions, "A", 0, 0)
         self.check_transition_data(transitions, "B", 6.12, 4.19)
@@ -61,11 +62,12 @@ class test_parameter_change(unittest.TestCase):
 
         self.check_decision_point_data(places, "p_9", {"D": 0.9, "skip_3": 0.1})
         self.check_decision_point_data(places, "p_4", {"E": 0.2, "F": 0.8})
+        self.assertEqual(arrival_rate, 6)
 
         # 3. Update transition, check correct update
         data = {
             RequestJsonKeys.event_log_id: event_log_id,
-            RequestJsonKeys.arrivalrate: 120,
+            RequestJsonKeys.arrivalrate: 10,
             "test": True,
             RequestJsonKeys.transitions: [
                 {
@@ -75,7 +77,6 @@ class test_parameter_change(unittest.TestCase):
                 }]
         }
         response = self.client.post("/change-parameter", json=data)
-        print(response)
         transitions = response.json[PetriNetDictKeys.transitions]
         self.check_transition_data(transitions, "B", 3, 3)
 
@@ -84,6 +85,7 @@ class test_parameter_change(unittest.TestCase):
         response = self.client.post("/process-model/enrichment-dict", json=data)
         transitions = response.json[PetriNetDictKeys.transitions]
         self.check_transition_data(transitions, "B", 3, 3)
+        self.assertEqual(response.json[PetriNetDictKeys.net][PetriNetDictKeys.arrivalrate], 10)
 
 
 if __name__ == "__main__":
