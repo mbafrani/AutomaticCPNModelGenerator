@@ -13,11 +13,11 @@ class Wizard {
     this.storePageChangesInMemory = useFromMemory
   }
 
-  setWizardSharedDataForKey = (key, value) => {
+  setSharedDataForKey = (key, value) => {
     this.data[key] = value
   }
 
-  getWizardSharedDataForKey = key => this.data[key]
+  getSharedDataForKey = key => this.data[key]
 
   getWizardSharedData = () => this.data
 
@@ -77,9 +77,9 @@ class Wizard {
     const partialViews = [
       "wizard-import-log.html",
       "wizard-process-model.html",
-      "wizard-export-cpn.html",
       "wizard-view-params.html",
-      "wizard-change-params.html"
+      "wizard-change-params.html",
+      "wizard-process-model.html",
     ]
     const promises = []
     for (let i = 0; i < partialViews.length; i++) {
@@ -89,24 +89,24 @@ class Wizard {
     Promise.all(promises).then((contents) => {
       this.pageViewContents = $("<div/>").append(contents).find(".wizard__page");
       this.currentPageIndex = 0;
-      this.setupPage()
+      this.setupPage(true)
     });
   }
 
-  viewNextPage = pageNumber => {
+  viewNextPage = (pageNumber, loadPageListener=true) => {
     if (this.storePageChangesInMemory) {
         const content = $("#wizard .wizard__page")[0];
         this.pageViewContents[this.currentPageIndex] = content
     }
     this.previousPageIndex = this.currentPageIndex;
     typeof pageNumber == "number" ? this.currentPageIndex = (pageNumber - 1) : this.currentPageIndex++;
-    this.setupPage()
+    this.setupPage(loadPageListener)
   }
 
-  viewPreviousPage = (pageNumber, loadPageAgain=false) => {
+  viewPreviousPage = (pageNumber, loadPageListener=false) => {
     this.previousPageIndex = this.currentPageIndex;
     typeof pageNumber == "number" ? this.currentPageIndex = pageNumber - 1 : this.currentPageIndex--;
-    this.setupPage(loadPageAgain)
+    this.setupPage(loadPageListener)
   }
 
   getCurrentPageNumber = () => this.currentPageIndex + 1

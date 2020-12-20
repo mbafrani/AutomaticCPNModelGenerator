@@ -4,19 +4,18 @@ const uploadEventLog = file => new Promise((resolve, reject) => {
   const formData  = new FormData();
   formData.append("file", file);
 
-  fetch(apiEndpoint + "cpn-export", {
+  fetch(apiEndpoint + "event-log", {
     method: "POST",
     headers: {
-      "Accept": "application/json",
-      "Content-Type": "multipart/form-data"
+      "Accept": "application/json"
     },
     body: formData
   })
   .then(response => {
     if (response.status == 200) {
-      resolve(response.json())
+      response.json().then(response => resolve(response))
     } else {
-      reject(response)
+      response.json().then(response => reject(response))
     }
   })
 });
@@ -27,7 +26,7 @@ const getProcessModel = eventLogId => new Promise((resolve, reject) => {
       if (response.status == 200) {
         return response.blob()
       } else {
-        reject(response)
+        response.json().then(response => reject(response))
       }
     })
       .then(image => {
@@ -52,7 +51,7 @@ const exportCpnModel = eventLogId => new Promise((resolve, reject) => {
     if (response.status == 200) {
       return response.blob()
     } else {
-      reject(response)
+      response.json().then(response => reject(response))
     }
   })
     .then(blob => {
@@ -73,9 +72,9 @@ const getChangeParameters = eventLogId => new Promise((resolve, reject) => {
   fetch(apiEndpoint + "change-parameter/" + eventLogId)
     .then(response => {
       if (response.status == 200) {
-        resolve(response.json())
+        response.json().then(response => resolve(response))
       } else {
-        reject(response)
+        response.json().then(response => reject(response))
       }
     })
 });
@@ -91,9 +90,9 @@ const updateChangeParameters = changeParametersBody => new Promise((resolve, rej
   })
   .then(response => {
     if (response.status == 200) {
-      resolve(response)
+      response.json().then(response => resolve(response))
     } else {
-      reject(response)
+      response.json().then(response => reject(response))
     }
   })
 });

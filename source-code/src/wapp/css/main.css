@@ -4,6 +4,13 @@
   src: url("OpenSans-Regular.ttf");
 }
 
+:root {
+  --theme:#494bab;
+  --button-active:#494bab;
+  --button-hover: #2f3191;
+  --button-disabled: #AAAAAA;
+}
+
 * {
   box-sizing: border-box;
   /* outline: 1px solid #F00; */
@@ -25,7 +32,7 @@ html, body {
 /* elements -- layout */
 
 header {
-  background-color: #06AFAF;
+  background-color: var(--theme);
   color: white;
   font-size: 1.2em;
   height: 8%;
@@ -34,23 +41,11 @@ header {
 
 main {
 	background-color: #CACACA;
-  height: 87%;
+  height: 92%;
   width: 100%;
   padding: 1em;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-footer {
-	background-color: #111;
-  color: #888888;
-  font-size: 0.8em;
-  height: 5%;
-  width: 100%;
-  display: flex;
-	flex-direction: row;
   align-items: center;
   justify-content: center;
 }
@@ -102,6 +97,7 @@ footer {
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 1em;
     }
 
   .wizard__nav {
@@ -120,29 +116,66 @@ footer {
     width: 10%;
     border: 0;
     outline: 0;
-    color: #888888;
+    color: #555555;
     background-color: #EEEEEE;
     font-size: 1.2em;
     cursor: pointer;
   }
 
   .wizard__nav__btn:hover {
-    color: #555555;
+    color: #222222;
   }
 
   .wizard__nav__btn-active {
-    color: #018786;
+    color:var(--button-active);
   }
 
   .wizard__nav__btn-active:hover {
-    color: #036969;
+    color:var(--button-hover);
   }
 
   .wizard__nav__btn-disabled {
-    color: #AAAAAA;
+    color: var(--button-disabled);
   }
 
+  .wizard__nav__btn-disabled:hover {
+    color: var(--button-disabled);
+    cursor: not-allowed;
+  }
 
   .wizard-wrapper__img {
+    width: 100%;
+  }
+
+/*	module -- wizard: import log */
+.page__import-log {
+  justify-content: center;
+}
+
+  .page__import-log-btn {
+    border: 0;
+    outline: 0;
+    color: #FFFFFF;
+    background-color: var(--button-active);
+    font-size: 1em;
+    padding: 0.5em 2em;
+    margin: 1em 0 0.5em 0;
+    cursor: pointer;
+  }
+
+  .page__import-log-btn:hover {
+    background-color: var(--button-hover);
+  }
+
+  .page__import-log-filename {
+    margin: 0.5em;
+  }
+
+/*	module -- wizard: process model */
+.page__process-model {
+  justify-content: center;
+}
+
+  .page__process-model-img {
     width: 100%;
   }
