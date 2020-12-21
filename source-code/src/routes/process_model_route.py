@@ -8,7 +8,7 @@ process_model_page = Blueprint("process_model", __name__)
 
 
 @process_model_page.route("/process-model/<string:event_log_id>", methods=["GET"])
-def discover_process_model(event_log_id):
+def get_process_model(event_log_id):
 
     if not EventLogService.is_event_log_id_feasible(event_log_id):
         return make_response(
@@ -36,16 +36,19 @@ def discover_process_model(event_log_id):
 
 
 @process_model_page.route("/process-model/enrichment-dict", methods=["POST"])
-def discover_process_model(event_log_id):
+def discover_process_model():
 
-    if not request.json or "event_log_id" not in request.json:	
-        if not EventLogService.is_event_log_id_feasible(event_log_id):
-            return make_response(
-                jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST),
-                InternalServerError.code
-            )
+    if not request.json or "event_log_id" not in request.json:
+        return make_response(jsonify(
+            message=constants.ERROR_EVENT_LOG_ID_NOT_FOUND_IN_REQUEST
+        ), BadRequest.code)
 
     event_log_id = request.json["event_log_id"]
+    if not EventLogService.is_event_log_id_feasible(event_log_id):
+        return make_response(
+            jsonify(message=constants.ERROR_EVENT_LOG_DOESNT_EXIST),
+            InternalServerError.code
+        )
 
     try:
         petri_net_service = PetriNetService(event_log_id)

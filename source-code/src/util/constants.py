@@ -28,6 +28,7 @@ DICT_KEY_PERF_STDEV = "stdev"
 DICT_KEY_PROBA_INFO_PETRI = "DECISION_PROBABILITY_INFORMATION_PETRI"
 DICT_KEY_FREQUENCY = "successor_frequencies"
 DICT_KEY_PLACE_PROB_INDEX = "DICT_KEY_PLACE_PROB_INDEX"
+DICT_KEY_ARRIVAL_RATE = "arrivalrate"
 
 # default performance values
 PERF_MEAN_DEFAULT_VALUE = 0.0
@@ -57,7 +58,7 @@ class PetriNetDictKeys:
     performance = DICT_KEY_PERF_INFO_PETRI
     mean = DICT_KEY_PERF_MEAN
     std = DICT_KEY_PERF_STDEV
-    arrivalrate = "arrivalrate"
+    arrivalrate = DICT_KEY_ARRIVAL_RATE
     places = "places"
     transitions = "transitions"
 
