@@ -26,14 +26,14 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(1, len(globbox_element.getElementsByTagName("timed")))
         self.assertEqual(2, len(globbox_element.getElementsByTagName("var")))
         ml_element = globbox_element.getElementsByTagName("ml")
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_ITER_INDEX_START), ml_element[0].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_ITER_INDEX_END), ml_element[1].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_ITER_INDEX_START), ml_element[0].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_ITER_INDEX_END), ml_element[1].firstChild.nodeValue)
         id_element = globbox_element.getElementsByTagName("id")
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), id_element[0].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_ITER_INSTANCE), id_element[1].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), id_element[0].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_ITER_INSTANCE), id_element[1].firstChild.nodeValue)
         self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[2].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), id_element[3].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_VARIABLE), id_element[4].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), id_element[3].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE), id_element[4].firstChild.nodeValue)
         self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[5].firstChild.nodeValue)
         self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE), id_element[6].firstChild.nodeValue)
 
@@ -99,7 +99,7 @@ class TestCPNExportService(unittest.TestCase):
             posattr_element[1].getAttribute("y")
         )
         self.assertEqual(2, len(text_element))
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), text_element[1].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), text_element[1].firstChild.nodeValue)
 
     def test_create_place_element_for_page__with_initial_markings(self):
         cpn_export_service = CPNExportService()
@@ -163,7 +163,7 @@ class TestCPNExportService(unittest.TestCase):
         )
         self.assertEqual(3, len(text_element))
         self.assertEqual(str(place_obj), text_element[0].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST), text_element[1].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), text_element[1].firstChild.nodeValue)
         self.assertEqual(
             str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
                 [constants.DICT_KEY_LAYOUT_X] + (
@@ -180,7 +180,7 @@ class TestCPNExportService(unittest.TestCase):
             )),
             posattr_element[2].getAttribute("y")
         )
-        self.assertEqual(str(constants.DECLARATION_COLOR_REQUEST_INSTANCES), text_element[2].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_INSTANCES), text_element[2].firstChild.nodeValue)
 
     def test_create_trans_element_for_page(self):
         cpn_export_service = CPNExportService()
@@ -304,7 +304,7 @@ class TestCPNExportService(unittest.TestCase):
             "normal(" + execution_time_mean + "," + execution_time_stdev + ")"
         )
         self.assertEqual(
-            str(constants.DECLARATION_COLOR_REQUEST_VARIABLE) + "@+" + str("Real.round(" + normal_distrib + ")"),
+            str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) + "@+" + str("Real.round(" + normal_distrib + ")"),
             text_element[0].firstChild.nodeValue
         )
 
@@ -379,7 +379,7 @@ class TestCPNExportService(unittest.TestCase):
         text_element = arc_element.getElementsByTagName("text")
         self.assertEqual(1, len(text_element))
         self.assertEqual(
-            constants.DECLARATION_COLOR_REQUEST_VARIABLE,
+            constants.DECLARATION_COLOR_CASE_ID_VARIABLE,
             text_element[0].firstChild.nodeValue
         )
 
