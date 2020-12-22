@@ -37,42 +37,6 @@ class CPNExportService:
 
         globbox_tag.appendChild(color_tag)
 
-        # color for data
-        color_tag = document.createElement("color")
-        color_tag.setAttribute("id", str(uuid.uuid1().hex))
-        colorid_tag = document.createElement("id")
-        colorid_tag.appendChild(document.createTextNode(
-            str(constants.DECLARATION_COLOR_DATA)))
-        color_tag.appendChild(colorid_tag)
-        colorstring_tag = document.createElement(str(constants.DECLARATION_COLOR_DATA_DATATYPE))
-        color_tag.appendChild(colorstring_tag)
-
-        globbox_tag.appendChild(color_tag)
-
-        # color for case id x data
-        color_tag = document.createElement("color")
-        color_tag.setAttribute("id", str(uuid.uuid1().hex))
-        colorid_tag = document.createElement("id")
-        colorid_tag.appendChild(document.createTextNode(
-            str(constants.DECLARATION_COLOR_CASE_ID_X_DATA)))
-        color_tag.appendChild(colorid_tag)
-        colortimed_tag = document.createElement("timed")
-        color_tag.appendChild(colortimed_tag)
-
-        colorproduct_tag = document.createElement("product")
-        colorid_tag = document.createElement("id")
-        colorid_tag.appendChild(document.createTextNode(
-            str(constants.DECLARATION_COLOR_CASE_ID)))
-        colorproduct_tag.appendChild(colorid_tag)
-        colorid_tag = document.createElement("id")
-        colorid_tag.appendChild(document.createTextNode(
-            str(constants.DECLARATION_COLOR_DATA)))
-        colorproduct_tag.appendChild(colorid_tag)
-
-        color_tag.appendChild(colorproduct_tag)
-
-        globbox_tag.appendChild(color_tag)
-
         # color for probabilty info
         color_tag = document.createElement("color")
         color_tag.setAttribute("id", str(uuid.uuid1().hex))
@@ -103,24 +67,6 @@ class CPNExportService:
         varid_tag = document.createElement("id")
         varid_tag.appendChild(document.createTextNode(
             str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE)))
-        var_tag.appendChild(varid_tag)
-
-        globbox_tag.appendChild(var_tag)
-
-        # data variable
-        var_tag = document.createElement("var")
-        var_tag.setAttribute("id", str(uuid.uuid1().hex))
-
-        vartype_tag = document.createElement("type")
-        vartypeid_tag = document.createElement("id")
-        vartypeid_tag.appendChild(document.createTextNode(
-            str(constants.DECLARATION_COLOR_DATA)))
-        vartype_tag.appendChild(vartypeid_tag)
-        var_tag.appendChild(vartype_tag)
-
-        varid_tag = document.createElement("id")
-        varid_tag.appendChild(document.createTextNode(
-            str(constants.DECLARATION_COLOR_DATA_VARIABLE)))
         var_tag.appendChild(varid_tag)
 
         globbox_tag.appendChild(var_tag)
@@ -275,7 +221,7 @@ class CPNExportService:
                 str(constants.DECLARATION_COLOR_PROBABILITY)))  
         else:
             text_tag.appendChild(document.createTextNode(
-                str(constants.DECLARATION_COLOR_CASE_ID_X_DATA)))
+                str(constants.DECLARATION_COLOR_CASE_ID)))
         type_tag.appendChild(text_tag)
 
         place_tag.appendChild(type_tag)
@@ -644,7 +590,7 @@ class CPNExportService:
             if(is_target_place):
                 text_tag.appendChild(document.createTextNode(
                     str(
-                        constants.DECLARATION_COLOR_CASE_ID_X_DATA_INIT_VARIABLE
+                        constants.DECLARATION_COLOR_CASE_ID_VARIABLE
                     )
                 ))
         else:
@@ -668,7 +614,7 @@ class CPNExportService:
                 )
                 text_tag.appendChild(document.createTextNode(
                     str(
-                        constants.DECLARATION_COLOR_CASE_ID_X_DATA_VARIABLE) +
+                        constants.DECLARATION_COLOR_CASE_ID_VARIABLE) +
                     "@+" +
                     str(
                         "round(" +
@@ -678,7 +624,7 @@ class CPNExportService:
                 ))
             else:
                 text_tag.appendChild(document.createTextNode(
-                    str(constants.DECLARATION_COLOR_CASE_ID_X_DATA_VARIABLE)))
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE)))
 
         annot_tag.appendChild(text_tag)
         arc_tag.appendChild(annot_tag)
