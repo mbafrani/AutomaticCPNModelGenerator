@@ -1,0 +1,1126 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE workspaceElements
+  PUBLIC '-//CPN//DTD CPNXML 1.0//EN'
+  'http://www.daimi.au.dk/~cpntools/bin/DTD/2/cpn.dtd'>
+<workspaceElements>
+	<generator tool="CPN Tools" version="0.1.69.1" format="2"/>
+	<cpnet>
+		<globbox>
+			<color id="8eb525bf440111ebb56ddc4a3ef4fd83">
+				<id>CASE_ID</id>
+				<timed/>
+				<int/>
+			</color>
+			<color id="8eb573a3440111eb9a67dc4a3ef4fd83">
+				<id>INT</id>
+				<int/>
+			</color>
+			<var id="8eb5a407440111eb9f36dc4a3ef4fd83">
+				<type>
+					<id>CASE_ID</id>
+				</type>
+				<id>c</id>
+			</var>
+			<var id="8eb5c195440111ebaa8bdc4a3ef4fd83">
+				<type>
+					<id>INT</id>
+				</type>
+				<id>p</id>
+			</var>
+		</globbox>
+		<page id="8eb5e884440111ebbf79dc4a3ef4fd83">
+			<pageattr name="Page"/>
+			<place id="sink">
+				<posattr x="1092.0" y="174.0"/>
+				<fillattr colour="Red" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>sink</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8eb7471e440111eba0e4dc4a3ef4fd83">
+					<posattr x="1114.5" y="162.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_8">
+				<posattr x="1092.0" y="27.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_8</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8eb80a01440111eb8fbddc4a3ef4fd83">
+					<posattr x="1114.5" y="15.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_11">
+				<posattr x="1387.0" y="157.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_11</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8eb99b2c440111eb84a4dc4a3ef4fd83">
+					<posattr x="1409.5" y="145.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_6">
+				<posattr x="468.0" y="163.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_6</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8eba523f440111eb8463dc4a3ef4fd83">
+					<posattr x="490.5" y="151.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_10">
+				<posattr x="1092.0" y="101.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_10</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ebaee33440111eba7d6dc4a3ef4fd83">
+					<posattr x="1114.5" y="89.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_5">
+				<posattr x="791.0" y="77.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_5</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ebc9abd440111eba66cdc4a3ef4fd83">
+					<posattr x="813.5" y="65.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_4">
+				<posattr x="791.0" y="175.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_4</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ebd3674440111eb842edc4a3ef4fd83">
+					<posattr x="813.5" y="163.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="source">
+				<posattr x="468.0" y="77.0"/>
+				<fillattr colour="Teal" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>source</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ebe204b440111eb8ed7dc4a3ef4fd83">
+					<posattr x="490.5" y="65.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<place id="p_9">
+				<posattr x="195.0" y="126.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>p_9</text>
+				<ellipse h="22.5" w="22.5"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ebee2f5440111ebab2ddc4a3ef4fd83">
+					<posattr x="217.5" y="114.75"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+			</place>
+			<trans id="ce6a56a47a884e6bbc7f137dea120338">
+				<posattr x="1260.5" y="157.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>examine casually</text>
+				<box h="15.833400000000001" w="52.083"/>
+				<cond id="8ed34755440111eba36adc4a3ef4fd83">
+					<posattr x="1225.778" y="167.5556"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>[p &lt; 67]</text>
+				</cond>
+			</trans>
+			<trans id="e3ff198ffa79491c896a55b1389f4156">
+				<posattr x="962.5" y="127.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>reject request</text>
+				<box h="15.833400000000001" w="54.581999999999994"/>
+				<cond id="8ed19acb440111eb9611dc4a3ef4fd83">
+					<posattr x="926.112" y="137.5556"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>[p &lt; 50]</text>
+				</cond>
+			</trans>
+			<trans id="f5bf04c44c894af3a19a30c0f4e49478">
+				<posattr x="962.5" y="183.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>pay compensation</text>
+				<box h="15.833400000000001" w="54.581999999999994"/>
+				<cond id="8ed08a19440111ebac4cdc4a3ef4fd83">
+					<posattr x="926.112" y="193.5556"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>[p &gt;= 50]</text>
+				</cond>
+			</trans>
+			<trans id="1004a924578c4ec5972c3a618b07dd1f">
+				<posattr x="664.5" y="127.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>reinitiate request</text>
+				<box h="15.833400000000001" w="52.083"/>
+				<cond id="8eceded0440111eb9086dc4a3ef4fd83">
+					<posattr x="629.778" y="137.5556"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>[p &gt;= 67]</text>
+				</cond>
+			</trans>
+			<trans id="1e86746fb9ff49b38c0d422c2c8f5c76">
+				<posattr x="664.5" y="71.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>register request</text>
+				<box h="15.833400000000001" w="42.084"/>
+			</trans>
+			<trans id="skip_5">
+				<posattr x="664.5" y="182.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>skip_5</text>
+				<box h="15.0" w="23.3334"/>
+				<cond id="8ecdb8a2440111eb972cdc4a3ef4fd83">
+					<posattr x="648.9444" y="192.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>[p &lt; 67]</text>
+				</cond>
+			</trans>
+			<trans id="a52ad7ef25a242a08c142d7d5057b5e7">
+				<posattr x="65.5" y="34.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>check ticket</text>
+				<box h="15.833400000000001" w="54.581999999999994"/>
+			</trans>
+			<trans id="tauSplit_3">
+				<posattr x="962.5" y="72.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>tauSplit_3</text>
+				<box h="15.0" w="23.3334"/>
+			</trans>
+			<trans id="75472cf3488f4bf29f2ee9160c6ebe28">
+				<posattr x="331.5" y="163.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>decide</text>
+				<box h="15.833400000000001" w="60.417"/>
+			</trans>
+			<trans id="95b663d8b71d4c07bdf80f99b104900a">
+				<posattr x="1260.5" y="101.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>examine thoroughly</text>
+				<box h="15.833400000000001" w="52.083"/>
+				<cond id="8ed4580b440111ebb0efdc4a3ef4fd83">
+					<posattr x="1225.778" y="111.5556"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>[p &gt;= 67]</text>
+				</cond>
+			</trans>
+			<arc id="8ec1ee31440111eba567dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="95b663d8b71d4c07bdf80f99b104900a"/>
+				<placeend idref="p_11"/>
+				<annot id="8ec21517440111eb9ebfdc4a3ef4fd83">
+					<posattr x="1337.8" y="140.33"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(48.0,0.0))</text>
+				</annot>
+			</arc>
+			<arc id="8ec23c10440111eb9d11dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="75472cf3488f4bf29f2ee9160c6ebe28"/>
+				<placeend idref="p_6"/>
+				<annot id="8ec28a02440111eb8004dc4a3ef4fd83">
+					<posattr x="422.5" y="168.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(4564.275,3309.835))</text>
+				</annot>
+			</arc>
+			<arc id="8ec2be9a440111ebab49dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="tauSplit_3"/>
+				<placeend idref="p_10"/>
+				<annot id="8ec325c9440111eb8365dc4a3ef4fd83">
+					<posattr x="1034.8" y="93.224"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(0.0,0.0))</text>
+				</annot>
+			</arc>
+			<arc id="8ec3a169440111eb9cf2dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="skip_5"/>
+				<placeend idref="p_6"/>
+				<annot id="8ec3c1a0440111ebaef7dc4a3ef4fd83">
+					<posattr x="587.79" y="179.6"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec40f8e440111eba500dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="f5bf04c44c894af3a19a30c0f4e49478"/>
+				<placeend idref="p_4"/>
+				<annot id="8ec4368e440111eb87cedc4a3ef4fd83">
+					<posattr x="862.27" y="183.32"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec45d7a440111ebb8d6dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="a52ad7ef25a242a08c142d7d5057b5e7"/>
+				<placeend idref="p_9"/>
+				<annot id="8ec48471440111ebbcccdc4a3ef4fd83">
+					<posattr x="142.88" y="94.114"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(2808.67,1424.85))</text>
+				</annot>
+			</arc>
+			<arc id="8ec4d265440111ebba99dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="ce6a56a47a884e6bbc7f137dea120338"/>
+				<placeend idref="p_10"/>
+				<annot id="8ec4f95a440111ebb0f0dc4a3ef4fd83">
+					<posattr x="1130.4" y="122.6"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec52042440111eb92fcdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="1e86746fb9ff49b38c0d422c2c8f5c76"/>
+				<placeend idref="p_5"/>
+				<annot id="8ec5472c440111ebb3b1dc4a3ef4fd83">
+					<posattr x="741.63" y="79.669"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(0.0,0.0))</text>
+				</annot>
+			</arc>
+			<arc id="8ec59528440111ebb554dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="75472cf3488f4bf29f2ee9160c6ebe28"/>
+				<placeend idref="p_11"/>
+				<annot id="8ec5e317440111ebada6dc4a3ef4fd83">
+					<posattr x="1304.1" y="235.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec630f6440111eba2bddc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="tauSplit_3"/>
+				<placeend idref="p_5"/>
+				<annot id="8ec657e9440111ebb48edc4a3ef4fd83">
+					<posattr x="891.77" y="79.057"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec67eda440111ebb2b6dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="95b663d8b71d4c07bdf80f99b104900a"/>
+				<placeend idref="p_10"/>
+				<annot id="8ec6a5cf440111ebb1f7dc4a3ef4fd83">
+					<posattr x="1163.3" y="106.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec6ccc4440111eba8ebdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="e3ff198ffa79491c896a55b1389f4156"/>
+				<placeend idref="sink"/>
+				<annot id="8ec6f4f4440111eb84e3dc4a3ef4fd83">
+					<posattr x="1044.0" y="161.67"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(2570.67,1707.72))</text>
+				</annot>
+			</arc>
+			<arc id="8ec6f4f5440111ebbbc4dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="1004a924578c4ec5972c3a618b07dd1f"/>
+				<placeend idref="p_6"/>
+				<annot id="8ec71be7440111eba49ddc4a3ef4fd83">
+					<posattr x="506.56" y="154.53"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec755a1440111ebb4b0dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="ce6a56a47a884e6bbc7f137dea120338"/>
+				<placeend idref="p_11"/>
+				<annot id="8ec769c6440111eb8f29dc4a3ef4fd83">
+					<posattr x="1341.3" y="162.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(4195.0,4210.11))</text>
+				</annot>
+			</arc>
+			<arc id="8ec7b7ce440111ebb9abdc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="e3ff198ffa79491c896a55b1389f4156"/>
+				<placeend idref="p_4"/>
+				<annot id="8ec806fa440111ebb886dc4a3ef4fd83">
+					<posattr x="829.6" y="165.02"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec82b71440111eb95aadc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="skip_5"/>
+				<placeend idref="p_4"/>
+				<annot id="8ec8a05e440111eb8ff5dc4a3ef4fd83">
+					<posattr x="734.23" y="183.14"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(0.0,0.0))</text>
+				</annot>
+			</arc>
+			<arc id="8ec8c74b440111eb8421dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="a52ad7ef25a242a08c142d7d5057b5e7"/>
+				<placeend idref="p_8"/>
+				<annot id="8ec8ee4e440111ebabfddc4a3ef4fd83">
+					<posattr x="998.5" y="27.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec9153d440111eb9d35dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="1e86746fb9ff49b38c0d422c2c8f5c76"/>
+				<placeend idref="source"/>
+				<annot id="8ec93c32440111eba236dc4a3ef4fd83">
+					<posattr x="567.46" y="78.963"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec96328440111eba273dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="tauSplit_3"/>
+				<placeend idref="p_8"/>
+				<annot id="8ec98a1e440111eba26fdc4a3ef4fd83">
+					<posattr x="1035.7" y="51.504"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(0.0,0.0))</text>
+				</annot>
+			</arc>
+			<arc id="8ec9b111440111ebb21bdc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="75472cf3488f4bf29f2ee9160c6ebe28"/>
+				<placeend idref="p_9"/>
+				<annot id="8ec9d805440111eb83cfdc4a3ef4fd83">
+					<posattr x="240.7" y="143.3"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ec9d806440111eba642dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="1004a924578c4ec5972c3a618b07dd1f"/>
+				<placeend idref="p_5"/>
+				<annot id="8ec9ff04440111eba1e9dc4a3ef4fd83">
+					<posattr x="743.04" y="100.861"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(1106.67,803.51))</text>
+				</annot>
+			</arc>
+			<arc id="8eca25f0440111eb93dfdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="f5bf04c44c894af3a19a30c0f4e49478"/>
+				<placeend idref="sink"/>
+				<annot id="8eca4ce4440111eb97aadc4a3ef4fd83">
+					<posattr x="1046.5" y="182.14"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c@+round(normal(8569.33,4147.32))</text>
+				</annot>
+			</arc>
+			<trans id="Init">
+				<posattr x="368.0" y="77.0"/>
+				<fillattr colour="Silver" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>Init</text>
+				<box h="10" w="25"/>
+			</trans>
+			<arc id="8ecae8b1440111eb950fdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="Init"/>
+				<placeend idref="source"/>
+				<annot id="8ecb37e5440111eb9823dc4a3ef4fd83">
+					<posattr x="418.0" y="82.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<place id="next_CASE_ID">
+				<posattr x="368.0" y="127.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>next_CASE_ID</text>
+				<ellipse h="15" w="40"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ecb5eac440111eb8718dc4a3ef4fd83">
+					<posattr x="408.0" y="119.5"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>CASE_ID</text>
+				</type>
+				<initmark id="8ecb85bc440111ebb6d1dc4a3ef4fd83">
+					<posattr x="408.0" y="134.5"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>1</text>
+				</initmark>
+			</place>
+			<arc id="8ecbaca2440111ebb271dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="Init"/>
+				<placeend idref="next_CASE_ID"/>
+				<annot id="8ecbd3bc440111eba8d5dc4a3ef4fd83">
+					<posattr x="363.0" y="107.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c</text>
+				</annot>
+			</arc>
+			<arc id="8ecbfa93440111eb9189dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="Init"/>
+				<placeend idref="next_CASE_ID"/>
+				<annot id="8ecc2188440111eba583dc4a3ef4fd83">
+					<posattr x="373.0" y="107.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>c+1 @+round(150.0)</text>
+				</annot>
+			</arc>
+			<place id="prob_skip_5">
+				<posattr x="664.5" y="212.0"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>prob_1</text>
+				<ellipse h="10" w="25"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ecc6f96440111eb8fc9dc4a3ef4fd83">
+					<posattr x="689.5" y="207.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>INT</text>
+				</type>
+				<initmark id="8ecc6f97440111eb9e09dc4a3ef4fd83">
+					<posattr x="689.5" y="217.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</initmark>
+				<fusioninfo id="8ecc966b440111eb9795dc4a3ef4fd83" name="prob_1">
+					<posattr x="652.0" y="207.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+				</fusioninfo>
+			</place>
+			<arc id="8eccbd5c440111eb94bddc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="skip_5"/>
+				<placeend idref="prob_skip_5"/>
+				<annot id="8ecce312440111ebba11dc4a3ef4fd83">
+					<posattr x="659.5" y="202.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>p</text>
+				</annot>
+			</arc>
+			<arc id="8ecd3120440111eb9444dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="skip_5"/>
+				<placeend idref="prob_skip_5"/>
+				<annot id="8ecd7eff440111eb9553dc4a3ef4fd83">
+					<posattr x="669.5" y="202.0"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</annot>
+			</arc>
+			<place id="prob_1004a924578c4ec5972c3a618b07dd1f">
+				<posattr x="664.5" y="158.6668"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>prob_1</text>
+				<ellipse h="10" w="25"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ecdf52d440111eb9b74dc4a3ef4fd83">
+					<posattr x="689.5" y="153.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>INT</text>
+				</type>
+				<initmark id="8ece1c34440111eb8cd7dc4a3ef4fd83">
+					<posattr x="689.5" y="163.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</initmark>
+				<fusioninfo id="8ece42f2440111ebab7adc4a3ef4fd83" name="prob_1">
+					<posattr x="652.0" y="153.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+				</fusioninfo>
+			</place>
+			<arc id="8ece69eb440111eb9ad0dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="1004a924578c4ec5972c3a618b07dd1f"/>
+				<placeend idref="prob_1004a924578c4ec5972c3a618b07dd1f"/>
+				<annot id="8ece69ec440111eb8d3bdc4a3ef4fd83">
+					<posattr x="659.5" y="147.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>p</text>
+				</annot>
+			</arc>
+			<arc id="8ece90df440111eba4cfdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="1004a924578c4ec5972c3a618b07dd1f"/>
+				<placeend idref="prob_1004a924578c4ec5972c3a618b07dd1f"/>
+				<annot id="8eceb7d4440111eba590dc4a3ef4fd83">
+					<posattr x="669.5" y="147.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</annot>
+			</arc>
+			<place id="prob_f5bf04c44c894af3a19a30c0f4e49478">
+				<posattr x="962.5" y="214.6668"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>prob_2</text>
+				<ellipse h="10" w="25"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ecf2cb3440111ebb15fdc4a3ef4fd83">
+					<posattr x="987.5" y="209.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>INT</text>
+				</type>
+				<initmark id="8ecf2cb4440111ebb8f2dc4a3ef4fd83">
+					<posattr x="987.5" y="219.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</initmark>
+				<fusioninfo id="8ecf7971440111eba9d8dc4a3ef4fd83" name="prob_2">
+					<posattr x="950.0" y="209.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+				</fusioninfo>
+			</place>
+			<arc id="8ecfc759440111eb88ffdc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="f5bf04c44c894af3a19a30c0f4e49478"/>
+				<placeend idref="prob_f5bf04c44c894af3a19a30c0f4e49478"/>
+				<annot id="8ed025c3440111eb83e2dc4a3ef4fd83">
+					<posattr x="957.5" y="203.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>p</text>
+				</annot>
+			</arc>
+			<arc id="8ed03c38440111eb855fdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="f5bf04c44c894af3a19a30c0f4e49478"/>
+				<placeend idref="prob_f5bf04c44c894af3a19a30c0f4e49478"/>
+				<annot id="8ed06325440111eba9b2dc4a3ef4fd83">
+					<posattr x="967.5" y="203.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</annot>
+			</arc>
+			<place id="prob_e3ff198ffa79491c896a55b1389f4156">
+				<posattr x="962.5" y="158.6668"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>prob_2</text>
+				<ellipse h="10" w="25"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ed0d7ff440111eb8cfbdc4a3ef4fd83">
+					<posattr x="987.5" y="153.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>INT</text>
+				</type>
+				<initmark id="8ed0fef6440111eba253dc4a3ef4fd83">
+					<posattr x="987.5" y="163.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</initmark>
+				<fusioninfo id="8ed0fef7440111eb80c5dc4a3ef4fd83" name="prob_2">
+					<posattr x="950.0" y="153.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+				</fusioninfo>
+			</place>
+			<arc id="8ed125ea440111ebb661dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="e3ff198ffa79491c896a55b1389f4156"/>
+				<placeend idref="prob_e3ff198ffa79491c896a55b1389f4156"/>
+				<annot id="8ed14cdf440111ebb232dc4a3ef4fd83">
+					<posattr x="957.5" y="147.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>p</text>
+				</annot>
+			</arc>
+			<arc id="8ed173d4440111eba12cdc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="e3ff198ffa79491c896a55b1389f4156"/>
+				<placeend idref="prob_e3ff198ffa79491c896a55b1389f4156"/>
+				<annot id="8ed19aca440111eba56cdc4a3ef4fd83">
+					<posattr x="967.5" y="147.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</annot>
+			</arc>
+			<place id="prob_ce6a56a47a884e6bbc7f137dea120338">
+				<posattr x="1260.5" y="188.6668"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>prob_3</text>
+				<ellipse h="10" w="25"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ed1e8b7440111eb84bddc4a3ef4fd83">
+					<posattr x="1285.5" y="183.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>INT</text>
+				</type>
+				<initmark id="8ed236b3440111ebad3bdc4a3ef4fd83">
+					<posattr x="1285.5" y="193.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</initmark>
+				<fusioninfo id="8ed2883a440111eb9819dc4a3ef4fd83" name="prob_3">
+					<posattr x="1248.0" y="183.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+				</fusioninfo>
+			</place>
+			<arc id="8ed2d46a440111eb9194dc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="ce6a56a47a884e6bbc7f137dea120338"/>
+				<placeend idref="prob_ce6a56a47a884e6bbc7f137dea120338"/>
+				<annot id="8ed2f96b440111eb8898dc4a3ef4fd83">
+					<posattr x="1255.5" y="177.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>p</text>
+				</annot>
+			</arc>
+			<arc id="8ed2f96c440111eb8502dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="ce6a56a47a884e6bbc7f137dea120338"/>
+				<placeend idref="prob_ce6a56a47a884e6bbc7f137dea120338"/>
+				<annot id="8ed32060440111eb95d3dc4a3ef4fd83">
+					<posattr x="1265.5" y="177.83339999999998"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</annot>
+			</arc>
+			<place id="prob_95b663d8b71d4c07bdf80f99b104900a">
+				<posattr x="1260.5" y="132.6668"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<text>prob_3</text>
+				<ellipse h="10" w="25"/>
+				<token x="0.000000" y="0.000000"/>
+				<marking x="0.000000" y="0.000000"/>
+				<type id="8ed39545440111eb9708dc4a3ef4fd83">
+					<posattr x="1285.5" y="127.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>INT</text>
+				</type>
+				<initmark id="8ed3bc35440111ebb8f4dc4a3ef4fd83">
+					<posattr x="1285.5" y="137.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</initmark>
+				<fusioninfo id="8ed3bc36440111ebb953dc4a3ef4fd83" name="prob_3">
+					<posattr x="1248.0" y="127.6668"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Black" bold="false"/>
+				</fusioninfo>
+			</place>
+			<arc id="8ed3e32a440111eb949cdc4a3ef4fd83" orientation="PtoT">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="95b663d8b71d4c07bdf80f99b104900a"/>
+				<placeend idref="prob_95b663d8b71d4c07bdf80f99b104900a"/>
+				<annot id="8ed40a1f440111eba285dc4a3ef4fd83">
+					<posattr x="1255.5" y="121.8334"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>p</text>
+				</annot>
+			</arc>
+			<arc id="8ed43116440111eba293dc4a3ef4fd83" orientation="TtoP">
+				<posattr x="0.000000" y="0.000000"/>
+				<fillattr colour="White" pattern="Solid" filled="false"/>
+				<lineattr colour="Black" thick="2" type="Solid"/>
+				<textattr colour="Black" bold="false"/>
+				<arrowattr headsize="1.000000" currentcyckle="2"/>
+				<transend idref="95b663d8b71d4c07bdf80f99b104900a"/>
+				<placeend idref="prob_95b663d8b71d4c07bdf80f99b104900a"/>
+				<annot id="8ed4580a440111eb9a24dc4a3ef4fd83">
+					<posattr x="1265.5" y="121.8334"/>
+					<fillattr colour="White" pattern="Solid" filled="false"/>
+					<lineattr colour="Black" thick="0" type="Solid"/>
+					<textattr colour="Teal" bold="false"/>
+					<text>discrete(0, 99)</text>
+				</annot>
+			</arc>
+		</page>
+		<fusion id="8ed4cd1a440111eb8cf7dc4a3ef4fd83" name="prob_1">
+			<fusion_elm idref="prob_skip_5"/>
+			<fusion_elm idref="prob_1004a924578c4ec5972c3a618b07dd1f"/>
+		</fusion>
+		<fusion id="8ed4cd1b440111eb8f85dc4a3ef4fd83" name="prob_2">
+			<fusion_elm idref="prob_f5bf04c44c894af3a19a30c0f4e49478"/>
+			<fusion_elm idref="prob_e3ff198ffa79491c896a55b1389f4156"/>
+		</fusion>
+		<fusion id="8ed4cd1c440111ebafc1dc4a3ef4fd83" name="prob_3">
+			<fusion_elm idref="prob_ce6a56a47a884e6bbc7f137dea120338"/>
+			<fusion_elm idref="prob_95b663d8b71d4c07bdf80f99b104900a"/>
+		</fusion>
+	</cpnet>
+</workspaceElements>
