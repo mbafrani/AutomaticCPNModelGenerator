@@ -103,7 +103,7 @@ class Wizard {
     this.setupPage(loadPageListener)
   }
 
-  viewPreviousPage = (pageNumber, loadPageListener=false) => {
+  viewPreviousPage = (pageNumber, loadPageListener=true) => {
     this.previousPageIndex = this.currentPageIndex;
     typeof pageNumber == "number" ? this.currentPageIndex = pageNumber - 1 : this.currentPageIndex--;
     this.setupPage(loadPageListener)

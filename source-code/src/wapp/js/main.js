@@ -1,12 +1,6 @@
 import * as apiService from "./api-service.js";
 import Wizard from "./wizard.js";
 
-// TODO:  Move these functions inside resepective page listeners
-const handleExportCpnModel = eventLogId => 
-  apiService.exportCpnModel(eventLogId)
-    .then(response => console.log("Downloaded")) // TODO: Show in the UI
-    .catch(error => alert(error.message)); // TODO: Show in the UI
-
 const handleGetChangeParameters = eventLogId => 
   apiService.getChangeParameters(eventLogId)
     .then(response => console.log(response)) // TODO: Show in the UI
@@ -70,10 +64,9 @@ wizard.addPage(
 
 // view process model page
 wizard.addPage(
-  "Process Model",
+  "Enriched Process Model",
   () => { // on load event listener
-    // disable the left button, so that user can"t upload again
-    wizard.disableLeftButton();
+    wizard.enableLeftButton();
     // show loading gif
     $("#process-model-loading").show();
     // get the event log id from wizard shared dictionary
@@ -84,16 +77,30 @@ wizard.addPage(
         // hide the loading gif
         $("#process-model-loading").hide();
         // TODO: Show in the wizard UI properly
+        $("#process-model").attr("href", imageURL);
         $("#process-model-img").attr("src", imageURL);
+        $('.easyzoom').easyZoom();
       })
       .catch(error => {
         alert(error.message); // TODO: Show in the UI
         // disable the right button
         wizard.disableRightButton();
       });
+      $("#export-file").click(function() {
+        apiService.exportCpnModel(eventLogId)
+        .then(response => console.log("Downloaded")) 
+        .catch(error => alert(error.message)); 
+        // enable the right button
+        wizard.enableRightButton();
+      });
+
+
+      
+
   },
-  "Back", () => {}, // left button event listener,  do nothing
-  "Next", () => wizard.viewNextPage() // right button event listener
+  //"Back", () => {}, // left button event listener,  do nothing
+  "Back", () => location.reload(),  // left button event listener
+  "Change parameters", () => wizard.viewNextPage() // right button event listener
 );
 
 // third page
