@@ -105,13 +105,56 @@ wizard.addPage(
 
 // third page
 wizard.addPage(
-  "Third Page",
+  "Change arrival rate and service times of activities",
   () => { // on load event listener
     // enable the left button
     wizard.enableLeftButton();
+    const eventLogId = wizard.getSharedDataForKey("event-log-id");
+    apiService.getChangeParameters(eventLogId)
+    .then(response => {
+      $('#arrival_rate').val(response.arrivalrate);
+      var transitions= response.transitions;
+      $('.table_service').empty();
+      var content='<table id="service_times" ><thead> <tr><th>Transition</th> <th>Mean (in mins) </th> <th> Std Dev (in mins)</th></tr></thead><tbody>'
+       for( var i=0; i< transitions.length; i++){
+        content += '<tr> <td id="t_'+[i]+'">' + transitions[i]['transition'] +'</td>'  
+        content += '<td contenteditable="true">' + transitions[i]['mean'] +'</td>'
+        content += '<td contenteditable="true">' + transitions[i]['std'] +'</td>'
+        // content += '<td> <input type="text" id="s_'+[i]+'"' + 'value='+transitions[i]['std'] +'></td></tr>'
+      } 
+      content += '</tbody></table>'
+      $('.table_service').append(content);
+      }
+    
+    ) // TODO: Show in the UI
+    .catch(error => alert(error.message));
   },
   "Back", () => wizard.viewPreviousPage(), // left button event listener
-  "Next", () => wizard.viewNextPage() // right button event listener
+  "Update", () => {
+    var rows = [];
+            $('tbody tr').each(function(i, n){
+                var $row = $(n);
+                rows.push({
+                    mean:   parseFloat($row.find('td:eq(1)').text()),
+                    std:    parseFloat($row.find('td:eq(2)').text()),
+                    transition: $row.find('td:eq(0)').text(),
+                });
+            });
+
+            var changeParamObj = new Object();
+            changeParamObj.arrivalrate= parseFloat($('#arrival_rate').val());
+            changeParamObj.event_log_id = wizard.getSharedDataForKey("event-log-id");
+            changeParamObj.transitions = rows;
+            apiService.updateChangeParameters(changeParamObj)
+            .then(response => console.log("hheh"))
+              //wizard.viewPreviousPage();
+              //console.log("Updated111")
+              //wizard.viewPreviousPage();
+            //}) // TODO: Show in the UI
+            .catch(error => alert(error.message));
+            console.log("iii")
+            wizard.viewPreviousPage();
+  } // right button event listener
 );
 
 // fourth page
