@@ -1,4 +1,5 @@
 import pm4py
+from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
@@ -116,9 +117,14 @@ class PetriNet:
         property_dict[PetriNetDictKeys.net] = self.net.properties.copy()
 
         # Add performance info from the transitions
-        property_dict[PetriNetDictKeys.transitions] = {
-            str(elm): elm.properties for elm in self.net.transitions
-        }
+        prop_dict = {str(elm): elm.properties for elm in self.net.transitions}
+
+        # Filter out silent transitions
+        activities = self.net.properties.get(PetriNetDictKeys.transition_names)
+        if activities is not None:
+            prop_dict = {act: prop_dict[act] for act in activities}
+
+        property_dict[PetriNetDictKeys.transitions] = prop_dict
 
         # Add probability information from the places
         property_dict[PetriNetDictKeys.places] = {
@@ -303,16 +309,23 @@ class PetriNetVisualizer(PetriNetContainer):
 
     def _get_transition_decoration(self):
         decorations = {}
+        act_key = exec_utils.get_param_value(
+            Parameters.ACTIVITY_KEY, {}, xes_constants.DEFAULT_NAME_KEY
+        )
+        non_silent_transitions = self.net.properties[PetriNetDictKeys.transition_names]
         # add new decorations for transitions with performance distribution
         for transition in self.net.transitions:
-            mean_value = transition.properties[constants.DICT_KEY_PERF_INFO_PETRI][
-                constants.DICT_KEY_PERF_MEAN
-            ]
-            std_value = transition.properties[constants.DICT_KEY_PERF_INFO_PETRI][
-                constants.DICT_KEY_PERF_STDEV
-            ]
-            label = str(transition) + "\n" + ("N(" + str(mean_value) + ", " + str(std_value) + ")")
-            decorations[transition] = {"color": "#FFFFFF ", "label": label}
+            
+            # Ignore silent transitions
+            if str(transition) not in non_silent_transitions:
+                continue
+
+            perf_dict = transition.properties.get(PetriNetDictKeys.performance)
+            if perf_dict is not None:
+                mean_value = perf_dict.get(PetriNetDictKeys.mean)
+                std_value = perf_dict.get(PetriNetDictKeys.std)
+                label = str(transition) + "\n" + ("N(" + str(mean_value) + ", " + str(std_value) + ")")
+                decorations[transition] = {"color": "#FFFFFF ", "label": label}
         return decorations
 
     def _get_source_arc_decoration(self):
@@ -345,16 +358,29 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
             mean_dict, stdev_dict = self._get_service_time_single_timestamps(
                 self.log, self.net, self.initial_marking, self.final_marking
             )
+        
+        act_key = exec_utils.get_param_value(
+            Parameters.ACTIVITY_KEY, {}, xes_constants.DEFAULT_NAME_KEY
+        )
+        activities = attributes_filter.get_attribute_values(self.log, act_key)
+
+        mean_dict = {activity: mean_dict[activity] for activity in activities}
+        stdev_dict = {activity: stdev_dict[activity] for activity in activities}
 
         # Get the average event log arrival rate
         case_arrival_ratio = case_arrival.get_case_arrival_avg(
             self.log,
             parameters={case_arrival.Parameters.TIMESTAMP_KEY: "time:timestamp"})
 
-        arrival_rate = math.ceil(case_arrival_ratio/60)
+        arrival_rate = math.ceil(case_arrival_ratio / 60)
+
+        act_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, {}, xes_constants.DEFAULT_NAME_KEY)
+        activities = list(attributes_filter.get_attribute_values(self.log, act_key))
+
+
 
         # store transition's perf information in the properties dictionary
-        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate)
+        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate, activities)
 
     def _aggregate_stats(self, statistics, elem, aggregation_measure):
         aggr_stat = 0
@@ -482,7 +508,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
     # extracts the perf information - execution time mean and std deviation
     # and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
-    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate):
+    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate, activities ):
         for trans in self.net.transitions:
             # insert the perf info into trans properties
             if constants.DICT_KEY_PERF_INFO_PETRI not in trans.properties:
@@ -502,6 +528,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                     constants.DICT_KEY_PERF_STDEV
                 ] = constants.PERF_STDEV_DEFAULT_VALUE
 
+        self.net.properties[PetriNetDictKeys.transition_names] = activities
         self.net.properties[constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate
 
 
