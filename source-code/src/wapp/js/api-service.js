@@ -80,6 +80,7 @@ const getChangeParameters = eventLogId => new Promise((resolve, reject) => {
 });
 
 const updateChangeParameters = changeParametersBody => new Promise((resolve, reject) => {
+  console.log(JSON.stringify(changeParametersBody));
   fetch(apiEndpoint + "change-parameter", {
     method: "POST",
     headers: {
@@ -90,9 +91,10 @@ const updateChangeParameters = changeParametersBody => new Promise((resolve, rej
   })
   .then(response => {
     if (response.status == 200) {
-      response.json().then(response => resolve(response))
+      console.log("jjjuuu")
+      return response.blob()
     } else {
-      response.json().then(response => reject(response))
+      response => reject(response)
     }
   })
 });
