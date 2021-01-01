@@ -9,3 +9,12 @@ __pycache__/
 
 # Server logs
 server.log
+
+# Unit test coverage files
+**/.coverage
+**/.htmlcov/
+
+# event log files uploaded in src/api/data
+src/api/data/uploads/*
+# except our favourite log
+!src/api/data/uploads/d43bcfbb-33df-11eb-979e-dc4a3ef4fd83/

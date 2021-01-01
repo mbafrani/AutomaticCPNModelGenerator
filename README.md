@@ -12,7 +12,7 @@ Implement the discovery and simulation of CPN models in pm4py.
 
 ## Getting started
 ```bash
-$ cd source-code/src
+$ cd src
 $ flask run
 ```
 
