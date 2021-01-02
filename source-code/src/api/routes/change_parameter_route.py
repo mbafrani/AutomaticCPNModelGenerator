@@ -70,14 +70,17 @@ def get_parameters(event_log_id):
                   (PetriNetDictKeys.arrivalrate)}
 
         transitions = []
+        # Filter out silent transitions
+        activities = prop_dict[PetriNetDictKeys.net].get(PetriNetDictKeys.transition_names)
         for trans_name, _mean_std in prop_dict[PetriNetDictKeys.transitions].items():
-            mean_std = _mean_std[PetriNetDictKeys.performance]
-            transition = {
-                RequestJsonKeys.transition: trans_name,
-                RequestJsonKeys.mean: mean_std[PetriNetDictKeys.mean],
-                RequestJsonKeys.std: mean_std[PetriNetDictKeys.std],
-            }
-            transitions.append(transition)
+            if trans_name in activities:
+                mean_std = _mean_std[PetriNetDictKeys.performance]
+                transition = {
+                    RequestJsonKeys.transition: trans_name,
+                    RequestJsonKeys.mean: mean_std[PetriNetDictKeys.mean],
+                    RequestJsonKeys.std: mean_std[PetriNetDictKeys.std],
+                }
+                transitions.append(transition)
 
         result[JsonKeys.transitions] = transitions
 
