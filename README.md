@@ -1,8 +1,10 @@
 # Process Discovery Using Python - CPN Model WS2020
 
-![CI Pipeline](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/workflows/CI%20Pipeline/badge.svg)
+[![CI Pipeline](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/workflows/CI%20Pipeline/badge.svg)](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/actions)
 
 Implement the discovery and simulation of CPN models in pm4py.
+
+https://cpn-model-process-discovery-1.herokuapp.com/
 
 
 ## Participants:

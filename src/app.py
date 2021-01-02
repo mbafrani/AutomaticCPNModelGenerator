@@ -26,5 +26,5 @@ for blueprint in vars(wapp_page).values():
         app.register_blueprint(blueprint, url_prefix=config.WAPP_APPLICATION_ROOT)
 
 if __name__ == "__main__":
-    app.run(host=config.HOST, port=config.PORT)
     print("App running on: " + config.HOST + ":" + str(config.PORT))
+    app.run(host=config.HOST, port=config.PORT)
