@@ -26,6 +26,11 @@ jobs:
         run: make init
       - name: Run tests with coverage/unittest
         run: make test
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: aecea6cf-8e41-42ee-9433-016a12208552 # upload token needs to be stored in secrets
+          fail_ci_if_error: true
       - name: Login to Heroku Container registry
         env: 
           HEROKU_API_KEY: 8e0c1634-5e2e-46d6-940a-6b3bd198b467 # this is a test account, api key needs to be stored in secrets

@@ -13,6 +13,7 @@ server.log
 # Unit test coverage files
 **/.coverage
 **/.htmlcov/
+**/coverage.xml
 
 # event log files uploaded in src/api/data
 src/api/data/uploads/*
