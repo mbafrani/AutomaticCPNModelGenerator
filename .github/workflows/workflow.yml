@@ -25,4 +25,16 @@ jobs:
       - name: Install dependencies
         run: make init
       - name: Run tests with coverage/unittest
-        run: make test 
+        run: make test
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: 8e0c1634-5e2e-46d6-940a-6b3bd198b467 # this is a test account, api key needs to be stored in secrets
+        run: heroku container:login
+      - name: Build and push to Heroku
+        env:
+          HEROKU_API_KEY: 8e0c1634-5e2e-46d6-940a-6b3bd198b467
+        run: heroku container:push -a cpn-model-process-discovery-1 web 
+      - name: Release to Heroku
+        env:
+          HEROKU_API_KEY: 8e0c1634-5e2e-46d6-940a-6b3bd198b467
+        run: heroku container:release -a cpn-model-process-discovery-1 web
