@@ -27,3 +27,4 @@ for blueprint in vars(wapp_page).values():
 
 if __name__ == "__main__":
     app.run(host=config.HOST, port=config.PORT)
+    print("App running on: " + config.HOST + ":" + str(config.PORT))

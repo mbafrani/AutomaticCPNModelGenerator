@@ -1,10 +1,10 @@
-FROM python:3
+FROM python:3.8
 
 WORKDIR /usr/src/app
 COPY src Makefile requirements.txt ./
 
-RUN make init
+RUN make linux-graphviz && make init
 
 EXPOSE 5000
 
-CMD [ "python", "src/app.py" ]
+CMD [ "python", "app.py" ]
