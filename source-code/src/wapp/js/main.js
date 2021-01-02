@@ -1,17 +1,6 @@
 import * as apiService from "./api-service.js";
 import Wizard from "./wizard.js";
 
-const handleGetChangeParameters = eventLogId => 
-  apiService.getChangeParameters(eventLogId)
-    .then(response => console.log(response)) // TODO: Show in the UI
-    .catch(error => alert(error.message)); // TODO: Show in the UI
-
-const handleUpdateChangeParameters = updateParametersBody =>
-  apiService.updateChangeParameters(updateParametersBody)
-    .then(response => console.log("Updated")) // TODO: Show in the UI
-    .catch(error => alert(error.message)); // TODO: Show in the UI
-
-
 const wizard = new Wizard();
 
 // import an event log page
@@ -76,7 +65,6 @@ wizard.addPage(
       .then(imageURL => {
         // hide the loading gif
         $("#process-model-loading").hide();
-        // TODO: Show in the wizard UI properly
         $("#process-model").attr("href", imageURL);
         $("#process-model-img").attr("src", imageURL);
         $('.easyzoom').easyZoom();
@@ -93,10 +81,6 @@ wizard.addPage(
         // enable the right button
         wizard.enableRightButton();
       });
-
-
-      
-
   },
   //"Back", () => {}, // left button event listener,  do nothing
   "Back", () => location.reload(),  // left button event listener
@@ -114,19 +98,18 @@ wizard.addPage(
     .then(response => {
       $('#arrival_rate').val(response.arrivalrate);
       var transitions= response.transitions;
-      $('.table_service').empty();
-      var content='<table id="service_times" ><thead> <tr><th>Transition</th> <th>Mean (in mins) </th> <th> Std Dev (in mins)</th></tr></thead><tbody>'
+      $('#service_times').empty();
+      var content='<thead> <tr><th>Transition</th> <th>Mean (in mins) </th> <th> Std Dev (in mins)</th></tr></thead><tbody>'
        for( var i=0; i< transitions.length; i++){
         content += '<tr> <td id="t_'+[i]+'">' + transitions[i]['transition'] +'</td>'  
         content += '<td contenteditable="true">' + transitions[i]['mean'] +'</td>'
         content += '<td contenteditable="true">' + transitions[i]['std'] +'</td>'
-        // content += '<td> <input type="text" id="s_'+[i]+'"' + 'value='+transitions[i]['std'] +'></td></tr>'
       } 
-      content += '</tbody></table>'
-      $('.table_service').append(content);
+      content += '</tbody>'
+      $('#service_times').append(content);
       }
     
-    ) // TODO: Show in the UI
+    ) 
     .catch(error => alert(error.message));
   },
   "Back", () => wizard.viewPreviousPage(), // left button event listener
@@ -146,13 +129,8 @@ wizard.addPage(
             changeParamObj.event_log_id = wizard.getSharedDataForKey("event-log-id");
             changeParamObj.transitions = rows;
             apiService.updateChangeParameters(changeParamObj)
-            .then(response => console.log("hheh"))
-              //wizard.viewPreviousPage();
-              //console.log("Updated111")
-              //wizard.viewPreviousPage();
-            //}) // TODO: Show in the UI
+            .then(response => console.log("Updated"))
             .catch(error => alert(error.message));
-            console.log("iii")
             wizard.viewPreviousPage();
   } // right button event listener
 );

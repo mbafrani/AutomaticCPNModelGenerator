@@ -91,6 +91,7 @@ main {
   }
 
     .wizard__page {
+      overflow-y: auto;
       width: 100%;
       height: 100%;
       display: flex;
@@ -179,3 +180,33 @@ main {
   .page__process-model-img {
     width: 100%;
   }
+
+  table, td, th{
+    border: 1px solid black;
+  }
+  table{
+    border-collapse: collapse;
+    display: block;
+  }
+
+.table_service {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em;
+}
+
+td[contenteditable="true"]:focus, input[type="number"]:focus {
+  background-color:#ADD8E6;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+th{
+  background-color: #f2f2f2;
+}
+
+th, td {
+  padding: 0.1em;
+}
