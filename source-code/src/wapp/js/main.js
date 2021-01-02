@@ -82,14 +82,13 @@ wizard.addPage(
         wizard.enableRightButton();
       });
   },
-  //"Back", () => {}, // left button event listener,  do nothing
-  "Back", () => location.reload(),  // left button event listener
-  "Change parameters", () => wizard.viewNextPage() // right button event listener
+  "Upload New Event Log", () => location.reload(),  // left button event listener
+  "Change Parameters", () => wizard.viewNextPage() // right button event listener
 );
 
 // third page
 wizard.addPage(
-  "Change arrival rate and service times of activities",
+  "Change Arrival Rate and Service Times of Activities",
   () => { // on load event listener
     // enable the left button
     wizard.enableLeftButton();
@@ -133,14 +132,6 @@ wizard.addPage(
             .catch(error => alert(error.message));
             wizard.viewPreviousPage();
   } // right button event listener
-);
-
-// fourth page
-wizard.addPage(
-  "Fourth Page",
-  () => {},  // on load event listener
-  "Back", () => wizard.viewPreviousPage(), // left button event listener
-  "Finish", () => location.reload() // right button event listener, reload the page
 );
 
 wizard.showWizard();
