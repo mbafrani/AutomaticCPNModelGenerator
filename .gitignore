@@ -9,3 +9,6 @@ __pycache__/
 
 # Server logs
 server.log
+
+# Docker
+cpn_generation.docker
