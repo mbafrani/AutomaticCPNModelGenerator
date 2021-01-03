@@ -77,9 +77,7 @@ class Wizard {
     const partialViews = [
       "wizard-import-log.html",
       "wizard-process-model.html",
-      "wizard-view-params.html",
-      "wizard-change-params.html",
-      "wizard-process-model.html",
+      "wizard-view-params.html"
     ]
     const promises = []
     for (let i = 0; i < partialViews.length; i++) {

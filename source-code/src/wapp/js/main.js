@@ -56,6 +56,9 @@ wizard.addPage(
   "Enriched Process Model",
   () => { // on load event listener
     wizard.enableLeftButton();
+    // hide image and button
+    $("#process-model-img").hide();
+    $("#export-file-btn").hide();
     // show loading gif
     $("#process-model-loading").show();
     // get the event log id from wizard shared dictionary
@@ -65,8 +68,12 @@ wizard.addPage(
       .then(imageURL => {
         // hide the loading gif
         $("#process-model-loading").hide();
+        // update image
         $("#process-model").attr("href", imageURL);
         $("#process-model-img").attr("src", imageURL);
+        // show the image and export button
+        $("#process-model-img").show();
+        $("#export-file-btn").show();
         $('.easyzoom').easyZoom();
       })
       .catch(error => {
@@ -82,7 +89,7 @@ wizard.addPage(
         wizard.enableRightButton();
       });
   },
-  "Upload New Event Log", () => location.reload(),  // left button event listener
+  "Upload New", () => location.reload(),  // left button event listener
   "Change Parameters", () => wizard.viewNextPage() // right button event listener
 );
 
@@ -128,9 +135,12 @@ wizard.addPage(
             changeParamObj.event_log_id = wizard.getSharedDataForKey("event-log-id");
             changeParamObj.transitions = rows;
             apiService.updateChangeParameters(changeParamObj)
-            .then(response => console.log("Updated"))
-            .catch(error => alert(error.message));
-            wizard.viewPreviousPage();
+              .then(response => {
+                console.log("Updated");
+                wizard.viewPreviousPage();
+              })
+              .catch(error => alert(error.message));
+            
   } // right button event listener
 );
 

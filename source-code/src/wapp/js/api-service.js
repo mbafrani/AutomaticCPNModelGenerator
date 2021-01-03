@@ -90,9 +90,9 @@ const updateChangeParameters = changeParametersBody => new Promise((resolve, rej
   })
   .then(response => {
     if (response.status == 200) {
-      return response.blob()
+      response.blob().then(response => resolve(response))
     } else {
-      response => reject(response)
+      response.json().then(response => reject(response))
     }
   })
 });

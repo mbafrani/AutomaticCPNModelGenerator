@@ -91,7 +91,6 @@ main {
   }
 
     .wizard__page {
-      overflow-y: auto;
       width: 100%;
       height: 100%;
       display: flex;
@@ -114,7 +113,7 @@ main {
 
   .wizard__nav__btn {
     height: 100%;
-    width: 10%;
+    width: auto;
     border: 0;
     outline: 0;
     color: #555555;
@@ -180,6 +179,12 @@ main {
   .page__process-model-img {
     width: 100%;
   }
+
+/*	module -- wizard: view params */
+
+.page__view-params {
+  overflow-y: auto;
+}
 
   table, td, th{
     border: 1px solid black;
