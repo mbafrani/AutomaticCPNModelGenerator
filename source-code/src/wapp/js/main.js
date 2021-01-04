@@ -129,8 +129,8 @@ wizard.addPage(
             $('tbody tr').each(function(i, n){
                 var $row = $(n);
                 rows.push({
-                    mean:   parseFloat($row.find('td:eq(1)').text()),
-                    std:    parseFloat($row.find('td:eq(2)').text()),
+                    mean:   parseFloat($row.find('td:eq(1)').text()).toFixed(2),
+                    std:    parseFloat($row.find('td:eq(2)').text()).toFixed(2),
                     transition: $row.find('td:eq(0)').text(),
                 });
             });
