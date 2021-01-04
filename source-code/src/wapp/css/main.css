@@ -215,3 +215,7 @@ th{
 th, td {
   padding: 0.1em;
 }
+
+.page__import-log-error {
+  color: red
+}
