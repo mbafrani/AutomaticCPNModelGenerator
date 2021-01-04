@@ -63,12 +63,17 @@ wizard.addPage(
     $("#process-model-loading").show();
     // get the event log id from wizard shared dictionary
     const eventLogId = wizard.getSharedDataForKey("event-log-id");
+    const img_url= wizard.getSharedDataForKey("img_url");
+    
     // call the api to get the process model
     apiService.getProcessModel(eventLogId)
       .then(imageURL => {
         // hide the loading gif
         $("#process-model-loading").hide();
         // update image
+        if(img_url != "" && img_url != undefined){
+          imageURL=img_url;
+        }
         $("#process-model").attr("href", imageURL);
         $("#process-model-img").attr("src", imageURL);
         // show the image and export button
@@ -135,8 +140,9 @@ wizard.addPage(
             changeParamObj.event_log_id = wizard.getSharedDataForKey("event-log-id");
             changeParamObj.transitions = rows;
             apiService.updateChangeParameters(changeParamObj)
-              .then(response => {
+              .then(imageURL => {
                 console.log("Updated");
+                wizard.setSharedDataForKey("img_url", imageURL);
                 wizard.viewPreviousPage();
               })
               .catch(error => alert(error.message));

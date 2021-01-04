@@ -90,10 +90,14 @@ const updateChangeParameters = changeParametersBody => new Promise((resolve, rej
   })
   .then(response => {
     if (response.status == 200) {
-      response.blob().then(response => resolve(response))
+      return response.blob()
     } else {
       response.json().then(response => reject(response))
     }
+  })
+  .then(image => {
+    const processModelImageUrl = URL.createObjectURL(image)
+    resolve(processModelImageUrl)
   })
 });
 
