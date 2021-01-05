@@ -21,7 +21,13 @@ const uploadEventLog = file => new Promise((resolve, reject) => {
 });
 
 const getProcessModel = eventLogId => new Promise((resolve, reject) => {
-  fetch(apiEndpoint + "process-model/" + eventLogId)
+  fetch(apiEndpoint + "process-model/" + eventLogId, {
+     method: "GET",
+     headers: {
+      "pragma": "no-cache",
+      "cache-control": "no-cache",
+    },
+  })
     .then(response => {
       if (response.status == 200) {
         return response.blob()
@@ -90,7 +96,7 @@ const updateChangeParameters = changeParametersBody => new Promise((resolve, rej
   })
   .then(response => {
     if (response.status == 200) {
-      response.json().then(response => resolve(response))
+      return response.blob().then(response => resolve(response))
     } else {
       response.json().then(response => reject(response))
     }

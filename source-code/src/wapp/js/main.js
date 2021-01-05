@@ -1,23 +1,6 @@
 import * as apiService from "./api-service.js";
 import Wizard from "./wizard.js";
 
-// TODO:  Move these functions inside resepective page listeners
-const handleExportCpnModel = eventLogId => 
-  apiService.exportCpnModel(eventLogId)
-    .then(response => console.log("Downloaded")) // TODO: Show in the UI
-    .catch(error => alert(error.message)); // TODO: Show in the UI
-
-const handleGetChangeParameters = eventLogId => 
-  apiService.getChangeParameters(eventLogId)
-    .then(response => console.log(response)) // TODO: Show in the UI
-    .catch(error => alert(error.message)); // TODO: Show in the UI
-
-const handleUpdateChangeParameters = updateParametersBody =>
-  apiService.updateChangeParameters(updateParametersBody)
-    .then(response => console.log("Updated")) // TODO: Show in the UI
-    .catch(error => alert(error.message)); // TODO: Show in the UI
-
-
 const wizard = new Wizard();
 
 // import an event log page
@@ -60,8 +43,7 @@ wizard.addPage(
       .catch(error => {
         // hide the loading gif
         $("#import-log-loading").hide();
-        // TODO: Show in the UI instead of alert
-        alert(error.message)
+        $("#import-log-error").html(error.message).addClass("page__import-log-error");
         // enable the right button
         wizard.enableRightButton();
       });
@@ -70,10 +52,12 @@ wizard.addPage(
 
 // view process model page
 wizard.addPage(
-  "Process Model",
+  "Enriched Process Model",
   () => { // on load event listener
-    // disable the left button, so that user can"t upload again
-    wizard.disableLeftButton();
+    wizard.enableLeftButton();
+    // hide image and button
+    $("#process-model-img").hide();
+    $("#export-file-btn").hide();
     // show loading gif
     $("#process-model-loading").show();
     // get the event log id from wizard shared dictionary
@@ -83,36 +67,79 @@ wizard.addPage(
       .then(imageURL => {
         // hide the loading gif
         $("#process-model-loading").hide();
-        // TODO: Show in the wizard UI properly
+        // update image
+        $("#process-model").attr("href", imageURL);
         $("#process-model-img").attr("src", imageURL);
+        // show the image and export button
+        $("#process-model-img").show();
+        $("#export-file-btn").show();
+        $('.easyzoom').easyZoom();
       })
       .catch(error => {
         alert(error.message); // TODO: Show in the UI
         // disable the right button
         wizard.disableRightButton();
       });
+      $("#export-file").click(function() {
+        apiService.exportCpnModel(eventLogId)
+        .then(response => console.log("Downloaded")) 
+        .catch(error => alert(error.message)); 
+        // enable the right button
+        wizard.enableRightButton();
+      });
   },
-  "Back", () => {}, // left button event listener,  do nothing
-  "Next", () => wizard.viewNextPage() // right button event listener
+  "Upload New", () => location.reload(),  // left button event listener
+  "Change Parameters", () => wizard.viewNextPage() // right button event listener
 );
 
 // third page
 wizard.addPage(
-  "Third Page",
+  "Change Arrival Rate and Service Times of Activities",
   () => { // on load event listener
     // enable the left button
     wizard.enableLeftButton();
+    const eventLogId = wizard.getSharedDataForKey("event-log-id");
+    apiService.getChangeParameters(eventLogId)
+    .then(response => {
+      $('#arrival_rate').val(response.arrivalrate);
+      var transitions= response.transitions;
+      $('#service_times').empty();
+      var content='<thead> <tr><th>Transition</th> <th>Mean (in mins) </th> <th> Std Dev (in mins)</th></tr></thead><tbody>'
+       for( var i=0; i< transitions.length; i++){
+        content += '<tr> <td id="t_'+[i]+'">' + transitions[i]['transition'] +'</td>'  
+        content += '<td contenteditable="true">' + transitions[i]['mean'] +'</td>'
+        content += '<td contenteditable="true">' + transitions[i]['std'] +'</td>'
+      } 
+      content += '</tbody>'
+      $('#service_times').append(content);
+      }
+    ) 
+    .catch(error => alert(error.message));
   },
   "Back", () => wizard.viewPreviousPage(), // left button event listener
-  "Next", () => wizard.viewNextPage() // right button event listener
-);
+  "Update", () => {
+    var rows = [];
+            $('tbody tr').each(function(i, n){
+                var $row = $(n);
+                rows.push({
+                    mean:   parseFloat($row.find('td:eq(1)').text()).toFixed(2),
+                    std:    parseFloat($row.find('td:eq(2)').text()).toFixed(2),
+                    transition: $row.find('td:eq(0)').text(),
+                });
+            });
 
-// fourth page
-wizard.addPage(
-  "Fourth Page",
-  () => {},  // on load event listener
-  "Back", () => wizard.viewPreviousPage(), // left button event listener
-  "Finish", () => location.reload() // right button event listener, reload the page
+            var changeParamObj = new Object();
+            changeParamObj.arrivalrate= parseFloat($('#arrival_rate').val());
+            changeParamObj.event_log_id = wizard.getSharedDataForKey("event-log-id");
+            changeParamObj.transitions = rows;
+            apiService.updateChangeParameters(changeParamObj)
+              .then(response => {
+                console.log("Updated");
+                wizard.viewPreviousPage();
+              })
+              .catch(error => alert(error.message));
+            
+  } // right button event listener
 );
 
 wizard.showWizard();

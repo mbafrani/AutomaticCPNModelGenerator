@@ -77,9 +77,7 @@ class Wizard {
     const partialViews = [
       "wizard-import-log.html",
       "wizard-process-model.html",
-      "wizard-view-params.html",
-      "wizard-change-params.html",
-      "wizard-process-model.html",
+      "wizard-view-params.html"
     ]
     const promises = []
     for (let i = 0; i < partialViews.length; i++) {
@@ -103,7 +101,7 @@ class Wizard {
     this.setupPage(loadPageListener)
   }
 
-  viewPreviousPage = (pageNumber, loadPageListener=false) => {
+  viewPreviousPage = (pageNumber, loadPageListener=true) => {
     this.previousPageIndex = this.currentPageIndex;
     typeof pageNumber == "number" ? this.currentPageIndex = pageNumber - 1 : this.currentPageIndex--;
     this.setupPage(loadPageListener)
