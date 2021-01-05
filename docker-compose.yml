@@ -1,0 +1,7 @@
+version: '3'
+services:
+    cpncontainer:
+        image: "cpn_generation"
+        ports:
+        - "5000:5000"
+        restart: unless-stopped

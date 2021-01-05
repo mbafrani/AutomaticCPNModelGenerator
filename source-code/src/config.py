@@ -4,7 +4,7 @@ import os
 DEBUG = os.getenv("ENVIRONMENT") == "DEV"
 WAPP_APPLICATION_ROOT = os.getenv("WAPP_APPLICATION_ROOT", "/")
 API_APPLICATION_ROOT = os.getenv("API_APPLICATION_ROOT", "/api/")
-HOST = os.getenv("APPLICATION_HOST")
+HOST = os.getenv("APPLICATION_HOST", "0.0.0.0")
 PORT = int(os.getenv("APPLICATION_PORT", "5000"))
 
 UPLOAD_FOLDER = os.path.join('api', 'data', 'uploads')
