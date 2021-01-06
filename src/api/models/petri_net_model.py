@@ -1,4 +1,5 @@
 import pm4py
+from pm4py.algo.filtering.log.attributes import attributes_filter
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.objects.conversion.log import converter as log_converter
@@ -351,10 +352,13 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
             self.log,
             parameters={case_arrival.Parameters.TIMESTAMP_KEY: "time:timestamp"})
 
-        arrival_rate = math.ceil(case_arrival_ratio/60)
+        arrival_rate = math.ceil(case_arrival_ratio / 60)
+
+        act_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, {}, xes_constants.DEFAULT_NAME_KEY)
+        activities = list(attributes_filter.get_attribute_values(self.log, act_key))
 
         # store transition's perf information in the properties dictionary
-        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate)
+        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate, activities)
 
     def _aggregate_stats(self, statistics, elem, aggregation_measure):
         aggr_stat = 0
@@ -482,7 +486,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
     # extracts the perf information - execution time mean and std deviation
     # and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
-    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate):
+    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate, activities ):
         for trans in self.net.transitions:
             # insert the perf info into trans properties
             if constants.DICT_KEY_PERF_INFO_PETRI not in trans.properties:
@@ -502,6 +506,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                     constants.DICT_KEY_PERF_STDEV
                 ] = constants.PERF_STDEV_DEFAULT_VALUE
 
+        self.net.properties[PetriNetDictKeys.transition_names] = activities
         self.net.properties[constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate
 
 

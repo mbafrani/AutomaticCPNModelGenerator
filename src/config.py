@@ -2,7 +2,7 @@ import logging
 import os
 
 DEBUG = os.getenv("ENVIRONMENT") == "DEV"
-WAPP_APPLICATION_ROOT = os.getenv("WAPP_APPLICATION_ROOT", "/")
+WAPP_APPLICATION_ROOT = os.getenv("WAPP_APPLICATION_ROOT", "/generate-cpn-model/")
 API_APPLICATION_ROOT = os.getenv("API_APPLICATION_ROOT", "/api/")
 HOST = os.getenv("APPLICATION_HOST", "0.0.0.0")
 PORT = int(os.getenv("PORT", "5000"))

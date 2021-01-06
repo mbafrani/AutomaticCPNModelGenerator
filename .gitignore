@@ -19,3 +19,6 @@ server.log
 src/api/data/uploads/*
 # except our favourite log
 !src/api/data/uploads/d43bcfbb-33df-11eb-979e-dc4a3ef4fd83/
+
+# Docker
+cpn_generation.docker

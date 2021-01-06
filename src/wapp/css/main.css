@@ -112,13 +112,13 @@ main {
   }
 
   .wizard__nav__btn {
-    height: 60%;
-    width: 10%;
+    height: 100%;
+    width: auto;
     border: 0;
     outline: 0;
     color: #555555;
     background-color: #EEEEEE;
-    font-size: 1.2em;
+    font-size: 1em;
     cursor: pointer;
   }
 
@@ -179,3 +179,43 @@ main {
   .page__process-model-img {
     width: 100%;
   }
+
+/*	module -- wizard: view params */
+
+.page__view-params {
+  overflow-y: auto;
+}
+
+  table, td, th{
+    border: 1px solid black;
+  }
+  table{
+    border-collapse: collapse;
+    display: block;
+  }
+
+.table_service {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5em;
+}
+
+td[contenteditable="true"]:focus, input[type="number"]:focus {
+  background-color:#ADD8E6;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+th{
+  background-color: #f2f2f2;
+}
+
+th, td {
+  padding: 0.1em;
+}
+
+.page__import-log-error {
+  color: red
+}

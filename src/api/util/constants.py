@@ -57,6 +57,7 @@ class PetriNetDictKeys:
     arrivalrate = DICT_KEY_ARRIVAL_RATE
     places = "places"
     transitions = "transitions"
+    transition_names = "transition_names"
 
 
 class RequestJsonKeys:

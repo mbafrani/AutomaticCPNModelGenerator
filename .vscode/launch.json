@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Flask",
+      "name": "Python Flask Server",
       "type": "python",
       "request": "launch",
       "cwd": "${workspaceFolder}/src",
@@ -23,11 +23,20 @@
       "jinja": true
     },
     {
-      "name": "Python: Current File",
-      "type": "python",
+      "name": "Web App Client",
       "request": "launch",
-      "program": "${file}",
-      "console": "integratedTerminal"
+      "type": "pwa-chrome",
+      "url": "http://127.0.0.1:5000/generate-cpn-model/",
+      "webRoot": "${workspaceFolder}/src/wapp"
     },
+  ],
+  "compounds": [
+    {
+      "name": "API + Wapp",
+      "configurations": [
+        "Python Flask Server", 
+        "Web App Client",
+      ]
+    }
   ]
 }
