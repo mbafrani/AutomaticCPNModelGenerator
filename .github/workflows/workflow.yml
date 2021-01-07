@@ -2,10 +2,10 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - unittest-coverage
+      - main
   pull_request:
     branches:
-      - unittest-coverage
+      - main
 
 jobs:
   build:
