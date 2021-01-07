@@ -1,5 +1,11 @@
 # Process Discovery Using Python - CPN Model WS2020
+
+[![CI Pipeline](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/workflows/CI%20Pipeline/badge.svg)](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/actions)
+[![codecov](https://codecov.io/gh/Younesmueller/CPN-Model-Process-Discovery-WS-20/graph/badge.svg?token=XLC4HPXXCG)](https://codecov.io/gh/Younesmueller/CPN-Model-Process-Discovery-WS-20)
+
 Implement the discovery and simulation of CPN models in pm4py.
+
+https://cpn-model-process-discovery-1.herokuapp.com/generate-cpn-model/
 
 
 ## Participants:
@@ -12,14 +18,13 @@ Implement the discovery and simulation of CPN models in pm4py.
 
 ## Getting started
 ```bash
-$ cd source-code/src
+$ cd src
 $ flask run
 ```
 
 ## Docker
 For building image:
 ```bash
-$ cd source-code
 $ build.sh
 ```
 For starting application container:

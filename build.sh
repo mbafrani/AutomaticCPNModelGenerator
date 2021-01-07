@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Docker build -t cpn_generation ./source-code/
+Docker build -t cpn_generation .
 echo -e '\n\nSaving image...'
 docker image save cpn_generation > cpn_generation.docker
 
