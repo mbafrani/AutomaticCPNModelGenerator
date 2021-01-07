@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, make_response
 from werkzeug.exceptions import HTTPException, BadRequest, InternalServerError
 
 from api.util import constants
-from api.services import EventLogService
+from api.services import PetriNetService, EventLogService
 
 event_log_page = Blueprint("event_log", __name__)
 
@@ -19,6 +19,9 @@ def import_event_log_file():
 
     try:
         log_file = EventLogService.save_log_file(file)
+        petri_net_service = PetriNetService(log_file.id)
+        petri_net_service.load_petri_net()
+        EventLogService.delete_log_file(log_file.id)
         return jsonify(
             message=constants.MESSAGE_EVENT_LOG_UPLOAD_SUCCESS,
             event_log_id=log_file.id
