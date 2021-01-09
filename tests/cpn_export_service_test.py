@@ -7,7 +7,6 @@ from xml.dom.minidom import Document, Element
 import pm4py
 import flask
 from werkzeug.exceptions import NotFound, UnsupportedMediaType, BadRequest
-
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from api.services import CPNExportService
 from api.util import constants
@@ -15,7 +14,6 @@ from api.util import constants
 
 class TestCPNExportService(unittest.TestCase):
 
-    @unittest.skip("Disabling it temporarily, this needs to be fixed")
     def test_create_globbox_element_for_document(self):
         cpn_export_service = CPNExportService()
         document = Document()
@@ -26,17 +24,13 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(2, len(globbox_element.getElementsByTagName("color")))
         self.assertEqual(1, len(globbox_element.getElementsByTagName("timed")))
         self.assertEqual(2, len(globbox_element.getElementsByTagName("var")))
-        ml_element = globbox_element.getElementsByTagName("ml")
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_ITER_INDEX_START), ml_element[0].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_ITER_INDEX_END), ml_element[1].firstChild.nodeValue)
         id_element = globbox_element.getElementsByTagName("id")
         self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), id_element[0].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_ITER_INSTANCE), id_element[1].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[2].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), id_element[3].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE), id_element[4].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[5].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE), id_element[6].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[1].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), id_element[2].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE), id_element[3].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), id_element[4].firstChild.nodeValue)
+        self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE), id_element[5].firstChild.nodeValue)
 
     def test_create_place_element_for_page(self):
         cpn_export_service = CPNExportService()
@@ -102,13 +96,13 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(2, len(text_element))
         self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), text_element[1].firstChild.nodeValue)
 
-    @unittest.skip("Disabling it temporarily, this needs to be fixed")
     def test_create_place_element_for_page__with_initial_markings(self):
         cpn_export_service = CPNExportService()
-        place_obj = MagicMock()
-        place_obj.name = "place1"
-        place_obj.__str__ = MagicMock(return_value="place1")
-        place_obj.properties = {
+
+        place_case = MagicMock()
+        place_case.name = "next_CASE_ID"
+        place_case.__str__ = MagicMock(return_value="next_CASE_ID")
+        place_case.properties = {
             constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                 constants.DICT_KEY_LAYOUT_X: 10,
                 constants.DICT_KEY_LAYOUT_Y: 20,
@@ -116,73 +110,110 @@ class TestCPNExportService(unittest.TestCase):
                 constants.DICT_KEY_LAYOUT_WIDTH: 30
             }
         }
-        document = Document()
-        place_element = cpn_export_service.create_place_element_for_page(
-            place_obj, {place_obj: place_obj}, {}, document
-        )
+        place_prob = MagicMock()
+        place_prob.name = "prob_1"
+        place_prob.__str__ = MagicMock(return_value="next_CASE_ID")
+        place_prob.properties = {
+            constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                constants.DICT_KEY_LAYOUT_X: 10,
+                constants.DICT_KEY_LAYOUT_Y: 20,
+                constants.DICT_KEY_LAYOUT_HEIGHT: 30,
+                constants.DICT_KEY_LAYOUT_WIDTH: 30
+            }
+        }
+        places = [place_case, place_prob]
+        is_next_case_id_place = True
 
-        self.assertIsInstance(place_element, Element)
-        self.assertEqual(place_obj.name, place_element.getAttribute("id"))
-        posattr_element = place_element.getElementsByTagName("posattr")
-        self.assertEqual(3, len(posattr_element))
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
-            posattr_element[0].getAttribute("x")
-        )
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]),
-            posattr_element[0].getAttribute("y")
-        )
-        self.assertEqual(3, len(place_element.getElementsByTagName("fillattr")))
-        self.assertEqual(3, len(place_element.getElementsByTagName("lineattr")))
-        self.assertEqual(3, len(place_element.getElementsByTagName("textattr")))
-        text_element = place_element.getElementsByTagName("text")
-        ellipse_element = place_element.getElementsByTagName("ellipse")
-        self.assertEqual(1, len(ellipse_element))
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT]),
-            ellipse_element[0].getAttribute("h")
-        )
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]),
-            ellipse_element[0].getAttribute("w")
-        )
-        self.assertEqual(1, len(place_element.getElementsByTagName("token")))
-        self.assertEqual(1, len(place_element.getElementsByTagName("marking")))
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + (
-                place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
-            )),
-            posattr_element[1].getAttribute("x")
-        )
-        self.assertEqual(
-            str(
-                place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] - (
-                    place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+        for place in places:
+            document = Document()
+            if is_next_case_id_place:
+                place_element = cpn_export_service.create_place_element_for_page(
+                    place, {place: place}, {}, document, is_next_case_id_place=True
+                )
+            else:
+                place_element = cpn_export_service.create_place_element_for_page(
+                    place, {place: place}, {}, document, is_decision_prob_place=True
+                )
+
+            self.assertIsInstance(place_element, Element)
+            self.assertEqual(place.name, place_element.getAttribute("id"))
+            posattr_element = place_element.getElementsByTagName("posattr")
+            if is_next_case_id_place:
+                self.assertEqual(3, len(posattr_element))
+                self.assertEqual(3, len(place_element.getElementsByTagName("fillattr")))
+                self.assertEqual(3, len(place_element.getElementsByTagName("lineattr")))
+                self.assertEqual(3, len(place_element.getElementsByTagName("textattr")))
+            else:
+                self.assertEqual(1, len(place_element.getElementsByTagName("fusioninfo")))
+                self.assertEqual(4, len(posattr_element))
+                self.assertEqual(4, len(place_element.getElementsByTagName("fillattr")))
+                self.assertEqual(4, len(place_element.getElementsByTagName("lineattr")))
+                self.assertEqual(4, len(place_element.getElementsByTagName("textattr")))
+
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
+                posattr_element[0].getAttribute("x")
+            )
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]),
+                posattr_element[0].getAttribute("y")
+            )
+
+            text_element = place_element.getElementsByTagName("text")
+            ellipse_element = place_element.getElementsByTagName("ellipse")
+            self.assertEqual(1, len(ellipse_element))
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT]),
+                ellipse_element[0].getAttribute("h")
+            )
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]),
+                ellipse_element[0].getAttribute("w")
+            )
+            self.assertEqual(1, len(place_element.getElementsByTagName("token")))
+            self.assertEqual(1, len(place_element.getElementsByTagName("marking")))
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + (
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
                 )),
-            posattr_element[1].getAttribute("y")
-        )
-        self.assertEqual(3, len(text_element))
-        self.assertEqual(str(place_obj), text_element[0].firstChild.nodeValue)
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), text_element[1].firstChild.nodeValue)
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_X] + (
-                    place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_WIDTH]
-            )),
-            posattr_element[2].getAttribute("x")
-        )
-        self.assertEqual(
-            str(place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_Y] + (
-                    place_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
-            )),
-            posattr_element[2].getAttribute("y")
-        )
-        self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID_INSTANCES), text_element[2].firstChild.nodeValue)
+                posattr_element[1].getAttribute("x")
+            )
+            self.assertEqual(
+                str(
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] - (
+                        place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                    )),
+                posattr_element[1].getAttribute("y")
+            )
+            self.assertEqual(3, len(text_element))
+            self.assertEqual(str(place), text_element[0].firstChild.nodeValue)
+            if (is_next_case_id_place):
+                self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), text_element[1].firstChild.nodeValue)
+            else:
+                self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY), text_element[1].firstChild.nodeValue)
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_X] + (
+                        place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_WIDTH]
+                )),
+                posattr_element[2].getAttribute("x")
+            )
+            self.assertEqual(
+                str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_Y] + (
+                        place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                )),
+                posattr_element[2].getAttribute("y")
+            )
+            if is_next_case_id_place:
+                self.assertEqual(str(1), text_element[2].firstChild.nodeValue)
+            else:
+                self.assertEqual(str(constants.DECLARATION_COLOR_PROBABILITY_FUNCTION), text_element[2].firstChild.nodeValue)
+
+            is_next_case_id_place = False
 
     def test_create_trans_element_for_page(self):
         cpn_export_service = CPNExportService()
@@ -261,54 +292,76 @@ class TestCPNExportService(unittest.TestCase):
                 }
             }
         )
-        document = Document()
-        arc_element = cpn_export_service.create_arc_element_for_page(
-            arc_obj, document
-        )
+        for i in range(3):
+            document = Document()
+            if i==0:
+                arc_element = cpn_export_service.create_arc_element_for_page(
+                    arc_obj, document
+                )
+            elif i==1:
+                arrival_rate = 150
+                arc_element = cpn_export_service.create_arc_element_for_page(
+                    arc_obj, document, is_next_case_id_arc=True, arrival_rate=arrival_rate
+                )
+            else:
+                arc_element = cpn_export_service.create_arc_element_for_page(
+                    arc_obj, document, is_decision_prob_arc=True
+                )
 
-        self.assertIsInstance(arc_element, Element)
-        self.assertEqual(constants.TRANS_TO_PLACE_ORIENTATION, arc_element.getAttribute("orientation"))
-        self.assertEqual(1, len(arc_element.getElementsByTagName("arrowattr")))
-        transend_element = arc_element.getElementsByTagName("transend")
-        self.assertEqual(1, len(transend_element))
-        self.assertEqual(
-            arc_obj.source.name.replace('-', ''),
-            transend_element[0].getAttribute("idref")
-        )
-        placeend_element = arc_element.getElementsByTagName("placeend")
-        self.assertEqual(1, len(placeend_element))
-        self.assertEqual(
-            arc_obj.target.name,
-            placeend_element[0].getAttribute("idref")
-        )
-        posattr_element = arc_element.getElementsByTagName("posattr")
-        self.assertEqual(2, len(posattr_element))
-        self.assertEqual(
-            str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
-            posattr_element[1].getAttribute("x")
-        )
-        self.assertEqual(
-            str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] + 5),
-            posattr_element[1].getAttribute("y")
-        )
-        self.assertEqual(2, len(arc_element.getElementsByTagName("fillattr")))
-        self.assertEqual(2, len(arc_element.getElementsByTagName("lineattr")))
-        self.assertEqual(2, len(arc_element.getElementsByTagName("textattr")))
-        text_element = arc_element.getElementsByTagName("text")
-        self.assertEqual(1, len(text_element))
-        execution_time_mean = str(
-            arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN]
-        )
-        execution_time_stdev = str(
-            arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV]
-        )
-        normal_distrib = str(
-            "normal(" + execution_time_mean + "," + execution_time_stdev + ")"
-        )
-        self.assertEqual(
-            str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) + "@+" + str("round(" + normal_distrib + ")"),
-            text_element[0].firstChild.nodeValue
-        )
+            self.assertIsInstance(arc_element, Element)
+            self.assertEqual(constants.TRANS_TO_PLACE_ORIENTATION, arc_element.getAttribute("orientation"))
+            self.assertEqual(1, len(arc_element.getElementsByTagName("arrowattr")))
+            transend_element = arc_element.getElementsByTagName("transend")
+            self.assertEqual(1, len(transend_element))
+            self.assertEqual(
+                arc_obj.source.name.replace('-', ''),
+                transend_element[0].getAttribute("idref")
+            )
+            placeend_element = arc_element.getElementsByTagName("placeend")
+            self.assertEqual(1, len(placeend_element))
+            self.assertEqual(
+                arc_obj.target.name,
+                placeend_element[0].getAttribute("idref")
+            )
+            posattr_element = arc_element.getElementsByTagName("posattr")
+            self.assertEqual(2, len(posattr_element))
+            self.assertEqual(
+                str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
+                posattr_element[1].getAttribute("x")
+            )
+            self.assertEqual(
+                str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] + 5),
+                posattr_element[1].getAttribute("y")
+            )
+            self.assertEqual(2, len(arc_element.getElementsByTagName("fillattr")))
+            self.assertEqual(2, len(arc_element.getElementsByTagName("lineattr")))
+            self.assertEqual(2, len(arc_element.getElementsByTagName("textattr")))
+            text_element = arc_element.getElementsByTagName("text")
+            self.assertEqual(1, len(text_element))
+
+            if i==0:
+                execution_time_mean = str(
+                    arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN]
+                )
+                execution_time_stdev = str(
+                    arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV]
+                )
+                normal_distrib = str(
+                    "normal(" + execution_time_mean + "," + execution_time_stdev + ")"
+                )
+                self.assertEqual(
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) + "@+" + str("round(" + normal_distrib + ")"),
+                    text_element[0].firstChild.nodeValue
+                )
+            elif i==1:
+                self.assertEqual(
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE + "+1@+round(exponential(" + str(round(1 / arrival_rate, 6)) + "))"),
+                    text_element[0].firstChild.nodeValue
+                )
+            else:
+                self.assertEqual(
+                    str(constants.DECLARATION_COLOR_PROBABILITY_FUNCTION), text_element[0].firstChild.nodeValue
+                )
 
     def test_create_arc_element_for_page__place_to_trans(self):
         cpn_export_service = CPNExportService()
@@ -385,37 +438,60 @@ class TestCPNExportService(unittest.TestCase):
             text_element[0].firstChild.nodeValue
         )
 
-    @unittest.skip("Disabling it temporarily, this needs to be fixed")
     def test_create_page_element_for_document(self):
         cpn_export_service = CPNExportService()
         petri_net_obj = MagicMock()
-        petri_net_obj.places = {'place1': {}, 'place2': {}}
+
+        place_obj1 = MagicMock()
+        place_obj1.name = "source"
+        place_obj1.__str__ = MagicMock(return_value="source")
+        place_obj1.properties = {
+            constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                constants.DICT_KEY_LAYOUT_X: 10,
+                constants.DICT_KEY_LAYOUT_Y: 20,
+            }
+        }
+        place_obj2 = MagicMock()
+        place_obj2.name = "place2"
+        place_obj2.__str__ = MagicMock(return_value="place2")
+        place_obj2.properties = {
+            constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                constants.DICT_KEY_LAYOUT_X: 10,
+                constants.DICT_KEY_LAYOUT_Y: 20,
+            }
+        }
+
+        petri_net_obj.places = [place_obj1, place_obj2]
+        # petri_net_obj.places = {'place1': {}, 'place2': {}}
         petri_net_obj.transitions = {pm4py.objects.petri.petrinet.PetriNet.Transition('trans_1'): {},
                                      pm4py.objects.petri.petrinet.PetriNet.Transition('trans_2'): {}}
         petri_net_obj.arcs = {'arc1': {}, 'arc2': {}, 'arc3': {}, 'arc4': {}}
         document = Document()
+        places_tag = []
+        for p in petri_net_obj.places:
+            places_tag.append(document.createElement("place"))
+
         cpn_export_service.create_place_element_for_page = MagicMock(
-            side_effect=[document.createElement("place") for elem in petri_net_obj.places]
+            side_effect =[document.createElement("place") for i in range(len(petri_net_obj.places)+1)]
         )
         cpn_export_service.create_trans_element_for_page = MagicMock(
-            side_effect=[document.createElement("trans") for elem in petri_net_obj.transitions]
+            side_effect =[document.createElement("trans") for i in range(len(petri_net_obj.transitions)+1)]
         )
         cpn_export_service.create_arc_element_for_page = MagicMock(
-            side_effect=[document.createElement("arc") for elem in petri_net_obj.arcs]
+            side_effect =[document.createElement("arc") for i in range(len(petri_net_obj.arcs)+3)]
         )
         cpn_export_service.get_arcs_with_prob_info = MagicMock(
             return_value={'p_1': MagicMock()}
         )
-
         page_element = cpn_export_service.create_page_element_for_document(
             document, petri_net_obj, None, None, None
         )
 
         self.assertIsInstance(page_element, Element)
         self.assertEqual(1, len(page_element.getElementsByTagName("pageattr")))
-        self.assertEqual(2, len(page_element.getElementsByTagName("place")))
-        self.assertEqual(2, len(page_element.getElementsByTagName("trans")))
-        self.assertEqual(4, len(page_element.getElementsByTagName("arc")))
+        self.assertEqual(len(petri_net_obj.places)+1, len(page_element.getElementsByTagName("place")))
+        self.assertEqual(len(petri_net_obj.transitions)+1, len(page_element.getElementsByTagName("trans")))
+        self.assertEqual(len(petri_net_obj.arcs)+3, len(page_element.getElementsByTagName("arc")))
 
     def test_create_cpn_model_from_petri_net(self):
         cpn_export_service = CPNExportService()
