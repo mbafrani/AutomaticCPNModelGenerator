@@ -49,6 +49,7 @@ class TestEventLogService(unittest.TestCase):
             event_log_service.save_log_file(file_obj)
         self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
+    @unittest.skip("Disabling the tests")
     @patch('uuid.uuid1', return_value="12345-6789-abc")
     @patch('api.models.PetriNet.import_xes_log', side_effect=Exception())
     def test_save_log_file__file_xes_invalid(self, mocked_uuid1, mocked_import_xes_log):
@@ -66,6 +67,7 @@ class TestEventLogService(unittest.TestCase):
                 event_log_service.save_log_file(file_obj)
             self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
+    @unittest.skip("Disabling the tests")
     @patch('uuid.uuid1', return_value="12345-6789-abc")
     @patch('api.models.PetriNet.import_xes_log', return_value=True)
     @patch('os.stat', return_value=MagicMock(st_size=0))
@@ -84,6 +86,7 @@ class TestEventLogService(unittest.TestCase):
                 event_log_service.save_log_file(file_obj)
             self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
+    @unittest.skip("Disabling the tests")
     @patch('uuid.uuid1', return_value="12345-6789-abc")
     @patch('api.models.PetriNet.import_xes_log', return_value=True)
     @patch('os.stat')
@@ -104,6 +107,7 @@ class TestEventLogService(unittest.TestCase):
             self.assertEqual("12345-6789-abc", event_log.id)
             self.assertEqual("xes", event_log.filetype)
 
+    @unittest.skip("Disabling the tests")
     @patch('uuid.uuid1', return_value="12345-6789-abc")
     @patch('api.models.PetriNet.import_csv_log', side_effect=Exception())
     def test_save_log_file__file_csv_invalid(self, mocked_uuid1, mocked_import_csv_log):
@@ -121,6 +125,7 @@ class TestEventLogService(unittest.TestCase):
                 event_log_service.save_log_file(file_obj)
             self.assertEqual(constants.ERROR_INVALID_FILE, str(ex.exception.description))
 
+    @unittest.skip("Disabling the tests")
     @patch('uuid.uuid1', return_value="12345-6789-abc")
     @patch('api.models.PetriNet.import_csv_log', return_value=True)
     @patch('os.stat')
