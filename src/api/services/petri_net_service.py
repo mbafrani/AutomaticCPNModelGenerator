@@ -5,6 +5,7 @@ import os
 from api.util import constants
 from api.models import PetriNet, load_net
 from werkzeug.exceptions import BadRequest
+from api.services import EventLogService
 
 PetriNetDictKeys = constants.PetriNetDictKeys
 RequestJsonKeys = constants.RequestJsonKeys
@@ -56,29 +57,15 @@ class PetriNetService:
         return self.petri_net
 
     def _discover_petri_net(self):
-        # dynamically check event log file extension (XES or CSV)
-        log_file_extension = None
-        for filename in os.listdir(
-            os.path.join(current_app.config["UPLOAD_FOLDER"], self.event_log_id)
-        ):
-            if filename.endswith("." + constants.XES_EXTENSION):
-                log_file_extension = constants.XES_EXTENSION
-            elif filename.endswith("." + constants.CSV_EXTENSION):
-                log_file_extension = constants.CSV_EXTENSION
+        log_file_path = EventLogService.get_log_file_path(self.event_log_id)
 
-        is_event_log_exists = log_file_extension is not None
-        if not is_event_log_exists:
-            raise NotFound(constants.ERROR_EVENT_LOG_DOESNT_EXIST)
-
-        event_log_file_path = os.path.join(
-            current_app.config["UPLOAD_FOLDER"],
-            self.event_log_id,
-            current_app.config["EVENT_LOG_DEFAULT_NAME"] + "." + log_file_extension,
-        )
-        if log_file_extension == constants.XES_EXTENSION:
-            self.petri_net.import_xes_log(event_log_file_path)
-        elif log_file_extension == constants.CSV_EXTENSION:
-            self.petri_net.import_csv_log(event_log_file_path)
+        try:
+            if log_file_path.lower().endswith(constants.XES_EXTENSION):
+                self.petri_net.import_xes_log(log_file_path)
+            elif log_file_path.lower().endswith(constants.CSV_EXTENSION):
+                self.petri_net.import_csv_log(log_file_path)
+        except Exception:
+            raise BadRequest(constants.ERROR_INVALID_FILE)
 
         self.petri_net.discover_process_model()
 

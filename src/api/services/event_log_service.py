@@ -9,7 +9,35 @@ from api.models import EventLog, PetriNet
 
 
 class EventLogService:
+    @staticmethod
+    def delete_log_file(event_log_id):
+        path = EventLogService.get_log_file_path(event_log_id)
+        os.remove(path)
 
+    @staticmethod
+    def _gen_path_without_extension(event_log_id):
+        base_path = os.path.join(
+            current_app.config["UPLOAD_FOLDER"],
+            event_log_id,
+            current_app.config["EVENT_LOG_DEFAULT_NAME"] + "."
+        )
+        return base_path
+
+    @staticmethod
+    def get_log_file_path(event_log_id):
+        base_path = EventLogService._gen_path_without_extension(event_log_id)
+        extensions = [constants.XES_EXTENSION, constants.CSV_EXTENSION]
+        log_file_path = None
+        for extension in extensions:
+            log_file_path = base_path + extension
+            if os.path.isfile(log_file_path):
+                break
+
+        if log_file_path is None:
+            raise NotFound(constants.ERROR_EVENT_LOG_DOESNT_EXIST)
+            
+        return log_file_path
+        
     @staticmethod
     def allowed_file(filename):
         return '.' in filename and \
@@ -35,14 +63,6 @@ class EventLogService:
             )
             # temporarily store the file for processing
             file.save(tmp_file_path)
-            try:
-                petri_net = PetriNet()
-                if file_extension == constants.XES_EXTENSION:
-                    petri_net.import_xes_log(tmp_file_path)
-                elif file_extension == constants.CSV_EXTENSION:
-                    petri_net.import_csv_log(tmp_file_path)
-            except Exception:
-                raise BadRequest(constants.ERROR_INVALID_FILE)
 
             # Check if the file contents are empty
             if (os.stat(tmp_file_path).st_size == 0):
@@ -51,14 +71,8 @@ class EventLogService:
             os.makedirs(
                 os.path.join(current_app.config['UPLOAD_FOLDER'], event_log_id)
             )
-            file_name = current_app.config["EVENT_LOG_DEFAULT_NAME"] + \
-                "." + file_extension
-            new_file_path = os.path.join(
-                current_app.config['UPLOAD_FOLDER'],
-                event_log_id,
-                file_name
-            )
-            # move the file from temporary folder to uploads folder
+            new_file_path = EventLogService._gen_path_without_extension(event_log_id)
+            new_file_path += file_extension
             os.rename(tmp_file_path, new_file_path)
 
             return EventLog(event_log_id, file_extension)
