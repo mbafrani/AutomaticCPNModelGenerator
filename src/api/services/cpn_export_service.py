@@ -579,7 +579,7 @@ class CPNExportService:
                     text_tag.appendChild(document.createTextNode(
                         str(
                             constants.DECLARATION_COLOR_CASE_ID_VARIABLE +
-                            "+1 @+round(exponential(" + str(round(1/arrival_rate, 6)) + "))"
+                            "+1@+round(exponential(" + str(round(1/arrival_rate, 6)) + "))"
                         )
                     ))
                 else:

@@ -292,54 +292,76 @@ class TestCPNExportService(unittest.TestCase):
                 }
             }
         )
-        document = Document()
-        arc_element = cpn_export_service.create_arc_element_for_page(
-            arc_obj, document
-        )
+        for i in range(3):
+            document = Document()
+            if i==0:
+                arc_element = cpn_export_service.create_arc_element_for_page(
+                    arc_obj, document
+                )
+            elif i==1:
+                arrival_rate = 150
+                arc_element = cpn_export_service.create_arc_element_for_page(
+                    arc_obj, document, is_next_case_id_arc=True, arrival_rate=arrival_rate
+                )
+            else:
+                arc_element = cpn_export_service.create_arc_element_for_page(
+                    arc_obj, document, is_decision_prob_arc=True
+                )
 
-        self.assertIsInstance(arc_element, Element)
-        self.assertEqual(constants.TRANS_TO_PLACE_ORIENTATION, arc_element.getAttribute("orientation"))
-        self.assertEqual(1, len(arc_element.getElementsByTagName("arrowattr")))
-        transend_element = arc_element.getElementsByTagName("transend")
-        self.assertEqual(1, len(transend_element))
-        self.assertEqual(
-            arc_obj.source.name.replace('-', ''),
-            transend_element[0].getAttribute("idref")
-        )
-        placeend_element = arc_element.getElementsByTagName("placeend")
-        self.assertEqual(1, len(placeend_element))
-        self.assertEqual(
-            arc_obj.target.name,
-            placeend_element[0].getAttribute("idref")
-        )
-        posattr_element = arc_element.getElementsByTagName("posattr")
-        self.assertEqual(2, len(posattr_element))
-        self.assertEqual(
-            str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
-            posattr_element[1].getAttribute("x")
-        )
-        self.assertEqual(
-            str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] + 5),
-            posattr_element[1].getAttribute("y")
-        )
-        self.assertEqual(2, len(arc_element.getElementsByTagName("fillattr")))
-        self.assertEqual(2, len(arc_element.getElementsByTagName("lineattr")))
-        self.assertEqual(2, len(arc_element.getElementsByTagName("textattr")))
-        text_element = arc_element.getElementsByTagName("text")
-        self.assertEqual(1, len(text_element))
-        execution_time_mean = str(
-            arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN]
-        )
-        execution_time_stdev = str(
-            arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV]
-        )
-        normal_distrib = str(
-            "normal(" + execution_time_mean + "," + execution_time_stdev + ")"
-        )
-        self.assertEqual(
-            str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) + "@+" + str("round(" + normal_distrib + ")"),
-            text_element[0].firstChild.nodeValue
-        )
+            self.assertIsInstance(arc_element, Element)
+            self.assertEqual(constants.TRANS_TO_PLACE_ORIENTATION, arc_element.getAttribute("orientation"))
+            self.assertEqual(1, len(arc_element.getElementsByTagName("arrowattr")))
+            transend_element = arc_element.getElementsByTagName("transend")
+            self.assertEqual(1, len(transend_element))
+            self.assertEqual(
+                arc_obj.source.name.replace('-', ''),
+                transend_element[0].getAttribute("idref")
+            )
+            placeend_element = arc_element.getElementsByTagName("placeend")
+            self.assertEqual(1, len(placeend_element))
+            self.assertEqual(
+                arc_obj.target.name,
+                placeend_element[0].getAttribute("idref")
+            )
+            posattr_element = arc_element.getElementsByTagName("posattr")
+            self.assertEqual(2, len(posattr_element))
+            self.assertEqual(
+                str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
+                posattr_element[1].getAttribute("x")
+            )
+            self.assertEqual(
+                str(arc_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] + 5),
+                posattr_element[1].getAttribute("y")
+            )
+            self.assertEqual(2, len(arc_element.getElementsByTagName("fillattr")))
+            self.assertEqual(2, len(arc_element.getElementsByTagName("lineattr")))
+            self.assertEqual(2, len(arc_element.getElementsByTagName("textattr")))
+            text_element = arc_element.getElementsByTagName("text")
+            self.assertEqual(1, len(text_element))
+
+            if i==0:
+                execution_time_mean = str(
+                    arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN]
+                )
+                execution_time_stdev = str(
+                    arc_obj.source.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV]
+                )
+                normal_distrib = str(
+                    "normal(" + execution_time_mean + "," + execution_time_stdev + ")"
+                )
+                self.assertEqual(
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) + "@+" + str("round(" + normal_distrib + ")"),
+                    text_element[0].firstChild.nodeValue
+                )
+            elif i==1:
+                self.assertEqual(
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE + "+1@+round(exponential(" + str(round(1 / arrival_rate, 6)) + "))"),
+                    text_element[0].firstChild.nodeValue
+                )
+            else:
+                self.assertEqual(
+                    str(constants.DECLARATION_COLOR_PROBABILITY_FUNCTION), text_element[0].firstChild.nodeValue
+                )
 
     def test_create_arc_element_for_page__place_to_trans(self):
         cpn_export_service = CPNExportService()
