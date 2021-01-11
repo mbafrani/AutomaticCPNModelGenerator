@@ -90,21 +90,23 @@ class PetriNetService:
 
     def update_transitions(self, transitions):
         # Read the json and create input for petri net
-        trans_names, means, stds = [], [], []
+        trans_names, means, stds, res_capacities = [], [], [], []
 
         for transition in transitions:
             trans_name = transition.get(RequestJsonKeys.transition)
             mean = transition.get(RequestJsonKeys.mean)
             std = transition.get(RequestJsonKeys.std)
+            res_capacity = transition.get(RequestJsonKeys.res_capacity)
             if trans_name is None or mean is None or std is None:
                 raise BadRequest(constants.ERROR_MISSING_PARAMETER_PERFORMANCE)
             trans_names.append(trans_name)
             means.append(mean)
             stds.append(std)
+            res_capacities.append(res_capacity)
 
         # Load Petri Net
         self.petri_net = self.load_petri_net()
-        self.petri_net.update_transitions(trans_names, means, stds)
+        self.petri_net.update_transitions(trans_names, means, stds, res_capacities)
 
         # Save Petri Net
         self._save_petri_net()
