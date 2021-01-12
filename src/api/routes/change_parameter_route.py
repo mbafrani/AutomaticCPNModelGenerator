@@ -72,13 +72,14 @@ def get_parameters(event_log_id):
         transitions = []
         # Filter out silent transitions
         activities = prop_dict[PetriNetDictKeys.net].get(PetriNetDictKeys.transition_names)
-        for trans_name, _mean_std in prop_dict[PetriNetDictKeys.transitions].items():
+        for trans_name, _mean_std_res in prop_dict[PetriNetDictKeys.transitions].items():
             if trans_name in activities:
-                mean_std = _mean_std[PetriNetDictKeys.performance]
+                mean_std_res = _mean_std_res[PetriNetDictKeys.performance]
                 transition = {
                     RequestJsonKeys.transition: trans_name,
-                    RequestJsonKeys.mean: mean_std[PetriNetDictKeys.mean],
-                    RequestJsonKeys.std: mean_std[PetriNetDictKeys.std],
+                    RequestJsonKeys.mean: mean_std_res[PetriNetDictKeys.mean],
+                    RequestJsonKeys.std: mean_std_res[PetriNetDictKeys.std],
+                    RequestJsonKeys.res_capacity: mean_std_res[PetriNetDictKeys.res_capacity],
                 }
                 transitions.append(transition)
 

@@ -5,6 +5,9 @@ import os
 from pm4py.objects.log.importer.xes import importer as xes_importer
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
+from pm4py.util import exec_utils, xes_constants, constants as pm4py_constants
+from pm4py.algo.filtering.log.attributes import attributes_filter
+from enum import Enum
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from api.models import PetriNet, PetriNetPerformanceEnricher
@@ -17,9 +20,14 @@ def mine_petrinet(path):
     return petrinet, log, net, im, fm
 
 
+class Parameters(Enum):
+    ACTIVITY_KEY = pm4py_constants.PARAMETER_CONSTANT_ACTIVITY_KEY
+
+
 base_path = os.path.join(os.path.dirname(__file__), "data", "input")
 interval_event_log_path = os.path.join(base_path, "interval_event_log.xes")
 one_timestamp_log_example_path = os.path.join(base_path, "event-log.xes")
+act_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, {}, xes_constants.DEFAULT_NAME_KEY)
 
 
 class TestEnrichPerfInfo(unittest.TestCase):
@@ -54,6 +62,28 @@ class TestEnrichPerfInfo(unittest.TestCase):
         self.assertEqual(stats_mean['register request'], 0)
         self.assertIn("register request", stats_stdev)
         self.assertEqual(stats_stdev['register request'], 0)
+
+    def test_get_resource_capacity_logs_with_resources(self):
+        petrinet, log, net, im, fm = mine_petrinet(one_timestamp_log_example_path)
+        activities = list(attributes_filter.get_attribute_values(log, act_key))
+        enricher = PetriNetPerformanceEnricher(petrinet)
+        res_capacity_dict = enricher._get_res_capacities(log, activities)
+        self.assertEqual(len(res_capacity_dict), len(activities))
+        self.assertIn("register request", res_capacity_dict)
+        self.assertEqual(res_capacity_dict['register request'], 3)
+        self.assertIn("decide", res_capacity_dict)
+        self.assertEqual(res_capacity_dict['decide'], 1)
+
+    def test_get_resource_capacity_logs_without_resources(self):
+        petrinet, log, net, im, fm = mine_petrinet(interval_event_log_path)
+        activities = list(attributes_filter.get_attribute_values(log, act_key))
+        enricher = PetriNetPerformanceEnricher(petrinet)
+        res_capacity_dict = enricher._get_res_capacities(log, activities)
+        self.assertEqual(len(res_capacity_dict), len(activities))
+        self.assertIn("place order", res_capacity_dict)
+        self.assertEqual(res_capacity_dict['place order'], 1)
+        self.assertIn("cancel order", res_capacity_dict)
+        self.assertEqual(res_capacity_dict['cancel order'], 1)
 
 
 if __name__ == "__main__":

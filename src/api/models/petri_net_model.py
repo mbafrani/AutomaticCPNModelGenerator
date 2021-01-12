@@ -26,6 +26,7 @@ from api.util import constants
 from pm4py.objects.petri.importer import importer as pnml_importer
 from pm4py.objects.petri.exporter import exporter as pnml_exporter
 from pm4py.statistics.traces.log import case_arrival
+from pm4py.algo.enhancement.roles import algorithm as roles_discovery
 
 PetriNetDictKeys = constants.PetriNetDictKeys
 
@@ -66,7 +67,7 @@ def load_net(folder, name="petri_net"):
 
 class PetriNet:
     def __init__(
-        self, log=None, net=None, initial_marking=None, final_marking=None, gviz=None
+            self, log=None, net=None, initial_marking=None, final_marking=None, gviz=None
     ):
         self.log = log
         self.net = net
@@ -216,7 +217,8 @@ class PetriNet:
             arc = next(
                 arc
                 for arc in self.net.arcs
-                if str(arc.source) == str(source["label"].split("\n")[0]) and str(arc.target) == str(target["label"].split("\n")[0])
+                if str(arc.source) == str(source["label"].split("\n")[0]) and str(arc.target) == str(
+                    target["label"].split("\n")[0])
             )
             pos = item["pos"].split(" ")[3].split(",")
             arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI] = {
@@ -224,8 +226,8 @@ class PetriNet:
                 constants.DICT_KEY_LAYOUT_Y: float(pos[1]),
             }
 
-    def update_transitions(self, transitions, means, stds):
-        for transition_name, mean, std in zip(transitions, means, stds):
+    def update_transitions(self, transitions, means, stds, res_capacities):
+        for transition_name, mean, std, res_cap in zip(transitions, means, stds, res_capacities):
             # Find Transition
             for trans in self.net.transitions:
                 if str(trans) == transition_name:
@@ -240,6 +242,7 @@ class PetriNet:
             perf_dict = transition.properties[PetriNetDictKeys.performance]
             perf_dict[PetriNetDictKeys.mean] = mean
             perf_dict[PetriNetDictKeys.std] = std
+            perf_dict[PetriNetDictKeys.res_capacity] = res_cap
 
     def update_arrivalrate(self, arrivalrate):
         self.net.properties[PetriNetDictKeys.arrivalrate] = arrivalrate
@@ -312,7 +315,11 @@ class PetriNetVisualizer(PetriNetContainer):
             std_value = transition.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                 constants.DICT_KEY_PERF_STDEV
             ]
-            label = str(transition) + "\n" + ("N(" + str(mean_value) + ", " + str(std_value) + ")")
+            res_capacity = transition.properties[constants.DICT_KEY_PERF_INFO_PETRI][
+                constants.DICT_KEY_PERF_RES_CAP
+            ]
+            label = str(transition) + "\n" + ("N(" + str(mean_value) + ", " + str(std_value) + ")") \
+                    + "\n" + "Res. Capacity: " + str(res_capacity)
             decorations[transition] = {"color": "#FFFFFF ", "label": label}
         return decorations
 
@@ -323,10 +330,10 @@ class PetriNetVisualizer(PetriNetContainer):
                 arrival_rate = self.net.properties[constants.DICT_KEY_ARRIVAL_RATE]
                 label = "Arrival Rate \n {} minutes".format(arrival_rate)
                 decorations[arc] = {
-                        "color": "#000000",
-                        "penwidth": "1",
-                        "label": label,
-                    }
+                    "color": "#000000",
+                    "penwidth": "1",
+                    "label": label,
+                }
                 break
 
         return decorations
@@ -357,8 +364,26 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
         act_key = exec_utils.get_param_value(Parameters.ACTIVITY_KEY, {}, xes_constants.DEFAULT_NAME_KEY)
         activities = list(attributes_filter.get_attribute_values(self.log, act_key))
 
+        # Get the resource capacities
+        res_capacity_dict = self._get_res_capacities(self.log, activities)
+
         # store transition's perf information in the properties dictionary
-        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate, activities)
+        self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate,
+                                                        activities, res_capacity_dict)
+
+    def _get_res_capacities(self, log, activities):
+        res_capacity_dict = {}
+        if "org:resource" in str(log):
+            roles = roles_discovery.apply(log)
+            for role in roles:
+                count_of_resources = len(role[1])
+                for act in role[0]:
+                    res_capacity_dict[act] = count_of_resources
+        else:
+            for act in activities:
+                res_capacity_dict[act] = constants.PERF_RES_CAP_VALID_TRANS_DEFAULT_VALUE
+
+        return res_capacity_dict
 
     def _aggregate_stats(self, statistics, elem, aggregation_measure):
         aggr_stat = 0
@@ -389,13 +414,13 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
         return aggregated_statistics
 
     def _get_service_time_single_timestamps(
-        self,
-        log,
-        net,
-        initial_marking,
-        final_marking,
-        parameters=None,
-        ht_perf_method="last",
+            self,
+            log,
+            net,
+            initial_marking,
+            final_marking,
+            parameters=None,
+            ht_perf_method="last",
     ):
         if parameters is None:
             parameters = {}
@@ -484,20 +509,24 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
         return durations_dict_mean, durations_dict_stdev
 
-    # extracts the perf information - execution time mean and std deviation
-    # and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
-    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate, activities ):
+    # extracts the perf information - execution time mean and std deviation, arrival rate
+    # and resource capacities and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
+    def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate,
+                                                   activities, res_capacity_dict):
         for trans in self.net.transitions:
             # insert the perf info into trans properties
             if constants.DICT_KEY_PERF_INFO_PETRI not in trans.properties:
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI] = {}
-            if str(trans) in mean_dict and str(trans) in stdev_dict:
+            if str(trans) in mean_dict and str(trans) in stdev_dict and str(trans) in res_capacity_dict:
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                     constants.DICT_KEY_PERF_MEAN
                 ] = mean_dict[str(trans)]
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                     constants.DICT_KEY_PERF_STDEV
                 ] = stdev_dict[str(trans)]
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
+                    constants.DICT_KEY_PERF_RES_CAP
+                ] = res_capacity_dict[str(trans)]
             else:
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                     constants.DICT_KEY_PERF_MEAN
@@ -505,6 +534,9 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                 trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
                     constants.DICT_KEY_PERF_STDEV
                 ] = constants.PERF_STDEV_DEFAULT_VALUE
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][
+                    constants.DICT_KEY_PERF_RES_CAP
+                ] = constants.PERF_RES_CAP_SILENT_TRANS_VALUE
 
         self.net.properties[PetriNetDictKeys.transition_names] = activities
         self.net.properties[constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate

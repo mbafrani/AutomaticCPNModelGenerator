@@ -14,15 +14,18 @@ class test_parameter_change(unittest.TestCase):
         app.config["TESTING"] = True
         self.client = app.test_client()
 
-    def check_transition_data(self, transitions, trans_name, exp_mean, exp_std):
+    def check_transition_data(self, transitions, trans_name, exp_mean, exp_std, exp_res_capacity):
         self.assertIn(trans_name, transitions)
         trans = transitions[trans_name][PetriNetDictKeys.performance]
         self.assertIn(PetriNetDictKeys.mean, trans)
         self.assertIn(PetriNetDictKeys.std, trans)
+        self.assertIn(PetriNetDictKeys.res_capacity, trans)
         mean = trans[PetriNetDictKeys.mean]
         std = trans[PetriNetDictKeys.std]
+        res_capacity = trans[PetriNetDictKeys.res_capacity]
         self.assertAlmostEqual(mean, exp_mean, 2)
         self.assertAlmostEqual(std, exp_std, 2)
+        self.assertEqual(res_capacity, exp_res_capacity)
 
     def check_decision_point_data(self, places, name, probs):
         self.assertIn(name, places)
@@ -52,13 +55,13 @@ class test_parameter_change(unittest.TestCase):
         places = response.json[PetriNetDictKeys.places]
         arrival_rate = response.json[PetriNetDictKeys.net][PetriNetDictKeys.arrivalrate]
 
-        self.check_transition_data(transitions, "A", 0, 0)
-        self.check_transition_data(transitions, "B", 6.12, 4.19)
-        self.check_transition_data(transitions, "C", 12.01, 5.64)
-        self.check_transition_data(transitions, "D", 11.87, 4.71)
-        self.check_transition_data(transitions, "E", 4.15, 2.86)
-        self.check_transition_data(transitions, "F", 4.7, 2.82)
-        self.check_transition_data(transitions, "G", 4.98, 2.8)
+        self.check_transition_data(transitions, "A", 0, 0, 1)
+        self.check_transition_data(transitions, "B", 6.12, 4.19, 1)
+        self.check_transition_data(transitions, "C", 12.01, 5.64, 1)
+        self.check_transition_data(transitions, "D", 11.87, 4.71, 1)
+        self.check_transition_data(transitions, "E", 4.15, 2.86, 1)
+        self.check_transition_data(transitions, "F", 4.7, 2.82, 1)
+        self.check_transition_data(transitions, "G", 4.98, 2.8, 1)
 
         self.check_decision_point_data(places, "p_9", {"D": 0.9, "skip_3": 0.1})
         self.check_decision_point_data(places, "p_4", {"E": 0.2, "F": 0.8})
@@ -73,18 +76,19 @@ class test_parameter_change(unittest.TestCase):
                 {
                     RequestJsonKeys.transition: "B",
                     RequestJsonKeys.mean: 3,
-                    RequestJsonKeys.std: 3
+                    RequestJsonKeys.std: 3,
+                    RequestJsonKeys.res_capacity: 5,
                 }]
         }
         response = self.client.post("api/change-parameter", json=data)
         transitions = response.json[PetriNetDictKeys.transitions]
-        self.check_transition_data(transitions, "B", 3, 3)
+        self.check_transition_data(transitions, "B", 3, 3, 5)
 
         # 4. Check if the update is saved on the server
         data = {RequestJsonKeys.event_log_id: event_log_id, "test": True}
         response = self.client.post("api/process-model/enrichment-dict", json=data)
         transitions = response.json[PetriNetDictKeys.transitions]
-        self.check_transition_data(transitions, "B", 3, 3)
+        self.check_transition_data(transitions, "B", 3, 3, 5)
         self.assertEqual(response.json[PetriNetDictKeys.net][PetriNetDictKeys.arrivalrate], 10)
 
 

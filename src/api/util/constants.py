@@ -29,10 +29,13 @@ DICT_KEY_PROBA_INFO_PETRI = "DECISION_PROBABILITY_INFORMATION_PETRI"
 DICT_KEY_FREQUENCY = "successor_frequencies"
 DICT_KEY_PLACE_PROB_INDEX = "DICT_KEY_PLACE_PROB_INDEX"
 DICT_KEY_ARRIVAL_RATE = "arrivalrate"
+DICT_KEY_PERF_RES_CAP = "resource_capacity"
 
 # default performance values
 PERF_MEAN_DEFAULT_VALUE = 0.0
 PERF_STDEV_DEFAULT_VALUE = 0.0
+PERF_RES_CAP_VALID_TRANS_DEFAULT_VALUE = 1
+PERF_RES_CAP_SILENT_TRANS_VALUE = 0
 
 # declaration constants
 DECLARATION_COLOR_CASE_ID = "CASE_ID"
@@ -58,6 +61,7 @@ class PetriNetDictKeys:
     places = "places"
     transitions = "transitions"
     transition_names = "transition_names"
+    res_capacity = "resource_capacity"
 
 
 class RequestJsonKeys:
@@ -69,3 +73,4 @@ class RequestJsonKeys:
     transition = "transition"
     mean = "mean"
     std = "std"
+    res_capacity = "resource_capacity"
