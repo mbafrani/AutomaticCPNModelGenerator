@@ -159,13 +159,11 @@ class CPNExportService:
         )
         place_tag.appendChild(ellipse_tag)
 
-        # TODO: Handle tokens
         token_tag = document.createElement("token")
         token_tag.setAttribute("x", "0.000000")
         token_tag.setAttribute("y", "0.000000")
         place_tag.appendChild(token_tag)
 
-        # TODO: Handle markings
         marking_tag = document.createElement("marking")
         marking_tag.setAttribute("x", "0.000000")
         marking_tag.setAttribute("y", "0.000000")
@@ -278,50 +276,6 @@ class CPNExportService:
             initmark_tag.appendChild(text_tag)
 
             place_tag.appendChild(initmark_tag)
-
-        if is_decision_prob_place:
-            fusioninfo_tag = document.createElement("fusioninfo")
-            fusioninfo_tag.setAttribute("id", str(uuid.uuid1().hex))
-            fusioninfo_tag.setAttribute("name", str(place))
-
-            posattr_tag = document.createElement("posattr")
-            # initial_marking position_x = place_x_position - place_width
-            posattr_tag.setAttribute("x", str(
-                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_X] -
-                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_WIDTH] / 2
-            ))
-            # initial_marking position_y = place_y_position -
-            # place_height/2
-            posattr_tag.setAttribute("y", str(
-                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_Y] -
-                (
-                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
-                )
-            ))
-            fusioninfo_tag.appendChild(posattr_tag)
-
-            fillattr_tag = document.createElement("fillattr")
-            fillattr_tag.setAttribute("colour", "White")
-            fillattr_tag.setAttribute("pattern", "Solid")
-            fillattr_tag.setAttribute("filled", "false")
-            fusioninfo_tag.appendChild(fillattr_tag)
-
-            lineattr_tag = document.createElement("lineattr")
-            lineattr_tag.setAttribute("colour", "Black")
-            lineattr_tag.setAttribute("thick", "0")
-            lineattr_tag.setAttribute("type", "Solid")
-            fusioninfo_tag.appendChild(lineattr_tag)
-
-            textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
-            textattr_tag.setAttribute("bold", "false")
-            fusioninfo_tag.appendChild(textattr_tag)
-
-            place_tag.appendChild(fusioninfo_tag)
 
         return place_tag
 
@@ -638,7 +592,6 @@ class CPNExportService:
                 arcs_from_place_to_trans.setdefault(str(arc.source.name), []).append(arc)
 
         # find places in arcs that have multiple arcs
-        prob_index = 0
         arcs_with_prob = {
             key: value for key, value in arcs_from_place_to_trans.items() if len(value) > 1
         }
@@ -773,40 +726,57 @@ class CPNExportService:
         )
         page_tag.appendChild(arc_trans_to_place_tag)
 
-        # setup fusion probability places
+        # setup probability places
         prob_index = 0
         arcs_with_prob = self.get_arcs_with_prob_info(petri_net)
-        for key, value in arcs_with_prob.items():
+        for key, arcs in arcs_with_prob.items():
             prob_index = prob_index + 1
-            for arc in value:
-                # create <place>
-                prob_place = ProbabilityPlace(
-                    "prob_" + str(arc.target.name).replace('-', ''), None, None, properties={
-                        constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                            constants.DICT_KEY_LAYOUT_X: arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
-                            constants.DICT_KEY_LAYOUT_Y: (
-                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] * 2
-                            ),
-                            constants.DICT_KEY_LAYOUT_HEIGHT: 10,
-                            constants.DICT_KEY_LAYOUT_WIDTH: 25
-                        },
-                        constants.DICT_KEY_PLACE_PROB_INDEX: prob_index
-                    }
-                )
-                place_tag = self.create_place_element_for_page(prob_place, {}, {}, document, is_decision_prob_place=True)
-                page_tag.appendChild(place_tag)
+            # the transitions between which the probability place has to be created
+            trans_1_y = arcs[0].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+            trans_2_y = arcs[1].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+            if trans_1_y > trans_2_y:
+                transition_upper = arcs[0].target
+                transition_lower = arcs[1].target
+            else:
+                transition_upper = arcs[1].target
+                transition_lower = arcs[0].target
+
+            # create <place>
+            prob_place = ProbabilityPlace(
+                "prob_" + str(transition_lower.name).replace('-', ''), None, None, properties={
+                    constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                        constants.DICT_KEY_LAYOUT_X: transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
+                        constants.DICT_KEY_LAYOUT_Y: (
+                            transition_upper.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
+                            transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                        ) / 2,
+                        constants.DICT_KEY_LAYOUT_HEIGHT: 10,
+                        constants.DICT_KEY_LAYOUT_WIDTH: 25
+                    },
+                    constants.DICT_KEY_PLACE_PROB_INDEX: prob_index
+                }
+            )
+            place_tag = self.create_place_element_for_page(prob_place, {}, {}, document, is_decision_prob_place=True)
+            page_tag.appendChild(place_tag)
+
+            for trans in [transition_lower, transition_upper]:
+
+                if trans is transition_lower:
+                    arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 5
+                    arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 20
+                else:  # trans is transition_upper
+                    arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 5
+                    arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 20
+
                 # create arc_1
                 arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
-                    prob_place, arc.target, weight=1, properties={
+                    prob_place, trans, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                            constants.DICT_KEY_LAYOUT_X: (
-                                prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 5
-                            ),
+                            constants.DICT_KEY_LAYOUT_X: arc_place_to_trans_layout_x,
                             constants.DICT_KEY_LAYOUT_Y: (
                                 prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                            ) / 2
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                            ) / 2.06
                         }
                     }
                 )
@@ -814,15 +784,13 @@ class CPNExportService:
                 page_tag.appendChild(arc_place_to_trans_tag)
                 # create arc_2
                 arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
-                    arc.target, prob_place, weight=1, properties={
+                    trans, prob_place, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                            constants.DICT_KEY_LAYOUT_X: (
-                                prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 5
-                            ),
+                            constants.DICT_KEY_LAYOUT_X: arc_trans_to_place_layout_x,
                             constants.DICT_KEY_LAYOUT_Y: (
                                 prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                            ) / 2
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                            ) / 2.06
                         }
                     }
                 )
@@ -831,23 +799,10 @@ class CPNExportService:
 
                 # update trans element with guard condition
                 self.update_trans_element_with_guard_cond(
-                    arc.target, trans_dict[str(arc.target.name)], document
+                    trans, trans_dict[str(trans.name)], document
                 )
 
         return page_tag
-
-    # fusion element containg fusion places information
-    def create_fusion_element_for_document(self, document, fusion_elements, fusion_name):
-        fusion_tag = document.createElement("fusion")
-        fusion_tag.setAttribute("id", str(uuid.uuid1().hex))
-        fusion_tag.setAttribute("name", str(fusion_name))
-
-        for fusion_element in fusion_elements:
-            fusion_elm_tag = document.createElement("fusion_elm")
-            fusion_elm_tag.setAttribute("idref", str(fusion_element))
-            fusion_tag.appendChild(fusion_elm_tag)
-
-        return fusion_tag
 
     # Genarates a cpn dom object filled with information from the petri net
     def create_cpn_model_from_petri_net(
@@ -897,18 +852,6 @@ class CPNExportService:
             parameters=None
         )
         cpnet_tag.appendChild(page_tag)
-
-        # <fusion>
-        prob_index = 0
-        arcs_with_prob = self.get_arcs_with_prob_info(petri_net)
-        for key, value in arcs_with_prob.items():
-            prob_index = prob_index + 1
-            fusion_name = "prob_" + str(prob_index)
-            fusion_elements = []
-            for arc in value:
-                fusion_elements.append("prob_" + str(arc.target.name).replace('-', ''))
-            fusion_tag = self.create_fusion_element_for_document(document, fusion_elements, fusion_name)
-            cpnet_tag.appendChild(fusion_tag)
 
         return document
 
