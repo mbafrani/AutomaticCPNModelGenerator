@@ -1,11 +1,5 @@
 name: CI Pipeline
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build:
@@ -31,6 +25,12 @@ jobs:
         with:
           token: aecea6cf-8e41-42ee-9433-016a12208552 # upload token needs to be stored in secrets
           fail_ci_if_error: true
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: success() && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v2
       - name: Login to Heroku Container registry
         env: 
           HEROKU_API_KEY: 8e0c1634-5e2e-46d6-940a-6b3bd198b467 # this is a test account, api key needs to be stored in secrets

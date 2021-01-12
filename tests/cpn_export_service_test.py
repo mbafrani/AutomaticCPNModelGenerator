@@ -138,17 +138,10 @@ class TestCPNExportService(unittest.TestCase):
             self.assertIsInstance(place_element, Element)
             self.assertEqual(place.name, place_element.getAttribute("id"))
             posattr_element = place_element.getElementsByTagName("posattr")
-            if is_next_case_id_place:
-                self.assertEqual(3, len(posattr_element))
-                self.assertEqual(3, len(place_element.getElementsByTagName("fillattr")))
-                self.assertEqual(3, len(place_element.getElementsByTagName("lineattr")))
-                self.assertEqual(3, len(place_element.getElementsByTagName("textattr")))
-            else:
-                self.assertEqual(1, len(place_element.getElementsByTagName("fusioninfo")))
-                self.assertEqual(4, len(posattr_element))
-                self.assertEqual(4, len(place_element.getElementsByTagName("fillattr")))
-                self.assertEqual(4, len(place_element.getElementsByTagName("lineattr")))
-                self.assertEqual(4, len(place_element.getElementsByTagName("textattr")))
+            self.assertEqual(3, len(posattr_element))
+            self.assertEqual(3, len(place_element.getElementsByTagName("fillattr")))
+            self.assertEqual(3, len(place_element.getElementsByTagName("lineattr")))
+            self.assertEqual(3, len(place_element.getElementsByTagName("textattr")))
 
             self.assertEqual(
                 str(place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]),
@@ -481,7 +474,7 @@ class TestCPNExportService(unittest.TestCase):
             side_effect =[document.createElement("arc") for i in range(len(petri_net_obj.arcs)+3)]
         )
         cpn_export_service.get_arcs_with_prob_info = MagicMock(
-            return_value={'p_1': MagicMock()}
+            return_value={}
         )
         page_element = cpn_export_service.create_page_element_for_document(
             document, petri_net_obj, None, None, None
@@ -520,10 +513,6 @@ class TestCPNExportService(unittest.TestCase):
         cpn_export_service.get_arcs_with_prob_info = MagicMock(
             return_value={'p_1': MagicMock()}
         )
-        cpn_export_service.create_fusion_element_for_document = MagicMock(
-            return_value=document.createElement("fusion")
-        )
-
         cpn_model = cpn_export_service.create_cpn_model_from_petri_net(obj, None, None)
 
         self.assertIsInstance(cpn_model, Document)
@@ -535,7 +524,6 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(1, len(cpn_model.getElementsByTagName("cpnet")))
         self.assertEqual(1, len(cpn_model.getElementsByTagName("globbox")))
         self.assertEqual(1, len(cpn_model.getElementsByTagName("page")))
-        self.assertEqual(1, len(cpn_model.getElementsByTagName("fusion")))
 
     def test_get_cpn_file_path(self):
         app = flask.Flask(__name__)
@@ -566,21 +554,6 @@ class TestCPNExportService(unittest.TestCase):
 
         cpn_export_service.get_cpn_file_path.assert_called_with(event_log_id)
         model_obj.toprettyxml.assert_called_with(encoding="iso-8859-1")
-
-    def test_create_fusion_element_for_document(self):
-        cpn_export_service = CPNExportService()
-        document = Document()
-        fusions = ['prob_' + str(uuid.uuid1().hex), 'prob_' + str(uuid.uuid1().hex)]
-        fusion_name = 'prob_1'
-
-        fusion_element = cpn_export_service.create_fusion_element_for_document(document, fusions, fusion_name)
-
-        self.assertIsInstance(fusion_element, Element)
-        self.assertEqual(fusion_name, fusion_element.getAttribute('name'))
-        fusion_elm = fusion_element.getElementsByTagName('fusion_elm')
-        self.assertEqual(len(fusions), len(fusion_elm))
-        for i, elem in enumerate(fusion_elm):
-            self.assertEqual(fusions[i], elem.getAttribute('idref'))
 
     def test_get_arcs_with_prob_info(self):
         cpn_export_service = CPNExportService()
