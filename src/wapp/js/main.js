@@ -104,11 +104,12 @@ wizard.addPage(
       $('#arrival_rate').val(response.arrivalrate);
       var transitions= response.transitions;
       $('#service_times').empty();
-      var content='<thead> <tr><th>Transition</th> <th>Mean (in mins) </th> <th> Std Dev (in mins)</th></tr></thead><tbody>'
+      var content='<thead> <tr><th>Transition</th> <th>Mean (in mins) </th> <th> Std Dev (in mins)</th><th>Resource Capacity</th></tr></thead><tbody>'
        for( var i=0; i< transitions.length; i++){
         content += '<tr> <td id="t_'+[i]+'">' + transitions[i]['transition'] +'</td>'  
-        content += '<td contenteditable="true">' + transitions[i]['mean'] +'</td>'
-        content += '<td contenteditable="true">' + transitions[i]['std'] +'</td>'
+        content += '<td contenteditable="true" onkeypress="allowDecimal(event,this)">' + transitions[i]['mean'] +'</td>'
+        content += '<td contenteditable="true" onkeypress="allowDecimal(event,this)">' + transitions[i]['std'] +'</td>'
+        content += '<td contenteditable="true" onkeypress="allowNumeric(event)" onfocusout="validInput(this)">' + transitions[i]['resource_capacity'] +'</td>'
       } 
       content += '</tbody>'
       $('#service_times').append(content);
@@ -125,6 +126,7 @@ wizard.addPage(
                     mean:   parseFloat($row.find('td:eq(1)').text()).toFixed(2),
                     std:    parseFloat($row.find('td:eq(2)').text()).toFixed(2),
                     transition: $row.find('td:eq(0)').text(),
+                    resource_capacity: parseInt($row.find('td:eq(3)').text()),
                 });
             });
 
