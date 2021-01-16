@@ -59,7 +59,7 @@ class CPNExportService:
             str(constants.DECLARATION_COLOR_RES_CAPACITY)))
         color_tag.appendChild(colorid_tag)
 
-        enum_tag = document.createElement("enum")
+        enum_tag = document.createElement(str(constants.DECLARATION_COLOR_RES_CAPACITY_DATATYPE))
         enum_id_tag = document.createElement("id")
         enum_id_tag.appendChild(document.createTextNode(
             str(constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE)))
@@ -554,11 +554,13 @@ class CPNExportService:
             "x",
             str(
                 arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_X]
+                [constants.DICT_KEY_LAYOUT_X] + (
+                    18 if is_next_case_id_arc and is_target_place else 0
+                )
             )
         )
         # move y position by 5 else the arc annotation will end up lying on
-        # the arc
+        # the arc   
         posattr_tag.setAttribute(
             "y",
             str(
@@ -588,6 +590,10 @@ class CPNExportService:
         if is_next_case_id_arc:
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_NEXT_CASE_ID_ANNOT_TEXT_COLOR)
             if is_target_place:
+                # smooting value to prevent divide by zero error
+                if arrival_rate == 0:
+                    arrival_rate = 1e-6
+
                 text_tag.appendChild(document.createTextNode(
                     str(
                         constants.DECLARATION_COLOR_CASE_ID_VARIABLE +
