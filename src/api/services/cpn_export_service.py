@@ -59,6 +59,9 @@ class CPNExportService:
             str(constants.DECLARATION_COLOR_RES_CAPACITY)))
         color_tag.appendChild(colorid_tag)
 
+        colortimed_tag = document.createElement("timed")
+        color_tag.appendChild(colortimed_tag)
+
         enum_tag = document.createElement(str(constants.DECLARATION_COLOR_RES_CAPACITY_DATATYPE))
         enum_id_tag = document.createElement("id")
         enum_id_tag.appendChild(document.createTextNode(
@@ -623,12 +626,28 @@ class CPNExportService:
                     str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE)
                 ))
         elif is_res_cap_arc:
+            # Show execution time normal distribution
+            # on the arc transition->place
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_RES_CAP_ANNOT_TEXT_COLOR)
-            text_tag.appendChild(document.createTextNode(
-                str(
-                    constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE
+            if is_target_place:
+                exec_time_mean = str(
+                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                    [constants.DICT_KEY_PERF_MEAN]
                 )
-            ))
+                exec_time_stdev = str(
+                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                    [constants.DICT_KEY_PERF_STDEV]
+                )
+                text_tag.appendChild(document.createTextNode(
+                    str(constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE) +
+                    "@+" + "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
+                ))
+            else:
+                text_tag.appendChild(document.createTextNode(
+                    str(
+                        constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE
+                    )
+                ))
         else:
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DEFAULT_ANNOT_TEXT_COLOR)
             # Show execution time normal distribution
