@@ -4,7 +4,6 @@ from xml.dom.minidom import DOMImplementation
 import os
 import uuid
 
-from api.models import ProbabilityPlace
 from api.util import constants
 
 
@@ -15,7 +14,7 @@ class CPNExportService:
         self.decision_equal_prob_found = False
 
     # globbox element in the cpn file contains color set declarations
-    def create_globbox_element_for_document(self, document):
+    def create_globbox_element_for_document(self, document, number_of_trans):
         globbox_tag = document.createElement("globbox")
 
         # setup color set declarations
@@ -48,6 +47,27 @@ class CPNExportService:
 
         colorint_tag = document.createElement(str(constants.DECLARATION_COLOR_PROBABILITY_DATATYPE))
         color_tag.appendChild(colorint_tag)
+
+        globbox_tag.appendChild(color_tag)
+
+        # color for resource capacity
+        color_tag = document.createElement("color")
+        color_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+        colorid_tag = document.createElement("id")
+        colorid_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_COLOR_RES_CAPACITY)))
+        color_tag.appendChild(colorid_tag)
+
+        colortimed_tag = document.createElement("timed")
+        color_tag.appendChild(colortimed_tag)
+
+        enum_tag = document.createElement(str(constants.DECLARATION_COLOR_RES_CAPACITY_DATATYPE))
+        enum_id_tag = document.createElement("id")
+        enum_id_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE)))
+        enum_tag.appendChild(enum_id_tag)
+        color_tag.appendChild(enum_tag)
 
         globbox_tag.appendChild(color_tag)
 
@@ -89,11 +109,43 @@ class CPNExportService:
 
         globbox_tag.appendChild(var_tag)
 
+        # function declarations
+        ml_tag = document.createElement("ml")
+        ml_tag.setAttribute("id", str(uuid.uuid1().hex))
+        ml_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_COLOR_NORMAL_DISTRIB_FUNCTION)))
+        globbox_tag.appendChild(ml_tag)
+
+        ml_tag = document.createElement("ml")
+        ml_tag.setAttribute("id", str(uuid.uuid1().hex))
+        ml_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_COLOR_EXP_DISTRIB_FUNCTION)))
+        globbox_tag.appendChild(ml_tag)
+
+        # create block declaration
+        block_tag = document.createElement("block")
+        block_tag.setAttribute("id", str(uuid.uuid1().hex))
+        blockid_tag = document.createElement("id")
+        blockid_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_BLOCK_EXEC_TIME_ID)))
+        block_tag.appendChild(blockid_tag)
+
+        # exec time variable declarations
+        for index in range(0, number_of_trans):
+            ml_tag = document.createElement("ml")
+            ml_tag.setAttribute("id", str(uuid.uuid1().hex))
+            ml_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_ASSIGNMENT_EXEC_TIME).format(index)
+            ))
+            block_tag.appendChild(ml_tag)
+        globbox_tag.appendChild(block_tag)
+
         return globbox_tag
 
     # place element containing place layout information
     def create_place_element_for_page(
-     self, place, initial_marking, final_marking, document, is_decision_prob_place=False, is_next_case_id_place=False):
+        self, place, initial_marking, final_marking, document,
+            is_decision_prob_place=False, is_next_case_id_place=False, is_res_cap_place=False, res_capacity=None):
         place_tag = document.createElement("place")
         place_tag.setAttribute("id", str(place.name))
 
@@ -114,27 +166,44 @@ class CPNExportService:
         )
         place_tag.appendChild(posattr_tag)
 
-        # set fill color for places: Teal(Source), Red(Sink) and
-        # White(Others)
         fillattr_tag = document.createElement("fillattr")
+        lineattr_tag = document.createElement("lineattr")
+        textattr_tag = document.createElement("textattr")
+
+        # set fill/line/text color for places
         if place in initial_marking.keys():
-            fillattr_tag.setAttribute("colour", "Teal")
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_SOURCE_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_SOURCE_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_SOURCE_TEXT_COLOR)
         elif place in final_marking.keys():
-            fillattr_tag.setAttribute("colour", "Red")
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_SINK_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_SINK_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_SINK_TEXT_COLOR)
+        elif is_decision_prob_place:
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DECISION_PROB_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DECISION_PROB_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DECISION_PROB_TEXT_COLOR)
+        elif is_next_case_id_place:
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_TEXT_COLOR)
+        elif is_res_cap_place:
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_TEXT_COLOR)
         else:
-            fillattr_tag.setAttribute("colour", "White")
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DEFAULT_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DEFAULT_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DEFAULT_TEXT_COLOR)
+
         fillattr_tag.setAttribute("pattern", "Solid")
         fillattr_tag.setAttribute("filled", "false")
         place_tag.appendChild(fillattr_tag)
 
-        lineattr_tag = document.createElement("lineattr")
-        lineattr_tag.setAttribute("colour", "Black")
         lineattr_tag.setAttribute("thick", "2")
         lineattr_tag.setAttribute("type", "Solid")
         place_tag.appendChild(lineattr_tag)
 
-        textattr_tag = document.createElement("textattr")
-        textattr_tag.setAttribute("colour", "Black")
         textattr_tag.setAttribute("bold", "false")
         place_tag.appendChild(textattr_tag)
 
@@ -206,26 +275,33 @@ class CPNExportService:
         type_tag.appendChild(lineattr_tag)
 
         textattr_tag = document.createElement("textattr")
-        textattr_tag.setAttribute("colour", "Black")
         textattr_tag.setAttribute("bold", "false")
-        type_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
         if is_next_case_id_place:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_TEXT_COLOR)
             text_tag.appendChild(document.createTextNode(
                 str(constants.DECLARATION_COLOR_CASE_ID)))
         elif is_decision_prob_place:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DECISION_PROB_TEXT_COLOR)
             text_tag.appendChild(document.createTextNode(
-                str(constants.DECLARATION_COLOR_PROBABILITY)))  
+                str(constants.DECLARATION_COLOR_PROBABILITY)))
+        elif is_res_cap_place:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_TEXT_COLOR)
+            text_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_COLOR_RES_CAPACITY)))
         else:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DEFAULT_TEXT_COLOR)
             text_tag.appendChild(document.createTextNode(
                 str(constants.DECLARATION_COLOR_CASE_ID)))
+
+        type_tag.appendChild(textattr_tag)
         type_tag.appendChild(text_tag)
 
         place_tag.appendChild(type_tag)
 
         # setup inital markings
-        if is_decision_prob_place or is_next_case_id_place:
+        if is_decision_prob_place or is_next_case_id_place or is_res_cap_place:
             initmark_tag = document.createElement("initmark")
             initmark_tag.setAttribute("id", str(uuid.uuid1().hex))
 
@@ -262,17 +338,26 @@ class CPNExportService:
             initmark_tag.appendChild(lineattr_tag)
 
             textattr_tag = document.createElement("textattr")
-            textattr_tag.setAttribute("colour", "Black")
             textattr_tag.setAttribute("bold", "false")
-            initmark_tag.appendChild(textattr_tag)
 
             text_tag = document.createElement("text")
             if is_next_case_id_place:
+                textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_TEXT_COLOR)
                 text_tag.appendChild(document.createTextNode(
                     str(1)))
             elif is_decision_prob_place:
+                textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DECISION_PROB_TEXT_COLOR)
                 text_tag.appendChild(document.createTextNode(
                     str(constants.DECLARATION_COLOR_PROBABILITY_FUNCTION)))
+            elif is_res_cap_place:
+                textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_TEXT_COLOR)
+                text_tag.appendChild(document.createTextNode(
+                    str(res_capacity) +
+                    "`" +
+                    str(constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE)
+                ))
+
+            initmark_tag.appendChild(textattr_tag)
             initmark_tag.appendChild(text_tag)
 
             place_tag.appendChild(initmark_tag)
@@ -280,7 +365,7 @@ class CPNExportService:
         return place_tag
 
     # trans element containg transition layout information
-    def create_trans_element_for_page(self, trans, document):
+    def create_trans_element_for_page(self, trans, document, is_init_trans=False):
         trans_tag = document.createElement("trans")
         # remove hypens from the guid (or else cpntool will crash)
         trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
@@ -303,24 +388,24 @@ class CPNExportService:
         trans_tag.appendChild(posattr_tag)
 
         fillattr_tag = document.createElement("fillattr")
-        fillattr_tag.setAttribute("colour", "Silver")
+        fillattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_FILL_COLOR)
         fillattr_tag.setAttribute("pattern", "Solid")
         fillattr_tag.setAttribute("filled", "false")
         trans_tag.appendChild(fillattr_tag)
 
         lineattr_tag = document.createElement("lineattr")
-        lineattr_tag.setAttribute("colour", "Black")
+        lineattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_LINE_COLOR)
         lineattr_tag.setAttribute("thick", "2")
         lineattr_tag.setAttribute("type", "Solid")
         trans_tag.appendChild(lineattr_tag)
 
         textattr_tag = document.createElement("textattr")
-        textattr_tag.setAttribute("colour", "Black")
+        textattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_TEXT_COLOR)
         textattr_tag.setAttribute("bold", "false")
         trans_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
-        text_tag.appendChild(document.createTextNode(str(trans)))
+        text_tag.appendChild(document.createTextNode(str(trans)))    
         trans_tag.appendChild(text_tag)
 
         box_tag = document.createElement("box")
@@ -339,6 +424,70 @@ class CPNExportService:
             )
         )
         trans_tag.appendChild(box_tag)
+
+        # code segment for setting the exec time distribution
+        if not is_init_trans:
+            code_tag = document.createElement("code")
+            code_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+            posattr_tag = document.createElement("posattr")
+            posattr_tag.setAttribute(
+                "x",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
+                    (
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
+                    )
+                )
+            )
+            posattr_tag.setAttribute(
+                "y",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
+                    (
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
+                    )
+                )
+            )
+            code_tag.appendChild(posattr_tag)
+
+            fillattr_tag = document.createElement("fillattr")
+            fillattr_tag.setAttribute("colour", "White")
+            fillattr_tag.setAttribute("pattern", "Solid")
+            fillattr_tag.setAttribute("filled", "false")
+            code_tag.appendChild(fillattr_tag)
+
+            lineattr_tag = document.createElement("lineattr")
+            lineattr_tag.setAttribute("colour", "Black")
+            lineattr_tag.setAttribute("thick", "0")
+            lineattr_tag.setAttribute("type", "Solid")
+            code_tag.appendChild(lineattr_tag)
+
+            textattr_tag = document.createElement("textattr")
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_TEXT_COLOR)
+            textattr_tag.setAttribute("bold", "false")
+            code_tag.appendChild(textattr_tag)
+
+            exec_time_mean = str(
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                [constants.DICT_KEY_PERF_MEAN]
+            )
+            exec_time_stdev = str(
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                [constants.DICT_KEY_PERF_STDEV]
+            )
+            normal_distrib = "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
+
+            text_tag = document.createElement("text")
+            text_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_CODE_SEGMENT_EXEC_TIME).format(
+                    constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                    normal_distrib
+                )
+            ))
+            code_tag.appendChild(text_tag)
+
+            trans_tag.appendChild(code_tag)
 
         return trans_tag
 
@@ -410,7 +559,7 @@ class CPNExportService:
     # arc element containg arc layout information
     def create_arc_element_for_page(
         self, arc, document,
-            is_decision_prob_arc=False, is_next_case_id_arc=False, arrival_rate=None, is_init_arc=False):
+            is_decision_prob_arc=False, is_next_case_id_arc=False, arrival_rate=None, is_init_arc=False, is_res_cap_arc=False):
         # identify the place and transition ends of the arc
         is_target_trans = isinstance(
             arc.target, pm4py.objects.petri.petrinet.PetriNet.Transition)
@@ -452,7 +601,14 @@ class CPNExportService:
         arc_tag.appendChild(fillattr_tag)
 
         lineattr_tag = document.createElement("lineattr")
-        lineattr_tag.setAttribute("colour", "Black")
+        if is_next_case_id_arc:
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_NEXT_CASE_ID_LINE_COLOR)
+        elif is_decision_prob_arc:
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DECISION_PROB_ANNOT_TEXT_COLOR)
+        elif is_res_cap_arc:
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_RES_CAP_ANNOT_TEXT_COLOR)
+        else:
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DEFAULT_LINE_COLOR)
         lineattr_tag.setAttribute("thick", "2")
         lineattr_tag.setAttribute("type", "Solid")
         arc_tag.appendChild(lineattr_tag)
@@ -475,8 +631,6 @@ class CPNExportService:
         placeend_tag.setAttribute("idref", placeend_idref)
         arc_tag.appendChild(placeend_tag)
 
-        # TODO: <bendpoint> - do we need this?
-
         annot_tag = document.createElement("annot")
         annot_tag.setAttribute("id", str(uuid.uuid1().hex))
 
@@ -485,11 +639,13 @@ class CPNExportService:
             "x",
             str(
                 arc.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_X]
+                [constants.DICT_KEY_LAYOUT_X] + (
+                    18 if is_next_case_id_arc and is_target_place else 0
+                )
             )
         )
         # move y position by 5 else the arc annotation will end up lying on
-        # the arc
+        # the arc   
         posattr_tag.setAttribute(
             "y",
             str(
@@ -512,74 +668,82 @@ class CPNExportService:
         annot_tag.appendChild(lineattr_tag)
 
         textattr_tag = document.createElement("textattr")
-        textattr_tag.setAttribute("colour", "Teal")
         textattr_tag.setAttribute("bold", "false")
-        annot_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
 
-        if is_decision_prob_arc or is_next_case_id_arc:
-            if is_decision_prob_arc:
-                if(is_target_place):
-                    text_tag.appendChild(document.createTextNode(
-                        str(constants.DECLARATION_COLOR_PROBABILITY_FUNCTION)
-                    ))
-                else:
-                    text_tag.appendChild(document.createTextNode(
-                        str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE)
-                    ))
-            elif is_next_case_id_arc:
-                if(is_target_place):
-                    text_tag.appendChild(document.createTextNode(
-                        str(
-                            constants.DECLARATION_COLOR_CASE_ID_VARIABLE +
-                            "+1@+round(exponential(" + str(round(1/arrival_rate, 6)) + "))"
-                        )
-                    ))
-                else:
-                    text_tag.appendChild(document.createTextNode(
-                        str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE)
-                    ))
+        if is_next_case_id_arc:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_NEXT_CASE_ID_ANNOT_TEXT_COLOR)
+            if is_target_place:
+                # smooting value to prevent divide by zero error
+                if arrival_rate == 0:
+                    arrival_rate = 1e-6
+
+                text_tag.appendChild(document.createTextNode(
+                    str(
+                        constants.DECLARATION_COLOR_CASE_ID_VARIABLE +
+                        "+1@+Exp(" + str(arrival_rate) + ")"
+                    )
+                ))
+            else:
+                text_tag.appendChild(document.createTextNode(
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE)
+                ))
         elif is_init_arc:
-            if(is_target_place):
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DEFAULT_ANNOT_TEXT_COLOR)
+            if is_target_place:
                 text_tag.appendChild(document.createTextNode(
                     str(
                         constants.DECLARATION_COLOR_CASE_ID_VARIABLE
                     )
                 ))
-        else:
+        elif is_decision_prob_arc:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DECISION_PROB_ANNOT_TEXT_COLOR)
+            if is_target_place:
+                text_tag.appendChild(document.createTextNode(
+                    str(constants.DECLARATION_COLOR_PROBABILITY_FUNCTION)
+                ))
+            else:
+                text_tag.appendChild(document.createTextNode(
+                    str(constants.DECLARATION_COLOR_PROBABILITY_VARIABLE)
+                ))
+        elif is_res_cap_arc:
             # Show execution time normal distribution
             # on the arc transition->place
-            if(is_target_place):
-                execution_time_mean = str(
-                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
-                    [constants.DICT_KEY_PERF_MEAN]
-                )
-                execution_time_stdev = str(
-                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
-                    [constants.DICT_KEY_PERF_STDEV]
-                )
-                normal_distrib = str(
-                    "normal(" +
-                    execution_time_mean +
-                    "," +
-                    execution_time_stdev +
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_RES_CAP_ANNOT_TEXT_COLOR)
+            if is_target_place:
+                text_tag.appendChild(document.createTextNode(
+                    str(constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE) +
+                    "@+(!" +
+                    str(constants.DECLARATION_VAR_EXEC_TIME).format(
+                        arc.source.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]
+                    ) +
                     ")"
-                )
+                ))
+            else:
                 text_tag.appendChild(document.createTextNode(
                     str(
-                        constants.DECLARATION_COLOR_CASE_ID_VARIABLE) +
-                    "@+" +
-                    str(
-                        "round(" +
-                        normal_distrib +
-                        ")"
+                        constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE
                     )
+                ))
+        else:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DEFAULT_ANNOT_TEXT_COLOR)
+            # Show execution time normal distribution
+            # on the arc transition->place
+            if is_target_place:
+                text_tag.appendChild(document.createTextNode(
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) +
+                    "@+(!" +
+                    str(constants.DECLARATION_VAR_EXEC_TIME).format(
+                        arc.source.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]
+                    ) +
+                    ")"
                 ))
             else:
                 text_tag.appendChild(document.createTextNode(
                     str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE)))
 
+        annot_tag.appendChild(textattr_tag)
         annot_tag.appendChild(text_tag)
         arc_tag.appendChild(annot_tag)
 
@@ -630,17 +794,81 @@ class CPNExportService:
 
         # <trans>, setup for transition rectangles
         trans_dict = {}
-        for trans in petri_net.transitions:
+        for index, trans in enumerate(petri_net.transitions):
+            # strore the transition index
+            trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI] = index
+
             trans_tag = self.create_trans_element_for_page(trans, document)
             trans_dict[str(trans.name)] = trans_tag
             page_tag.appendChild(trans_tag)
+
+            # handle resource capacities for transitions
+            if trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP] != 0:
+                # create resource capacity <place> for the transitions
+                res_capacity_place = pm4py.objects.petri.petrinet.PetriNet.Place(
+                    "cap_" + str(index), None, None, properties={
+                        constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                            constants.DICT_KEY_LAYOUT_X: (
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] -
+                                50
+                            ),
+                            constants.DICT_KEY_LAYOUT_Y: (
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
+                                25
+                            ),
+                            constants.DICT_KEY_LAYOUT_HEIGHT: 10,
+                            constants.DICT_KEY_LAYOUT_WIDTH: 25
+                        }
+                    }
+                )
+                place_tag = self.create_place_element_for_page(
+                    res_capacity_place, {}, {}, document, is_res_cap_place=True,
+                    res_capacity=trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP]
+                )
+                page_tag.appendChild(place_tag)
+
+                # create arc from resource capacity <place> to transition
+                arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                    res_capacity_place, trans, weight=1, properties={
+                        constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                            constants.DICT_KEY_LAYOUT_X: (
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
+                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]
+                            ) / 2,
+                            constants.DICT_KEY_LAYOUT_Y: ((
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
+                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                            ) / 2) - 10
+                        }
+                    }
+                )
+                arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document, is_res_cap_arc=True)
+                page_tag.appendChild(arc_place_to_trans_tag)
+
+                # create arc from transition to resource capacity <place>
+                arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                    trans, res_capacity_place, weight=1, properties={
+                        constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                            constants.DICT_KEY_LAYOUT_X: ((
+                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]
+                            ) / 2) - 30,
+                            constants.DICT_KEY_LAYOUT_Y: ((
+                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
+                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                            ) / 2) - 5
+                        }
+                    }
+                )
+                arc_trans_to_place_tag = self.create_arc_element_for_page(arc_trans_to_place, document, is_res_cap_arc=True)
+                page_tag.appendChild(arc_trans_to_place_tag)
 
         # <arcs>, setup for arcs
         for arc in petri_net.arcs:
             arc_tag = self.create_arc_element_for_page(arc, document)
             page_tag.appendChild(arc_tag)
 
-        # setup 'Init' transition
+        # setup 'Init' <trans>
         init_trans = pm4py.objects.petri.petrinet.PetriNet.Transition(
             "Init",
             "Init",
@@ -660,9 +888,9 @@ class CPNExportService:
                 }
             }
         )
-        init_trans_tag = self.create_trans_element_for_page(init_trans, document)
+        init_trans_tag = self.create_trans_element_for_page(init_trans, document, is_init_trans=True)
         page_tag.appendChild(init_trans_tag)
-        # create arc from 'Init' to 'source'
+        # create <arc> from 'Init' to 'source'
         arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
             init_trans, source_place, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -727,10 +955,8 @@ class CPNExportService:
         page_tag.appendChild(arc_trans_to_place_tag)
 
         # setup probability places
-        prob_index = 0
         arcs_with_prob = self.get_arcs_with_prob_info(petri_net)
         for key, arcs in arcs_with_prob.items():
-            prob_index = prob_index + 1
             # the transitions between which the probability place has to be created
             trans_1_y = arcs[0].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
             trans_2_y = arcs[1].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
@@ -742,8 +968,12 @@ class CPNExportService:
                 transition_lower = arcs[0].target
 
             # create <place>
-            prob_place = ProbabilityPlace(
-                "prob_" + str(transition_lower.name).replace('-', ''), None, None, properties={
+            prob_place = pm4py.objects.petri.petrinet.PetriNet.Place(
+                "prob_" +
+                str(transition_upper.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]) +
+                "_" +
+                str(transition_lower.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                None, None, properties={
                     constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                         constants.DICT_KEY_LAYOUT_X: transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
                         constants.DICT_KEY_LAYOUT_Y: (
@@ -751,9 +981,8 @@ class CPNExportService:
                             transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
                         ) / 2,
                         constants.DICT_KEY_LAYOUT_HEIGHT: 10,
-                        constants.DICT_KEY_LAYOUT_WIDTH: 25
-                    },
-                    constants.DICT_KEY_PLACE_PROB_INDEX: prob_index
+                        constants.DICT_KEY_LAYOUT_WIDTH: 28
+                    }
                 }
             )
             place_tag = self.create_place_element_for_page(prob_place, {}, {}, document, is_decision_prob_place=True)
@@ -840,7 +1069,7 @@ class CPNExportService:
         workspaceElements.appendChild(cpnet_tag)
 
         # <globbox>
-        globbox_tag = self.create_globbox_element_for_document(document)
+        globbox_tag = self.create_globbox_element_for_document(document, len(petri_net.transitions))
         cpnet_tag.appendChild(globbox_tag)
 
         # <page>
