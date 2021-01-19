@@ -14,7 +14,7 @@ class CPNExportService:
         self.decision_equal_prob_found = False
 
     # globbox element in the cpn file contains color set declarations
-    def create_globbox_element_for_document(self, document):
+    def create_globbox_element_for_document(self, document, number_of_trans):
         globbox_tag = document.createElement("globbox")
 
         # setup color set declarations
@@ -121,6 +121,24 @@ class CPNExportService:
         ml_tag.appendChild(document.createTextNode(
             str(constants.DECLARATION_COLOR_EXP_DISTRIB_FUNCTION)))
         globbox_tag.appendChild(ml_tag)
+
+        # create block declaration
+        block_tag = document.createElement("block")
+        block_tag.setAttribute("id", str(uuid.uuid1().hex))
+        blockid_tag = document.createElement("id")
+        blockid_tag.appendChild(document.createTextNode(
+            str(constants.DECLARATION_BLOCK_EXEC_TIME_ID)))
+        block_tag.appendChild(blockid_tag)
+
+        # exec time variable declarations
+        for index in range(0, number_of_trans):
+            ml_tag = document.createElement("ml")
+            ml_tag.setAttribute("id", str(uuid.uuid1().hex))
+            ml_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_ASSIGNMENT_EXEC_TIME).format(index)
+            ))
+            block_tag.appendChild(ml_tag)
+        globbox_tag.appendChild(block_tag)
 
         return globbox_tag
 
@@ -347,7 +365,7 @@ class CPNExportService:
         return place_tag
 
     # trans element containg transition layout information
-    def create_trans_element_for_page(self, trans, document):
+    def create_trans_element_for_page(self, trans, document, is_init_trans=False):
         trans_tag = document.createElement("trans")
         # remove hypens from the guid (or else cpntool will crash)
         trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
@@ -387,7 +405,7 @@ class CPNExportService:
         trans_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
-        text_tag.appendChild(document.createTextNode(str(trans)))
+        text_tag.appendChild(document.createTextNode(str(trans)))    
         trans_tag.appendChild(text_tag)
 
         box_tag = document.createElement("box")
@@ -406,6 +424,70 @@ class CPNExportService:
             )
         )
         trans_tag.appendChild(box_tag)
+
+        # code segment for setting the exec time distribution
+        if not is_init_trans:
+            code_tag = document.createElement("code")
+            code_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+            posattr_tag = document.createElement("posattr")
+            posattr_tag.setAttribute(
+                "x",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
+                    (
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
+                    )
+                )
+            )
+            posattr_tag.setAttribute(
+                "y",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
+                    (
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
+                    )
+                )
+            )
+            code_tag.appendChild(posattr_tag)
+
+            fillattr_tag = document.createElement("fillattr")
+            fillattr_tag.setAttribute("colour", "White")
+            fillattr_tag.setAttribute("pattern", "Solid")
+            fillattr_tag.setAttribute("filled", "false")
+            code_tag.appendChild(fillattr_tag)
+
+            lineattr_tag = document.createElement("lineattr")
+            lineattr_tag.setAttribute("colour", "Black")
+            lineattr_tag.setAttribute("thick", "0")
+            lineattr_tag.setAttribute("type", "Solid")
+            code_tag.appendChild(lineattr_tag)
+
+            textattr_tag = document.createElement("textattr")
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_TEXT_COLOR)
+            textattr_tag.setAttribute("bold", "false")
+            code_tag.appendChild(textattr_tag)
+
+            exec_time_mean = str(
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                [constants.DICT_KEY_PERF_MEAN]
+            )
+            exec_time_stdev = str(
+                trans.properties[constants.DICT_KEY_PERF_INFO_PETRI]
+                [constants.DICT_KEY_PERF_STDEV]
+            )
+            normal_distrib = "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
+
+            text_tag = document.createElement("text")
+            text_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_CODE_SEGMENT_EXEC_TIME).format(
+                    constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                    normal_distrib
+                )
+            ))
+            code_tag.appendChild(text_tag)
+
+            trans_tag.appendChild(code_tag)
 
         return trans_tag
 
@@ -630,17 +712,13 @@ class CPNExportService:
             # on the arc transition->place
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_RES_CAP_ANNOT_TEXT_COLOR)
             if is_target_place:
-                exec_time_mean = str(
-                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
-                    [constants.DICT_KEY_PERF_MEAN]
-                )
-                exec_time_stdev = str(
-                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
-                    [constants.DICT_KEY_PERF_STDEV]
-                )
                 text_tag.appendChild(document.createTextNode(
                     str(constants.DECLARATION_COLOR_RES_CAPACITY_VARIABLE) +
-                    "@+" + "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
+                    "@+(!" +
+                    str(constants.DECLARATION_VAR_EXEC_TIME).format(
+                        arc.source.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]
+                    ) +
+                    ")"
                 ))
             else:
                 text_tag.appendChild(document.createTextNode(
@@ -653,17 +731,13 @@ class CPNExportService:
             # Show execution time normal distribution
             # on the arc transition->place
             if is_target_place:
-                exec_time_mean = str(
-                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
-                    [constants.DICT_KEY_PERF_MEAN]
-                )
-                exec_time_stdev = str(
-                    arc.source.properties[constants.DICT_KEY_PERF_INFO_PETRI]
-                    [constants.DICT_KEY_PERF_STDEV]
-                )
                 text_tag.appendChild(document.createTextNode(
                     str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE) +
-                    "@+" + "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
+                    "@+(!" +
+                    str(constants.DECLARATION_VAR_EXEC_TIME).format(
+                        arc.source.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]
+                    ) +
+                    ")"
                 ))
             else:
                 text_tag.appendChild(document.createTextNode(
@@ -720,18 +794,19 @@ class CPNExportService:
 
         # <trans>, setup for transition rectangles
         trans_dict = {}
-        res_capacity_index = 0
-        for trans in petri_net.transitions:
+        for index, trans in enumerate(petri_net.transitions):
+            # strore the transition index
+            trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI] = index
+
             trans_tag = self.create_trans_element_for_page(trans, document)
             trans_dict[str(trans.name)] = trans_tag
             page_tag.appendChild(trans_tag)
 
             # handle resource capacities for transitions
             if trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP] != 0:
-                res_capacity_index = res_capacity_index + 1
                 # create resource capacity <place> for the transitions
                 res_capacity_place = pm4py.objects.petri.petrinet.PetriNet.Place(
-                    "cap_" + str(res_capacity_index), None, None, properties={
+                    "cap_" + str(index), None, None, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: (
                                 trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] -
@@ -777,7 +852,7 @@ class CPNExportService:
                             constants.DICT_KEY_LAYOUT_X: ((
                                 res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
                                 trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]
-                            ) / 2) - 10,
+                            ) / 2) - 30,
                             constants.DICT_KEY_LAYOUT_Y: ((
                                 res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
                                 trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
@@ -813,7 +888,7 @@ class CPNExportService:
                 }
             }
         )
-        init_trans_tag = self.create_trans_element_for_page(init_trans, document)
+        init_trans_tag = self.create_trans_element_for_page(init_trans, document, is_init_trans=True)
         page_tag.appendChild(init_trans_tag)
         # create <arc> from 'Init' to 'source'
         arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
@@ -880,10 +955,8 @@ class CPNExportService:
         page_tag.appendChild(arc_trans_to_place_tag)
 
         # setup probability places
-        prob_index = 0
         arcs_with_prob = self.get_arcs_with_prob_info(petri_net)
         for key, arcs in arcs_with_prob.items():
-            prob_index = prob_index + 1
             # the transitions between which the probability place has to be created
             trans_1_y = arcs[0].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
             trans_2_y = arcs[1].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
@@ -896,7 +969,11 @@ class CPNExportService:
 
             # create <place>
             prob_place = pm4py.objects.petri.petrinet.PetriNet.Place(
-                "prob_" + str(prob_index).replace('-', ''), None, None, properties={
+                "prob_" +
+                str(transition_upper.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]) +
+                "_" +
+                str(transition_lower.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                None, None, properties={
                     constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                         constants.DICT_KEY_LAYOUT_X: transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
                         constants.DICT_KEY_LAYOUT_Y: (
@@ -904,7 +981,7 @@ class CPNExportService:
                             transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
                         ) / 2,
                         constants.DICT_KEY_LAYOUT_HEIGHT: 10,
-                        constants.DICT_KEY_LAYOUT_WIDTH: 25
+                        constants.DICT_KEY_LAYOUT_WIDTH: 28
                     }
                 }
             )
@@ -992,7 +1069,7 @@ class CPNExportService:
         workspaceElements.appendChild(cpnet_tag)
 
         # <globbox>
-        globbox_tag = self.create_globbox_element_for_document(document)
+        globbox_tag = self.create_globbox_element_for_document(document, len(petri_net.transitions))
         cpnet_tag.appendChild(globbox_tag)
 
         # <page>
