@@ -679,7 +679,7 @@ class CPNExportService:
             if is_target_place:
                 # smooting value to prevent divide by zero error
                 if arrival_rate == 0:
-                    arrival_rate = 1e-6
+                    arrival_rate = 0.0001
 
                 text_tag.appendChild(document.createTextNode(
                     str(
