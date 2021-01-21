@@ -10,8 +10,7 @@ from api.util import constants
 class CPNExportService:
 
     def __init__(self):
-        # this property keep track of equal chance decision probabilities
-        self.decision_equal_prob_found = False
+        pass
 
     # globbox element in the cpn file contains color set declarations
     def create_globbox_element_for_document(self, document, number_of_trans):
@@ -492,7 +491,7 @@ class CPNExportService:
         return trans_tag
 
     # update trans element with guar condition for probabilty condition
-    def update_trans_element_with_guard_cond(self, trans, trans_tag, document):
+    def update_trans_element_with_guard_cond(self, trans, trans_tag, document, probs_of_source_place):
         cond_tag = document.createElement("cond")
         cond_tag.setAttribute("id", str(uuid.uuid1().hex))
 
@@ -537,20 +536,23 @@ class CPNExportService:
         cond_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
+
         # TODO: Refactor this code
         guard_cond = ""
         trans_decision_prob = trans.properties[constants.DICT_KEY_PROBA_INFO_PETRI]
-        if trans_decision_prob > 50:
+        trans_prob_index = probs_of_source_place.index(
+            (trans.name, trans_decision_prob)
+        )
+
+        if trans_prob_index == 0: # the highest probabilty transition
             guard_cond = "[p < " + str(trans_decision_prob) + "]"
-        elif trans_decision_prob < 50:
+        elif trans_prob_index == (len(probs_of_source_place) - 1): # the lowest probabilty transition
             guard_cond = "[p >= " + str(100 - trans_decision_prob) + "]"
-        else:
-            if self.decision_equal_prob_found:
-                guard_cond = "[p < " + str(trans_decision_prob) + "]"
-                self.decision_equal_prob_found = False
-            else:
-                guard_cond = "[p >= " + str(trans_decision_prob) + "]"
-                self.decision_equal_prob_found = True
+        else: # everything in between
+            prev_acc_sum = sum([tup[1] for tup in probs_of_source_place[:trans_prob_index]])
+            next_acc_sum = sum([tup[1] for tup in probs_of_source_place[(trans_prob_index + 1):]])
+            guard_cond = "[p >= " + str(prev_acc_sum) + " andalso p < " + str(100 - next_acc_sum) + "]"
+
         text_tag.appendChild(document.createTextNode(str(guard_cond)))
         cond_tag.appendChild(text_tag)
 
@@ -961,6 +963,7 @@ class CPNExportService:
             # the transitions between which the probability place has to be created
             transition_upper = None
             transition_lower = None
+            probs_of_source_place = []
             for arc in arcs:
                 if transition_upper is None:
                     transition_upper = arc.target
@@ -975,6 +978,17 @@ class CPNExportService:
                     transition_upper = arc.target
                 elif trans_y < transition_lower_y:
                     transition_lower = arc.target
+
+                # store the probabilities
+                probs_of_source_place.append(
+                    (
+                        arc.target.name,
+                        arc.target.properties[constants.DICT_KEY_PROBA_INFO_PETRI]
+                    )
+                )  
+
+            # sort the probabilities list of souurce place
+            probs_of_source_place.sort(key=lambda tup: tup[1], reverse=True)
 
             # create <place>
             prob_place = pm4py.objects.petri.petrinet.PetriNet.Place(
@@ -1036,7 +1050,7 @@ class CPNExportService:
 
                 # update trans element with guard condition
                 self.update_trans_element_with_guard_cond(
-                    arc.target, trans_dict[str(arc.target.name)], document
+                    arc.target, trans_dict[str(arc.target.name)], document, probs_of_source_place
                 )
 
         return page_tag
