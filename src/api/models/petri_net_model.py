@@ -164,13 +164,13 @@ class PetriNet:
             for item in json_dict[constants.DICT_KEY_OBJECTS_CONSTANT]
             if item["label"] == "1"
         )
-        source_obj["label"] = "source"
+        source_obj["label"] = constants.PLACE_NAME_SOURCE
         sink_obj = next(
             item
             for item in json_dict[constants.DICT_KEY_OBJECTS_CONSTANT]
             if item["label"] == ""
         )
-        sink_obj["label"] = "sink"
+        sink_obj["label"] = constants.PLACE_NAME_SINK
 
         # store place's layout information in the properties dictionary
         for place in self.net.places:
