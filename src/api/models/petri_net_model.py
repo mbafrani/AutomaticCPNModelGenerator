@@ -373,13 +373,13 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
     def _get_res_capacities(self, log, activities):
         res_capacity_dict = {}
-        if "org:resource" in str(log):
+        try:
             roles = roles_discovery.apply(log)
             for role in roles:
                 count_of_resources = len(role[1])
                 for act in role[0]:
                     res_capacity_dict[act] = count_of_resources
-        else:
+        except KeyError:
             for act in activities:
                 res_capacity_dict[act] = constants.PERF_RES_CAP_VALID_TRANS_DEFAULT_VALUE
 
