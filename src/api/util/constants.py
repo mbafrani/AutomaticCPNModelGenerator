@@ -103,6 +103,10 @@ CPN_MODEL_ARC_RES_CAP_ANNOT_TEXT_COLOR = "Green"
 PLACE_TO_TRANS_ORIENTATION = "PtoT"
 TRANS_TO_PLACE_ORIENTATION = "TtoP"
 
+# place name constants
+PLACE_NAME_SOURCE = "source"
+PLACE_NAME_SINK = "sink"
+
 
 class PetriNetDictKeys:
     net = "net"

@@ -10,8 +10,7 @@ from api.util import constants
 class CPNExportService:
 
     def __init__(self):
-        # this property keep track of equal chance decision probabilities
-        self.decision_equal_prob_found = False
+        pass
 
     # globbox element in the cpn file contains color set declarations
     def create_globbox_element_for_document(self, document, number_of_trans):
@@ -492,7 +491,7 @@ class CPNExportService:
         return trans_tag
 
     # update trans element with guar condition for probabilty condition
-    def update_trans_element_with_guard_cond(self, trans, trans_tag, document):
+    def update_trans_element_with_guard_cond(self, trans, trans_tag, document, probs_of_source_place):
         cond_tag = document.createElement("cond")
         cond_tag.setAttribute("id", str(uuid.uuid1().hex))
 
@@ -537,20 +536,23 @@ class CPNExportService:
         cond_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
+
         # TODO: Refactor this code
         guard_cond = ""
         trans_decision_prob = trans.properties[constants.DICT_KEY_PROBA_INFO_PETRI]
-        if trans_decision_prob > 50:
+        trans_prob_index = probs_of_source_place.index(
+            (trans.name, trans_decision_prob)
+        )
+
+        if trans_prob_index == 0: # the highest probabilty transition
             guard_cond = "[p < " + str(trans_decision_prob) + "]"
-        elif trans_decision_prob < 50:
+        elif trans_prob_index == (len(probs_of_source_place) - 1): # the lowest probabilty transition
             guard_cond = "[p >= " + str(100 - trans_decision_prob) + "]"
-        else:
-            if self.decision_equal_prob_found:
-                guard_cond = "[p < " + str(trans_decision_prob) + "]"
-                self.decision_equal_prob_found = False
-            else:
-                guard_cond = "[p >= " + str(trans_decision_prob) + "]"
-                self.decision_equal_prob_found = True
+        else: # everything in between
+            prev_acc_sum = sum([tup[1] for tup in probs_of_source_place[:trans_prob_index]])
+            next_acc_sum = sum([tup[1] for tup in probs_of_source_place[(trans_prob_index + 1):]])
+            guard_cond = "[p >= " + str(prev_acc_sum) + " andalso p < " + str(100 - next_acc_sum) + "]"
+
         text_tag.appendChild(document.createTextNode(str(guard_cond)))
         cond_tag.appendChild(text_tag)
 
@@ -677,7 +679,7 @@ class CPNExportService:
             if is_target_place:
                 # smooting value to prevent divide by zero error
                 if arrival_rate == 0:
-                    arrival_rate = 1e-6
+                    arrival_rate = 0.0001
 
                 text_tag.appendChild(document.createTextNode(
                     str(
@@ -752,7 +754,8 @@ class CPNExportService:
     def get_arcs_with_prob_info(self, petri_net):
         arcs_from_place_to_trans = {}
         for arc in petri_net.arcs:
-            if isinstance(arc.source, pm4py.objects.petri.petrinet.PetriNet.Place):
+            if isinstance(arc.source, pm4py.objects.petri.petrinet.PetriNet.Place) and \
+               arc.source.name != constants.PLACE_NAME_SOURCE:
                 arcs_from_place_to_trans.setdefault(str(arc.source.name), []).append(arc)
 
         # find places in arcs that have multiple arcs
@@ -958,14 +961,34 @@ class CPNExportService:
         arcs_with_prob = self.get_arcs_with_prob_info(petri_net)
         for key, arcs in arcs_with_prob.items():
             # the transitions between which the probability place has to be created
-            trans_1_y = arcs[0].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-            trans_2_y = arcs[1].target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-            if trans_1_y > trans_2_y:
-                transition_upper = arcs[0].target
-                transition_lower = arcs[1].target
-            else:
-                transition_upper = arcs[1].target
-                transition_lower = arcs[0].target
+            transition_upper = None
+            transition_lower = None
+            probs_of_source_place = []
+            for arc in arcs:
+                if transition_upper is None:
+                    transition_upper = arc.target
+                if transition_lower is None:
+                    transition_lower = arc.target
+
+                trans_y = arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]   
+                transition_upper_y = transition_upper.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                transition_lower_y = transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+
+                if trans_y > transition_upper_y:
+                    transition_upper = arc.target
+                elif trans_y < transition_lower_y:
+                    transition_lower = arc.target
+
+                # store the probabilities
+                probs_of_source_place.append(
+                    (
+                        arc.target.name,
+                        arc.target.properties[constants.DICT_KEY_PROBA_INFO_PETRI]
+                    )
+                )  
+
+            # sort the probabilities list of souurce place
+            probs_of_source_place.sort(key=lambda tup: tup[1], reverse=True)
 
             # create <place>
             prob_place = pm4py.objects.petri.petrinet.PetriNet.Place(
@@ -988,23 +1011,22 @@ class CPNExportService:
             place_tag = self.create_place_element_for_page(prob_place, {}, {}, document, is_decision_prob_place=True)
             page_tag.appendChild(place_tag)
 
-            for trans in [transition_lower, transition_upper]:
-
-                if trans is transition_lower:
+            for arc in arcs:
+                if arc.target == transition_lower:
                     arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 5
                     arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 20
-                else:  # trans is transition_upper
+                else:
                     arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 5
                     arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 20
 
                 # create arc_1
                 arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
-                    prob_place, trans, weight=1, properties={
+                    prob_place, arc.target, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: arc_place_to_trans_layout_x,
                             constants.DICT_KEY_LAYOUT_Y: (
                                 prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
                             ) / 2.06
                         }
                     }
@@ -1013,12 +1035,12 @@ class CPNExportService:
                 page_tag.appendChild(arc_place_to_trans_tag)
                 # create arc_2
                 arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
-                    trans, prob_place, weight=1, properties={
+                    arc.target, prob_place, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: arc_trans_to_place_layout_x,
                             constants.DICT_KEY_LAYOUT_Y: (
                                 prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
                             ) / 2.06
                         }
                     }
@@ -1028,7 +1050,7 @@ class CPNExportService:
 
                 # update trans element with guard condition
                 self.update_trans_element_with_guard_cond(
-                    trans, trans_dict[str(trans.name)], document
+                    arc.target, trans_dict[str(arc.target.name)], document, probs_of_source_place
                 )
 
         return page_tag

@@ -1,5 +1,5 @@
 flask==1.1.2
-pm4py==2.1.0.2
+pm4py==2.1.4.1
 graphviz==0.15
 numpy==1.18.1
 pandas==1.0.1

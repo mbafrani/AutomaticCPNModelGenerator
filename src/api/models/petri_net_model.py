@@ -164,13 +164,13 @@ class PetriNet:
             for item in json_dict[constants.DICT_KEY_OBJECTS_CONSTANT]
             if item["label"] == "1"
         )
-        source_obj["label"] = "source"
+        source_obj["label"] = constants.PLACE_NAME_SOURCE
         sink_obj = next(
             item
             for item in json_dict[constants.DICT_KEY_OBJECTS_CONSTANT]
             if item["label"] == ""
         )
-        sink_obj["label"] = "sink"
+        sink_obj["label"] = constants.PLACE_NAME_SINK
 
         # store place's layout information in the properties dictionary
         for place in self.net.places:
@@ -373,13 +373,13 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
     def _get_res_capacities(self, log, activities):
         res_capacity_dict = {}
-        if "org:resource" in str(log):
+        try:
             roles = roles_discovery.apply(log)
             for role in roles:
                 count_of_resources = len(role[1])
                 for act in role[0]:
                     res_capacity_dict[act] = count_of_resources
-        else:
+        except KeyError:
             for act in activities:
                 res_capacity_dict[act] = constants.PERF_RES_CAP_VALID_TRANS_DEFAULT_VALUE
 
