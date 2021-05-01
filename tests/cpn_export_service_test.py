@@ -321,7 +321,7 @@ class TestCPNExportService(unittest.TestCase):
             }
         }
         trans1_index = 1
-        arc_obj.source = pm4py.objects.petri.petrinet.PetriNet.Transition(
+        arc_obj.source = pm4py.objects.petri_net.obj.PetriNet.Transition(
             'trans-1-abc', None, None,
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -335,7 +335,7 @@ class TestCPNExportService(unittest.TestCase):
                 constants.DICT_KEY_TRANS_INDEX_PETRI: trans1_index
             }
         )
-        arc_obj.target = pm4py.objects.petri.petrinet.PetriNet.Place(
+        arc_obj.target = pm4py.objects.petri_net.obj.PetriNet.Place(
             'place1', None, None,
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -430,7 +430,7 @@ class TestCPNExportService(unittest.TestCase):
                 constants.DICT_KEY_LAYOUT_Y: 20
             }
         }
-        arc_obj.source = pm4py.objects.petri.petrinet.PetriNet.Place(
+        arc_obj.source = pm4py.objects.petri_net.obj.PetriNet.Place(
             'place1', None, None,
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -444,7 +444,7 @@ class TestCPNExportService(unittest.TestCase):
                 constants.DICT_KEY_PERF_RES_CAP: res_cap
             }
         )
-        arc_obj.target = pm4py.objects.petri.petrinet.PetriNet.Transition(
+        arc_obj.target = pm4py.objects.petri_net.obj.PetriNet.Transition(
             'trans-1-abc', None, None,
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -523,7 +523,7 @@ class TestCPNExportService(unittest.TestCase):
         petri_net_obj.places = [place_obj1, place_obj2]
 
         res_cap1, res_cap2 = 1, 2
-        trans_1 = pm4py.objects.petri.petrinet.PetriNet.Transition(
+        trans_1 = pm4py.objects.petri_net.obj.PetriNet.Transition(
             'trans_1',
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -536,7 +536,7 @@ class TestCPNExportService(unittest.TestCase):
                     constants.DICT_KEY_PERF_RES_CAP: res_cap1
                 }
             })
-        trans_2 = pm4py.objects.petri.petrinet.PetriNet.Transition(
+        trans_2 = pm4py.objects.petri_net.obj.PetriNet.Transition(
             'trans_2',
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -583,7 +583,7 @@ class TestCPNExportService(unittest.TestCase):
         cpn_export_service = CPNExportService()
         obj = MagicMock()
         arc1 = MagicMock()
-        obj.arcs = {arc1.source: pm4py.objects.petri.petrinet.PetriNet.Place(
+        obj.arcs = {arc1.source: pm4py.objects.petri_net.obj.PetriNet.Place(
             'place1', None, None,
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
@@ -654,13 +654,13 @@ class TestCPNExportService(unittest.TestCase):
         petri_net_obj.arcs = []
         for i in range(4):
             arc = MagicMock()
-            arc.source = pm4py.objects.petri.petrinet.PetriNet.Place('p_' + str(i))
+            arc.source = pm4py.objects.petri_net.obj.PetriNet.Place('p_' + str(i))
             petri_net_obj.arcs.append(arc)
         arc1 = MagicMock()
-        arc1.source = pm4py.objects.petri.petrinet.PetriNet.Place('p_1')
+        arc1.source = pm4py.objects.petri_net.obj.PetriNet.Place('p_1')
         petri_net_obj.arcs.append(arc1)
         arc3 = MagicMock()
-        arc3.source = pm4py.objects.petri.petrinet.PetriNet.Place('p_3')
+        arc3.source = pm4py.objects.petri_net.obj.PetriNet.Place('p_3')
         petri_net_obj.arcs.append(arc3)
 
         arcs = cpn_export_service.get_arcs_with_prob_info(petri_net_obj)
