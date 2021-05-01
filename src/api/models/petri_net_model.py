@@ -7,12 +7,12 @@ from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.util import exec_utils, xes_constants, constants as pm4py_constants
 from pm4py.algo.conformance.tokenreplay import algorithm as token_replay
 from pm4py.statistics.variants.log import get as variants_get
-from pm4py.visualization.petrinet.util import performance_map
+from pm4py.visualization.petri_net.util import performance_map
 from pm4py.statistics.sojourn_time.log import get as soj_time_get
-from pm4py.visualization.petrinet import visualizer
+from pm4py.visualization.petri_net import visualizer
 import os
-import pm4py.visualization.petrinet.common.visualize as vis_petrinet
-from pm4py.algo.enhancement.decision.algorithm import (
+import pm4py.visualization.petri_net.common.visualize as vis_petrinet
+from pm4py.algo.decision_mining.algorithm import (
     get_decision_points,
     get_decisions_table,
 )
@@ -23,10 +23,10 @@ from statistics import mean, stdev
 from enum import Enum
 from collections import Counter
 from api.util import constants
-from pm4py.objects.petri.importer import importer as pnml_importer
-from pm4py.objects.petri.exporter import exporter as pnml_exporter
+from pm4py.objects.petri_net.importer import importer as pnml_importer
+from pm4py.objects.petri_net.exporter import exporter as pnml_exporter
 from pm4py.statistics.traces.log import case_arrival
-from pm4py.algo.enhancement.roles import algorithm as roles_discovery
+from pm4py.algo.organizational_mining.roles import algorithm as roles_discovery
 
 PetriNetDictKeys = constants.PetriNetDictKeys
 
@@ -367,9 +367,27 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
         # Get the resource capacities
         res_capacity_dict = self._get_res_capacities(self.log, activities)
 
+        # Get resource pooling information
+        resource_pool_dict = self._get_res_pool_info(self.log)
+
         # store transition's perf information in the properties dictionary
         self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate,
-                                                        activities, res_capacity_dict)
+                                                        activities, res_capacity_dict, resource_pool_dict)
+
+    def _get_res_pool_info(self, log):
+        i = 1
+        pool_dict = {}
+        try:
+            roles = roles_discovery.apply(log)
+            for role in roles:
+                resource_dict = {"activities": role[0], "resources": list(role[1].keys()),
+                                 "capacity": len(list(role[1].keys()))}
+                pool_dict["group" + str(i)] = resource_dict
+                i = i + 1
+        except KeyError:
+            print("Resource pooling for logs without resource information is not implemented.")
+
+        return pool_dict
 
     def _get_res_capacities(self, log, activities):
         res_capacity_dict = {}
@@ -397,7 +415,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
     def _aggregate_statistics(self, statistics, aggregation_measure=None):
         aggregated_statistics = {}
         for elem in statistics.keys():
-            if isinstance(elem, pm4py.objects.petri.petrinet.PetriNet.Arc):
+            if isinstance(elem, pm4py.objects.petri_net.obj.PetriNet.Arc):
                 if statistics[elem]["performance"]:
                     aggr_stat = self._aggregate_stats(
                         statistics, elem, aggregation_measure
@@ -405,7 +423,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                     aggr_stat_hr = round(aggr_stat / 60, 2)
                     aggregated_statistics.setdefault(str(elem.target), []).append(aggr_stat_hr)
 
-            elif isinstance(elem, pm4py.objects.petri.petrinet.PetriNet.Place):
+            elif isinstance(elem, pm4py.objects.petri_net.obj.PetriNet.Place):
                 pass
 
         for key, value in aggregated_statistics.items():
@@ -512,7 +530,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
     # extracts the perf information - execution time mean and std deviation, arrival rate
     # and resource capacities and stores them in the transition.properties[DICT_KEY_PERF_INFO_PETRI]
     def _extract_perf_info_to_petri_net_properties(self, mean_dict, stdev_dict, arrival_rate,
-                                                   activities, res_capacity_dict):
+                                                   activities, res_capacity_dict, resource_pool_dict):
         for trans in self.net.transitions:
             # insert the perf info into trans properties
             if constants.DICT_KEY_PERF_INFO_PETRI not in trans.properties:
@@ -540,6 +558,7 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
 
         self.net.properties[PetriNetDictKeys.transition_names] = activities
         self.net.properties[constants.DICT_KEY_ARRIVAL_RATE] = arrival_rate
+        self.net.properties[constants.DICT_KEY_RESOURCE_POOLING] = resource_pool_dict
 
 
 class PetriNetDecisionPointEnricher(PetriNetContainer):
