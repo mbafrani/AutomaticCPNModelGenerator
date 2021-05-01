@@ -31,6 +31,9 @@ DICT_KEY_ARRIVAL_RATE = "arrivalrate"
 DICT_KEY_PERF_RES_CAP = "resource_capacity"
 DICT_KEY_TRANS_INDEX_PETRI = "TRANSITION_INDEX_INFORMATION_PETRI"
 DICT_KEY_RESOURCE_POOLING = "resource_pools"
+DICT_KEY_RESOURCE_TRANS = "activities"
+DICT_KEY_RESOURCE_NAMES = "resources"
+DICT_KEY_RESOURCE_CAP = "capacity"
 
 # default performance values
 PERF_MEAN_DEFAULT_VALUE = 0.0

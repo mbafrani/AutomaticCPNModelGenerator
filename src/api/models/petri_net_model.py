@@ -380,9 +380,10 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
         try:
             roles = roles_discovery.apply(log)
             for role in roles:
-                resource_dict = {"activities": role[0], "resources": list(role[1].keys()),
-                                 "capacity": len(list(role[1].keys()))}
-                pool_dict["group" + str(i)] = resource_dict
+                resource_dict = {constants.DICT_KEY_RESOURCE_TRANS: role[0],
+                                 constants.DICT_KEY_RESOURCE_NAMES: list(role[1].keys()),
+                                 constants.DICT_KEY_RESOURCE_CAP: len(list(role[1].keys()))}
+                pool_dict["group_" + str(i)] = resource_dict
                 i = i + 1
         except KeyError:
             print("Resource pooling for logs without resource information is not implemented.")

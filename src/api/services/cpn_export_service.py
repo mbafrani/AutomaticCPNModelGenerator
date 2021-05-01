@@ -805,43 +805,52 @@ class CPNExportService:
             trans_dict[str(trans.name)] = trans_tag
             page_tag.appendChild(trans_tag)
 
-            # handle resource capacities for transitions
-            if trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP] != 0:
-                # create resource capacity <place> for the transitions
-                res_capacity_place = pm4py.objects.petri_net.obj.PetriNet.Place(
-                    "cap_" + str(index), None, None, properties={
-                        constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                            constants.DICT_KEY_LAYOUT_X: (
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] -
-                                50
-                            ),
-                            constants.DICT_KEY_LAYOUT_Y: (
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
-                                25
-                            ),
-                            constants.DICT_KEY_LAYOUT_HEIGHT: 10,
-                            constants.DICT_KEY_LAYOUT_WIDTH: 25
-                        }
-                    }
-                )
-                place_tag = self.create_place_element_for_page(
-                    res_capacity_place, {}, {}, document, is_res_cap_place=True,
-                    res_capacity=trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP]
-                )
-                page_tag.appendChild(place_tag)
+        # adding resource pooling places
+        resource_groups = petri_net.properties[constants.DICT_KEY_RESOURCE_POOLING]
+        for name, group in resource_groups.items():
+            transitions = petri_net.transitions
+            trans_group, trans_group_x, trans_group_y = [], [], []
+            for trans in transitions:
+                if trans.label in group[constants.DICT_KEY_RESOURCE_TRANS]:
+                    trans_group.append(trans)
+                    trans_group_x.append(trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X])
+                    trans_group_y.append(trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y])
 
-                # create arc from resource capacity <place> to transition
+            res_capacity_place = pm4py.objects.petri_net.obj.PetriNet.Place(
+                name, None, None, properties={
+                    constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                        constants.DICT_KEY_LAYOUT_X: trans_group_x[0] - 50,
+                        constants.DICT_KEY_LAYOUT_Y: trans_group_y[0] - 30,
+                        constants.DICT_KEY_LAYOUT_HEIGHT: 10,
+                        constants.DICT_KEY_LAYOUT_WIDTH: 30
+                    }
+                }
+            )
+            place_tag = self.create_place_element_for_page(
+                res_capacity_place, {}, {}, document, is_res_cap_place=True,
+                res_capacity=group[constants.DICT_KEY_RESOURCE_CAP]
+            )
+            page_tag.appendChild(place_tag)
+
+            for trans in trans_group:
+                # create arcs from resource capacity <place> to transition
                 arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
                     res_capacity_place, trans, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: (
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
-                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]
-                            ) / 2,
+                                                                 trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                     constants.DICT_KEY_LAYOUT_X] +
+                                                                 res_capacity_place.properties[
+                                                                     constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                     constants.DICT_KEY_LAYOUT_X]
+                                                         ) / 2,
                             constants.DICT_KEY_LAYOUT_Y: ((
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                            ) / 2) - 10
+                                                                  trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                      constants.DICT_KEY_LAYOUT_Y] +
+                                                                  res_capacity_place.properties[
+                                                                      constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                      constants.DICT_KEY_LAYOUT_Y]
+                                                          ) / 2) - 10
                         }
                     }
                 )
@@ -853,17 +862,26 @@ class CPNExportService:
                     trans, res_capacity_place, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: ((
-                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X]
-                            ) / 2) - 30,
+                                                                  res_capacity_place.properties[
+                                                                      constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                      constants.DICT_KEY_LAYOUT_X] +
+                                                                  trans.properties[
+                                                                      constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                      constants.DICT_KEY_LAYOUT_X]
+                                                          ) / 2) - 30,
                             constants.DICT_KEY_LAYOUT_Y: ((
-                                res_capacity_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                            ) / 2) - 5
+                                                                  res_capacity_place.properties[
+                                                                      constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                      constants.DICT_KEY_LAYOUT_Y] +
+                                                                  trans.properties[
+                                                                      constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                      constants.DICT_KEY_LAYOUT_Y]
+                                                          ) / 2) - 5
                         }
                     }
                 )
-                arc_trans_to_place_tag = self.create_arc_element_for_page(arc_trans_to_place, document, is_res_cap_arc=True)
+                arc_trans_to_place_tag = self.create_arc_element_for_page(arc_trans_to_place, document,
+                                                                          is_res_cap_arc=True)
                 page_tag.appendChild(arc_trans_to_place_tag)
 
         # <arcs>, setup for arcs
@@ -970,7 +988,7 @@ class CPNExportService:
                 if transition_lower is None:
                     transition_lower = arc.target
 
-                trans_y = arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]   
+                trans_y = arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
                 transition_upper_y = transition_upper.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
                 transition_lower_y = transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
 
