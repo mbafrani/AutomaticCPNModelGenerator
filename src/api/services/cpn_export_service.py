@@ -831,7 +831,7 @@ class CPNExportService:
                 page_tag.appendChild(place_tag)
 
                 # create arc from resource capacity <place> to transition
-                arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
                     res_capacity_place, trans, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: (
