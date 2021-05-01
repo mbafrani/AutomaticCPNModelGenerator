@@ -564,9 +564,9 @@ class CPNExportService:
             is_decision_prob_arc=False, is_next_case_id_arc=False, arrival_rate=None, is_init_arc=False, is_res_cap_arc=False):
         # identify the place and transition ends of the arc
         is_target_trans = isinstance(
-            arc.target, pm4py.objects.petri.petrinet.PetriNet.Transition)
+            arc.target, pm4py.objects.petri_net.obj.PetriNet.Transition)
         is_target_place = isinstance(
-            arc.target, pm4py.objects.petri.petrinet.PetriNet.Place)
+            arc.target, pm4py.objects.petri_net.obj.PetriNet.Place)
 
         # identify orientation of the arc, Place->Trans or Trans->Place
         orientation = constants.PLACE_TO_TRANS_ORIENTATION \
@@ -754,7 +754,7 @@ class CPNExportService:
     def get_arcs_with_prob_info(self, petri_net):
         arcs_from_place_to_trans = {}
         for arc in petri_net.arcs:
-            if isinstance(arc.source, pm4py.objects.petri.petrinet.PetriNet.Place) and \
+            if isinstance(arc.source, pm4py.objects.petri_net.obj.PetriNet.Place) and \
                arc.source.name != constants.PLACE_NAME_SOURCE:
                 arcs_from_place_to_trans.setdefault(str(arc.source.name), []).append(arc)
 
@@ -808,7 +808,7 @@ class CPNExportService:
             # handle resource capacities for transitions
             if trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP] != 0:
                 # create resource capacity <place> for the transitions
-                res_capacity_place = pm4py.objects.petri.petrinet.PetriNet.Place(
+                res_capacity_place = pm4py.objects.petri_net.obj.PetriNet.Place(
                     "cap_" + str(index), None, None, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: (
