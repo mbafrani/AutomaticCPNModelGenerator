@@ -36,7 +36,7 @@ class TestPetriNet(unittest.TestCase):
         net, im, fm = obj.discover_process_model()
         self.assertEqual(len(im), 1)
         self.assertEqual(len(fm), 1)
-        self.assertIsInstance(net, pm4py.objects.petri.petrinet.PetriNet,
+        self.assertIsInstance(net, pm4py.objects.petri_net.obj.PetriNet,
                               "Not an instance of Petrinet")
         self.assertGreater(len(net.places), 0, "No places in the petri net")
         self.assertGreater(len(net.arcs), 0, "No arcs in the petri net")

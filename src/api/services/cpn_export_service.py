@@ -564,9 +564,9 @@ class CPNExportService:
             is_decision_prob_arc=False, is_next_case_id_arc=False, arrival_rate=None, is_init_arc=False, is_res_cap_arc=False):
         # identify the place and transition ends of the arc
         is_target_trans = isinstance(
-            arc.target, pm4py.objects.petri.petrinet.PetriNet.Transition)
+            arc.target, pm4py.objects.petri_net.obj.PetriNet.Transition)
         is_target_place = isinstance(
-            arc.target, pm4py.objects.petri.petrinet.PetriNet.Place)
+            arc.target, pm4py.objects.petri_net.obj.PetriNet.Place)
 
         # identify orientation of the arc, Place->Trans or Trans->Place
         orientation = constants.PLACE_TO_TRANS_ORIENTATION \
@@ -754,7 +754,7 @@ class CPNExportService:
     def get_arcs_with_prob_info(self, petri_net):
         arcs_from_place_to_trans = {}
         for arc in petri_net.arcs:
-            if isinstance(arc.source, pm4py.objects.petri.petrinet.PetriNet.Place) and \
+            if isinstance(arc.source, pm4py.objects.petri_net.obj.PetriNet.Place) and \
                arc.source.name != constants.PLACE_NAME_SOURCE:
                 arcs_from_place_to_trans.setdefault(str(arc.source.name), []).append(arc)
 
@@ -808,7 +808,7 @@ class CPNExportService:
             # handle resource capacities for transitions
             if trans.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_RES_CAP] != 0:
                 # create resource capacity <place> for the transitions
-                res_capacity_place = pm4py.objects.petri.petrinet.PetriNet.Place(
+                res_capacity_place = pm4py.objects.petri_net.obj.PetriNet.Place(
                     "cap_" + str(index), None, None, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: (
@@ -831,7 +831,7 @@ class CPNExportService:
                 page_tag.appendChild(place_tag)
 
                 # create arc from resource capacity <place> to transition
-                arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
                     res_capacity_place, trans, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: (
@@ -849,7 +849,7 @@ class CPNExportService:
                 page_tag.appendChild(arc_place_to_trans_tag)
 
                 # create arc from transition to resource capacity <place>
-                arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
                     trans, res_capacity_place, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: ((
@@ -872,7 +872,7 @@ class CPNExportService:
             page_tag.appendChild(arc_tag)
 
         # setup 'Init' <trans>
-        init_trans = pm4py.objects.petri.petrinet.PetriNet.Transition(
+        init_trans = pm4py.objects.petri_net.obj.PetriNet.Transition(
             "Init",
             "Init",
             None, None,
@@ -894,7 +894,7 @@ class CPNExportService:
         init_trans_tag = self.create_trans_element_for_page(init_trans, document, is_init_trans=True)
         page_tag.appendChild(init_trans_tag)
         # create <arc> from 'Init' to 'source'
-        arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
+        arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
             init_trans, source_place, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 50,
@@ -907,7 +907,7 @@ class CPNExportService:
 
         # setup next case if place and its arcs to 'Init' transition
         # create <place>
-        next_case_id_place = pm4py.objects.petri.petrinet.PetriNet.Place(
+        next_case_id_place = pm4py.objects.petri_net.obj.PetriNet.Place(
             "next_CASE_ID", None, None, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
@@ -922,7 +922,7 @@ class CPNExportService:
         next_case_id_place_tag = self.create_place_element_for_page(next_case_id_place, {}, {}, document, is_next_case_id_place=True)
         page_tag.appendChild(next_case_id_place_tag)
         # create arc_1
-        arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
+        arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
             next_case_id_place, init_trans, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: (
@@ -938,7 +938,7 @@ class CPNExportService:
         arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document, is_next_case_id_arc=True)
         page_tag.appendChild(arc_place_to_trans_tag)
         # create arc_2
-        arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
+        arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
             init_trans, next_case_id_place, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: (
@@ -991,7 +991,7 @@ class CPNExportService:
             probs_of_source_place.sort(key=lambda tup: tup[1], reverse=True)
 
             # create <place>
-            prob_place = pm4py.objects.petri.petrinet.PetriNet.Place(
+            prob_place = pm4py.objects.petri_net.obj.PetriNet.Place(
                 "prob_" +
                 str(transition_upper.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]) +
                 "_" +
@@ -1020,7 +1020,7 @@ class CPNExportService:
                     arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 20
 
                 # create arc_1
-                arc_place_to_trans = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
                     prob_place, arc.target, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: arc_place_to_trans_layout_x,
@@ -1034,7 +1034,7 @@ class CPNExportService:
                 arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document, is_decision_prob_arc=True)
                 page_tag.appendChild(arc_place_to_trans_tag)
                 # create arc_2
-                arc_trans_to_place = pm4py.objects.petri.petrinet.PetriNet.Arc(
+                arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
                     arc.target, prob_place, weight=1, properties={
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: arc_trans_to_place_layout_x,

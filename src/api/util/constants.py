@@ -30,6 +30,7 @@ DICT_KEY_FREQUENCY = "successor_frequencies"
 DICT_KEY_ARRIVAL_RATE = "arrivalrate"
 DICT_KEY_PERF_RES_CAP = "resource_capacity"
 DICT_KEY_TRANS_INDEX_PETRI = "TRANSITION_INDEX_INFORMATION_PETRI"
+DICT_KEY_RESOURCE_POOLING = "resource_pools"
 
 # default performance values
 PERF_MEAN_DEFAULT_VALUE = 0.0
