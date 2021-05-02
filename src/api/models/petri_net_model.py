@@ -368,13 +368,13 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
         res_capacity_dict = self._get_res_capacities(self.log, activities)
 
         # Get resource pooling information
-        resource_pool_dict = self._get_res_pool_info(self.log)
+        resource_pool_dict = self._get_res_pool_info(self.log, activities)
 
         # store transition's perf information in the properties dictionary
         self._extract_perf_info_to_petri_net_properties(mean_dict, stdev_dict, arrival_rate,
                                                         activities, res_capacity_dict, resource_pool_dict)
 
-    def _get_res_pool_info(self, log):
+    def _get_res_pool_info(self, log, activities):
         i = 1
         pool_dict = {}
         try:
@@ -386,7 +386,11 @@ class PetriNetPerformanceEnricher(PetriNetContainer):
                 pool_dict["group_" + str(i)] = resource_dict
                 i = i + 1
         except KeyError:
-            print("Resource pooling for logs without resource information is not implemented.")
+            for act in activities:
+                resource_dict = {constants.DICT_KEY_RESOURCE_TRANS: [act],
+                                 constants.DICT_KEY_RESOURCE_CAP: constants.PERF_RES_CAP_VALID_TRANS_DEFAULT_VALUE}
+                pool_dict["group_" + str(i)] = resource_dict
+                i = i + 1
 
         return pool_dict
 
