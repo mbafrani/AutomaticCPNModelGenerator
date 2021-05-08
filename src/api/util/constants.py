@@ -58,6 +58,9 @@ DECLARATION_BLOCK_EXEC_TIME_ID = "Transition Exec Times"
 DECLARATION_VAR_EXEC_TIME = "execTime_{0}"
 DECLARATION_ASSIGNMENT_EXEC_TIME = "val " + DECLARATION_VAR_EXEC_TIME + " = ref 0;"
 DECLARATION_CODE_SEGMENT_EXEC_TIME = "action ({0} := {1})"
+DECLARATION_CODE_SEGMENT_INPUT = f"input({DECLARATION_COLOR_CASE_ID_VARIABLE})"
+DECLARATION_CODE_SEGMENT_ACTION = "action\n" \
+                                  "{0} := event(" + DECLARATION_COLOR_CASE_ID_VARIABLE + ", \"{1}\", {2})"
 
 # cpn model places colors
 CPN_MODEL_PLACE_DEFAULT_FILL_COLOR = "White"
@@ -111,6 +114,9 @@ TRANS_TO_PLACE_ORIENTATION = "TtoP"
 PLACE_NAME_SOURCE = "source"
 PLACE_NAME_SINK = "sink"
 
+
+# sml constants
+SML_FILE_NAME = "test.sml"
 
 class PetriNetDictKeys:
     net = "net"

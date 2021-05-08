@@ -139,6 +139,17 @@ class CPNExportService:
             block_tag.appendChild(ml_tag)
         globbox_tag.appendChild(block_tag)
 
+        # use sml file declaration
+        use_tag = document.createElement("use")
+        use_tag.setAttribute("id", str(uuid.uuid1().hex))
+        ml_tag = document.createElement("ml")
+        ml_tag.appendChild(document.createTextNode(f"\"{constants.SML_FILE_NAME}\""))
+        use_tag.appendChild(ml_tag)
+        layout_tag = document.createElement("layout")
+        layout_tag.appendChild(document.createTextNode(f"use \"{constants.SML_FILE_NAME}\";"))
+        use_tag.appendChild(layout_tag)
+        globbox_tag.appendChild(use_tag)
+
         return globbox_tag
 
     # place element containing place layout information
@@ -435,7 +446,7 @@ class CPNExportService:
                 str(
                     trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
                     (
-                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH] + 15
                     )
                 )
             )
@@ -445,7 +456,7 @@ class CPNExportService:
                     trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
                     (
                         trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
-                    )
+                    ) - 2
                 )
             )
             code_tag.appendChild(posattr_tag)
@@ -479,8 +490,10 @@ class CPNExportService:
 
             text_tag = document.createElement("text")
             text_tag.appendChild(document.createTextNode(
-                str(constants.DECLARATION_CODE_SEGMENT_EXEC_TIME).format(
+                constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" +
+                str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
                     constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                    str(trans),
                     normal_distrib
                 )
             ))
