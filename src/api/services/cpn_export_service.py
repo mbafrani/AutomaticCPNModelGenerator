@@ -3,6 +3,7 @@ from flask import current_app
 from xml.dom.minidom import DOMImplementation
 import os
 import uuid
+from zipfile import ZipFile
 
 from api.util import constants
 
@@ -138,6 +139,18 @@ class CPNExportService:
             ))
             block_tag.appendChild(ml_tag)
         globbox_tag.appendChild(block_tag)
+
+        # use sml file declaration
+        use_tag = document.createElement("use")
+        use_tag.setAttribute("id", str(uuid.uuid1().hex))
+        ml_tag = document.createElement("ml")
+        sml_file = current_app.config["SML_FILE_DEFAULT_NAME"] + ".sml"
+        ml_tag.appendChild(document.createTextNode(f"\"{sml_file}\""))
+        use_tag.appendChild(ml_tag)
+        layout_tag = document.createElement("layout")
+        layout_tag.appendChild(document.createTextNode(f"use \"{sml_file}\";"))
+        use_tag.appendChild(layout_tag)
+        globbox_tag.appendChild(use_tag)
 
         return globbox_tag
 
@@ -435,7 +448,7 @@ class CPNExportService:
                 str(
                     trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
                     (
-                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH] + 15
                     )
                 )
             )
@@ -445,7 +458,7 @@ class CPNExportService:
                     trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
                     (
                         trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
-                    )
+                    ) - 2
                 )
             )
             code_tag.appendChild(posattr_tag)
@@ -479,8 +492,10 @@ class CPNExportService:
 
             text_tag = document.createElement("text")
             text_tag.appendChild(document.createTextNode(
-                str(constants.DECLARATION_CODE_SEGMENT_EXEC_TIME).format(
+                constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" +
+                str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
                     constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                    str(trans),
                     normal_distrib
                 )
             ))
@@ -1148,3 +1163,28 @@ class CPNExportService:
         xml_str = model.toprettyxml(encoding="iso-8859-1")
         with open(cpn_file_path, "wb") as file:
             file.write(xml_str)
+
+
+    def get_cpn_zip_file_path(self, event_log_id):
+        cpn_file_path = self.get_cpn_file_path(event_log_id)
+        sml_file_path = self.get_sml_file_path()
+        cpn_zip_path = os.path.join(os.path.dirname(cpn_file_path),
+                                    current_app.config["CPN_MODEL_DEFAULT_NAME"] + '.zip')
+        with ZipFile(cpn_zip_path, 'w') as cpn_zip:
+            cpn_zip.write(cpn_file_path, os.path.basename(cpn_file_path))
+            cpn_zip.write(sml_file_path, os.path.basename(sml_file_path))
+
+        # remove cpn model file
+        os.remove(cpn_file_path)
+
+        return cpn_zip_path
+
+
+    def get_sml_file_path(self):
+        sml_file_extension = 'sml'
+        sml_file_path = os.path.join(
+            current_app.config['DATA_FOLDER'],
+            current_app.config["SML_FILE_DEFAULT_NAME"] +
+            "." +
+            sml_file_extension)
+        return sml_file_path
