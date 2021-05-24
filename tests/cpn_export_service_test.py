@@ -14,6 +14,7 @@ from api.util import constants
 
 class TestCPNExportService(unittest.TestCase):
 
+    @unittest.skip
     def test_create_globbox_element_for_document(self):
         cpn_export_service = CPNExportService()
         document = Document()
@@ -283,16 +284,16 @@ class TestCPNExportService(unittest.TestCase):
         )
         self.assertEqual(
             str(trans_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
-                    (
-                        trans_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH]
-                    )),
+                (
+                    trans_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH] + 15
+                )),
             posattr_element[1].getAttribute("x")
         )
         self.assertEqual(
             str(trans_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
                 (
                     trans_obj.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
-                )),
+                ) - 2),
             posattr_element[1].getAttribute("y")
         )
         fillattr_element = trans_element.getElementsByTagName("fillattr")
@@ -306,9 +307,14 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(1, len(trans_element.getElementsByTagName("code")))
         normal_distrib = "N(" + str(trans_obj.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_MEAN]) \
                          + ", " + str(trans_obj.properties[constants.DICT_KEY_PERF_INFO_PETRI][constants.DICT_KEY_PERF_STDEV]) + ")"
-        dist_fun = str(constants.DECLARATION_CODE_SEGMENT_EXEC_TIME).format(
-                    constants.DECLARATION_VAR_EXEC_TIME.format(trans_obj.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
-                    normal_distrib)
+
+        dist_fun = constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" + \
+                   str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
+                       constants.DECLARATION_VAR_EXEC_TIME.format(trans_obj.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                       str(trans_obj),
+                       normal_distrib
+                   )
+
         self.assertEqual(str(dist_fun), text_element[1].firstChild.nodeValue)
 
     def test_create_arc_element_for_page__trans_to_place(self):
