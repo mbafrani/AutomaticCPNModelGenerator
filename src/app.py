@@ -9,11 +9,13 @@ import wapp.route as wapp_page
 app = Flask(__name__, static_url_path="/wapp/")
 
 app.debug = config.DEBUG
+app.config["DATA_FOLDER"] = os.path.join(app.root_path, config.DATA_FOLDER)
 app.config["UPLOAD_FOLDER"] = os.path.join(app.root_path, config.UPLOAD_FOLDER)
 app.config["TEMP_FOLDER"] = os.path.join(app.root_path, config.TEMP_FOLDER)
 app.config["EVENT_LOG_DEFAULT_NAME"] = config.EVENT_LOG_DEFAULT_NAME
 app.config["PROCESS_MODEL_DEFAULT_NAME"] = config.PROCESS_MODEL_DEFAULT_NAME
 app.config["CPN_MODEL_DEFAULT_NAME"] = config.CPN_MODEL_DEFAULT_NAME
+app.config["SML_FILE_DEFAULT_NAME"] = config.SML_FILE_DEFAULT_NAME
 
 # register api routes
 for blueprint in vars(api_routes).values():

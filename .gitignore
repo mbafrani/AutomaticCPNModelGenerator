@@ -2,6 +2,7 @@
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+.idea/
 
 # Jupyter notebook checkpoints
 .ipynb_checkpoints/

@@ -3,6 +3,7 @@ from flask import current_app
 from xml.dom.minidom import DOMImplementation
 import os
 import uuid
+from zipfile import ZipFile
 
 from api.util import constants
 
@@ -143,10 +144,11 @@ class CPNExportService:
         use_tag = document.createElement("use")
         use_tag.setAttribute("id", str(uuid.uuid1().hex))
         ml_tag = document.createElement("ml")
-        ml_tag.appendChild(document.createTextNode(f"\"{constants.SML_FILE_NAME}\""))
+        sml_file = current_app.config["SML_FILE_DEFAULT_NAME"] + ".sml"
+        ml_tag.appendChild(document.createTextNode(f"\"{sml_file}\""))
         use_tag.appendChild(ml_tag)
         layout_tag = document.createElement("layout")
-        layout_tag.appendChild(document.createTextNode(f"use \"{constants.SML_FILE_NAME}\";"))
+        layout_tag.appendChild(document.createTextNode(f"use \"{sml_file}\";"))
         use_tag.appendChild(layout_tag)
         globbox_tag.appendChild(use_tag)
 
@@ -1161,3 +1163,28 @@ class CPNExportService:
         xml_str = model.toprettyxml(encoding="iso-8859-1")
         with open(cpn_file_path, "wb") as file:
             file.write(xml_str)
+
+
+    def get_cpn_zip_file_path(self, event_log_id):
+        cpn_file_path = self.get_cpn_file_path(event_log_id)
+        sml_file_path = self.get_sml_file_path()
+        cpn_zip_path = os.path.join(os.path.dirname(cpn_file_path),
+                                    current_app.config["CPN_MODEL_DEFAULT_NAME"] + '.zip')
+        with ZipFile(cpn_zip_path, 'w') as cpn_zip:
+            cpn_zip.write(cpn_file_path, os.path.basename(cpn_file_path))
+            cpn_zip.write(sml_file_path, os.path.basename(sml_file_path))
+
+        # remove cpn model file
+        os.remove(cpn_file_path)
+
+        return cpn_zip_path
+
+
+    def get_sml_file_path(self):
+        sml_file_extension = 'sml'
+        sml_file_path = os.path.join(
+            current_app.config['DATA_FOLDER'],
+            current_app.config["SML_FILE_DEFAULT_NAME"] +
+            "." +
+            sml_file_extension)
+        return sml_file_path

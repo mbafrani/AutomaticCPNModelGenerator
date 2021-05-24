@@ -33,9 +33,9 @@ def export_cpn_file():
         )
         # save the cpn file to uploads/event-log-id/
         cpn_export_service.save_cpn_model(cpn_model, event_log_id)
+        cpn_zip_file_path = cpn_export_service.get_cpn_zip_file_path(event_log_id)
 
-        cpn_file_path = cpn_export_service.get_cpn_file_path(event_log_id)
-        return send_file(cpn_file_path, as_attachment=True)
+        return send_file(cpn_zip_file_path, as_attachment=True)
 
     except HTTPException as exception:
         message = exception.description
