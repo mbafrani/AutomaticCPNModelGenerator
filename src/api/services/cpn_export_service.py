@@ -377,7 +377,7 @@ class CPNExportService:
         return place_tag
 
     # trans element containg transition layout information
-    def create_trans_element_for_page(self, trans, document, non_silent_trans, is_init_trans=False):
+    def create_trans_element_for_page(self, trans, document, non_silent_trans, group_name, is_init_trans=False):
         trans_tag = document.createElement("trans")
         # remove hypens from the guid (or else cpntool will crash)
         trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
@@ -497,6 +497,7 @@ class CPNExportService:
                     str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
                         constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
                         str(trans),
+                        group_name,
                         normal_distrib
                     )
                 ))
@@ -813,17 +814,22 @@ class CPNExportService:
 
         # <trans>, setup for transition rectangles
         trans_dict = {}
+        group_name = ""
+        resource_groups = petri_net.properties[constants.DICT_KEY_RESOURCE_POOLING]
         non_silent_trans = petri_net.properties[constants.DICT_KEY_TRANS_NAMES]
         for index, trans in enumerate(petri_net.transitions):
-            # strore the transition index
+            # store the transition index
+            for name, group in resource_groups.items():
+                res_activities = group[constants.DICT_KEY_RESOURCE_TRANS]
+                if str(trans) in res_activities:
+                    group_name = name
+                    break
             trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI] = index
-
-            trans_tag = self.create_trans_element_for_page(trans, document, non_silent_trans)
+            trans_tag = self.create_trans_element_for_page(trans, document, non_silent_trans, group_name)
             trans_dict[str(trans.name)] = trans_tag
             page_tag.appendChild(trans_tag)
 
         # adding resource pooling places
-        resource_groups = petri_net.properties[constants.DICT_KEY_RESOURCE_POOLING]
         for name, group in resource_groups.items():
             transitions = petri_net.transitions
             trans_group, trans_group_x, trans_group_y = [], [], []
@@ -926,7 +932,7 @@ class CPNExportService:
                 }
             }
         )
-        init_trans_tag = self.create_trans_element_for_page(init_trans, document, non_silent_trans, is_init_trans=True)
+        init_trans_tag = self.create_trans_element_for_page(init_trans, document, non_silent_trans, group_name, is_init_trans=True)
         page_tag.appendChild(init_trans_tag)
         # create <arc> from 'Init' to 'source'
         arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(

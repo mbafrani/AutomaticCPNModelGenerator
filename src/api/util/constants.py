@@ -61,7 +61,7 @@ DECLARATION_ASSIGNMENT_EXEC_TIME = "val " + DECLARATION_VAR_EXEC_TIME + " = ref 
 DECLARATION_CODE_SEGMENT_EXEC_TIME = "action ({0} := {1})"
 DECLARATION_CODE_SEGMENT_INPUT = f"input({DECLARATION_COLOR_CASE_ID_VARIABLE})"
 DECLARATION_CODE_SEGMENT_ACTION = "action\n" \
-                                  "{0} := round(event(" + DECLARATION_COLOR_CASE_ID_VARIABLE + ", \"{1}\", {2}))"
+                                  "{0} := round(event(" + DECLARATION_COLOR_CASE_ID_VARIABLE + ", \"{1}\", \"{2}\", {3}))"
 
 # cpn model places colors
 CPN_MODEL_PLACE_DEFAULT_FILL_COLOR = "White"
