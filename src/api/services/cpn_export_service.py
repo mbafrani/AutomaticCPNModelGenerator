@@ -377,7 +377,7 @@ class CPNExportService:
         return place_tag
 
     # trans element containg transition layout information
-    def create_trans_element_for_page(self, trans, document, is_init_trans=False):
+    def create_trans_element_for_page(self, trans, document, non_silent_trans, is_init_trans=False):
         trans_tag = document.createElement("trans")
         # remove hypens from the guid (or else cpntool will crash)
         trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
@@ -490,16 +490,17 @@ class CPNExportService:
             )
             normal_distrib = "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
 
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode(
-                constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" +
-                str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
-                    constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
-                    str(trans),
-                    normal_distrib
-                )
-            ))
-            code_tag.appendChild(text_tag)
+            if str(trans) in non_silent_trans:
+                text_tag = document.createElement("text")
+                text_tag.appendChild(document.createTextNode(
+                    constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" +
+                    str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
+                        constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                        str(trans),
+                        normal_distrib
+                    )
+                ))
+                code_tag.appendChild(text_tag)
 
             trans_tag.appendChild(code_tag)
 
@@ -812,11 +813,12 @@ class CPNExportService:
 
         # <trans>, setup for transition rectangles
         trans_dict = {}
+        non_silent_trans = petri_net.properties[constants.DICT_KEY_TRANS_NAMES]
         for index, trans in enumerate(petri_net.transitions):
             # strore the transition index
             trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI] = index
 
-            trans_tag = self.create_trans_element_for_page(trans, document)
+            trans_tag = self.create_trans_element_for_page(trans, document, non_silent_trans)
             trans_dict[str(trans.name)] = trans_tag
             page_tag.appendChild(trans_tag)
 
@@ -924,7 +926,7 @@ class CPNExportService:
                 }
             }
         )
-        init_trans_tag = self.create_trans_element_for_page(init_trans, document, is_init_trans=True)
+        init_trans_tag = self.create_trans_element_for_page(init_trans, document, non_silent_trans, is_init_trans=True)
         page_tag.appendChild(init_trans_tag)
         # create <arc> from 'Init' to 'source'
         arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
