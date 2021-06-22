@@ -266,8 +266,9 @@ class TestCPNExportService(unittest.TestCase):
             constants.DICT_KEY_TRANS_INDEX_PETRI: 1
         }
         document = Document()
+        non_silent_trans = ["trans1"]
         trans_element = cpn_export_service.create_trans_element_for_page(
-            trans_obj, document
+            trans_obj, document, non_silent_trans, "group_1"
         )
 
         self.assertIsInstance(trans_element, Element)
@@ -312,6 +313,7 @@ class TestCPNExportService(unittest.TestCase):
                    str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
                        constants.DECLARATION_VAR_EXEC_TIME.format(trans_obj.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
                        str(trans_obj),
+                       "group_1",
                        normal_distrib
                    )
 
