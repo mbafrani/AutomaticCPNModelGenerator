@@ -156,8 +156,9 @@ class CPNExportService:
 
     # place element containing place layout information
     def create_place_element_for_page(
-        self, place, initial_marking, final_marking, document,
-            is_decision_prob_place=False, is_next_case_id_place=False, is_res_cap_place=False, res_capacity=None):
+            self, place, initial_marking, final_marking, document,
+            is_decision_prob_place=False, is_next_case_id_place=False, is_res_cap_place=False, res_capacity=None,
+            is_openEL_place=False):
         place_tag = document.createElement("place")
         place_tag.setAttribute("id", str(place.name))
 
@@ -203,6 +204,10 @@ class CPNExportService:
             fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_FILL_COLOR)
             lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_LINE_COLOR)
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_RES_CAP_TEXT_COLOR)
+        elif is_openEL_place:
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_OPEN_EL_FILL_COLOR)
+            lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_OPEN_EL_LINE_COLOR)
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_OPEN_EL_TEXT_COLOR)
         else:
             fillattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DEFAULT_FILL_COLOR)
             lineattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DEFAULT_LINE_COLOR)
@@ -268,8 +273,8 @@ class CPNExportService:
             place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
             [constants.DICT_KEY_LAYOUT_Y] -
             (
-                place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
             )
         ))
         type_tag.appendChild(posattr_tag)
@@ -294,6 +299,10 @@ class CPNExportService:
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_TEXT_COLOR)
             text_tag.appendChild(document.createTextNode(
                 str(constants.DECLARATION_COLOR_CASE_ID)))
+        elif is_openEL_place:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_OPEN_EL_LINE_COLOR)
+            text_tag.appendChild(document.createTextNode(
+                str(constants.DECLARATION_COLOR_OPEN_EL_TYPE)))
         elif is_decision_prob_place:
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_DECISION_PROB_TEXT_COLOR)
             text_tag.appendChild(document.createTextNode(
@@ -313,7 +322,7 @@ class CPNExportService:
         place_tag.appendChild(type_tag)
 
         # setup inital markings
-        if is_decision_prob_place or is_next_case_id_place or is_res_cap_place:
+        if is_decision_prob_place or is_openEL_place or is_res_cap_place:
             initmark_tag = document.createElement("initmark")
             initmark_tag.setAttribute("id", str(uuid.uuid1().hex))
 
@@ -331,8 +340,8 @@ class CPNExportService:
                 place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
                 [constants.DICT_KEY_LAYOUT_Y] +
                 (
-                    place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
+                        place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_HEIGHT] / 2
                 )
             ))
             initmark_tag.appendChild(posattr_tag)
@@ -353,8 +362,8 @@ class CPNExportService:
             textattr_tag.setAttribute("bold", "false")
 
             text_tag = document.createElement("text")
-            if is_next_case_id_place:
-                textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_NEXT_CASE_ID_TEXT_COLOR)
+            if is_openEL_place:
+                textattr_tag.setAttribute("colour", constants.CPN_MODEL_PLACE_OPEN_EL_LINE_COLOR)
                 text_tag.appendChild(document.createTextNode(
                     str(1)))
             elif is_decision_prob_place:
@@ -377,7 +386,7 @@ class CPNExportService:
         return place_tag
 
     # trans element containg transition layout information
-    def create_trans_element_for_page(self, trans, document, is_init_trans=False):
+    def create_trans_element_for_page(self, trans, document, non_silent_trans, group_name, is_init_trans=False, is_openfile_trans=False):
         trans_tag = document.createElement("trans")
         # remove hypens from the guid (or else cpntool will crash)
         trans_tag.setAttribute("id", str(trans.name).replace('-', ''))
@@ -400,7 +409,10 @@ class CPNExportService:
         trans_tag.appendChild(posattr_tag)
 
         fillattr_tag = document.createElement("fillattr")
-        fillattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_FILL_COLOR)
+        if is_openfile_trans:
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_OPEN_FILE_FILL_COLOR)
+        else:
+            fillattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_FILL_COLOR)
         fillattr_tag.setAttribute("pattern", "Solid")
         fillattr_tag.setAttribute("filled", "false")
         trans_tag.appendChild(fillattr_tag)
@@ -417,7 +429,7 @@ class CPNExportService:
         trans_tag.appendChild(textattr_tag)
 
         text_tag = document.createElement("text")
-        text_tag.appendChild(document.createTextNode(str(trans)))    
+        text_tag.appendChild(document.createTextNode(str(trans)))
         trans_tag.appendChild(text_tag)
 
         box_tag = document.createElement("box")
@@ -437,6 +449,56 @@ class CPNExportService:
         )
         trans_tag.appendChild(box_tag)
 
+        # code segment for open_file trans
+        if is_openfile_trans:
+            code_tag = document.createElement("code")
+            code_tag.setAttribute("id", str(uuid.uuid1().hex))
+
+            posattr_tag = document.createElement("posattr")
+            posattr_tag.setAttribute(
+                "x",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
+                    (
+                            trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH] + 15
+                    )
+                )
+            )
+            posattr_tag.setAttribute(
+                "y",
+                str(
+                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
+                    (
+                            trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
+                    ) - 2
+                )
+            )
+            code_tag.appendChild(posattr_tag)
+
+            fillattr_tag = document.createElement("fillattr")
+            fillattr_tag.setAttribute("colour", "White")
+            fillattr_tag.setAttribute("pattern", "Solid")
+            fillattr_tag.setAttribute("filled", "false")
+            code_tag.appendChild(fillattr_tag)
+
+            lineattr_tag = document.createElement("lineattr")
+            lineattr_tag.setAttribute("colour", "Black")
+            lineattr_tag.setAttribute("thick", "0")
+            lineattr_tag.setAttribute("type", "Solid")
+            code_tag.appendChild(lineattr_tag)
+
+            textattr_tag = document.createElement("textattr")
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_TRANS_DEFAULT_TEXT_COLOR)
+            textattr_tag.setAttribute("bold", "false")
+            code_tag.appendChild(textattr_tag)
+
+            text_tag = document.createElement("text")
+            text_tag.appendChild(document.createTextNode(constants.DECLARATION_CODE_SEGMENT_OPEN_FILE))
+            code_tag.appendChild(text_tag)
+
+            trans_tag.appendChild(code_tag)
+
         # code segment for setting the exec time distribution
         if not is_init_trans:
             code_tag = document.createElement("code")
@@ -448,7 +510,7 @@ class CPNExportService:
                 str(
                     trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] +
                     (
-                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH] + 15
+                            trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_WIDTH] + 15
                     )
                 )
             )
@@ -457,7 +519,8 @@ class CPNExportService:
                 str(
                     trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] -
                     (
-                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
+                            trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_HEIGHT] / 1.2
                     ) - 2
                 )
             )
@@ -490,16 +553,19 @@ class CPNExportService:
             )
             normal_distrib = "N(" + exec_time_mean + ", " + exec_time_stdev + ")"
 
-            text_tag = document.createElement("text")
-            text_tag.appendChild(document.createTextNode(
-                constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" +
-                str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
-                    constants.DECLARATION_VAR_EXEC_TIME.format(trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
-                    str(trans),
-                    normal_distrib
-                )
-            ))
-            code_tag.appendChild(text_tag)
+            if str(trans) in non_silent_trans:
+                text_tag = document.createElement("text")
+                text_tag.appendChild(document.createTextNode(
+                    constants.DECLARATION_CODE_SEGMENT_INPUT + "\n" +
+                    str(constants.DECLARATION_CODE_SEGMENT_ACTION).format(
+                        constants.DECLARATION_VAR_EXEC_TIME.format(
+                            trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
+                        str(trans),
+                        group_name,
+                        normal_distrib
+                    )
+                ))
+                code_tag.appendChild(text_tag)
 
             trans_tag.appendChild(code_tag)
 
@@ -516,8 +582,8 @@ class CPNExportService:
             str(
                 trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
                 [constants.DICT_KEY_LAYOUT_X] - (
-                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_WIDTH] / 1.5
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_WIDTH] / 1.5
                 )
             )
         )
@@ -526,8 +592,8 @@ class CPNExportService:
             str(
                 trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
                 [constants.DICT_KEY_LAYOUT_Y] + (
-                    trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
-                    [constants.DICT_KEY_LAYOUT_HEIGHT] / 1.5
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI]
+                        [constants.DICT_KEY_LAYOUT_HEIGHT] / 1.5
                 )
             )
         )
@@ -559,11 +625,11 @@ class CPNExportService:
             (trans.name, trans_decision_prob)
         )
 
-        if trans_prob_index == 0: # the highest probabilty transition
+        if trans_prob_index == 0:  # the highest probabilty transition
             guard_cond = "[p < " + str(trans_decision_prob) + "]"
-        elif trans_prob_index == (len(probs_of_source_place) - 1): # the lowest probabilty transition
+        elif trans_prob_index == (len(probs_of_source_place) - 1):  # the lowest probabilty transition
             guard_cond = "[p >= " + str(100 - trans_decision_prob) + "]"
-        else: # everything in between
+        else:  # everything in between
             prev_acc_sum = sum([tup[1] for tup in probs_of_source_place[:trans_prob_index]])
             next_acc_sum = sum([tup[1] for tup in probs_of_source_place[(trans_prob_index + 1):]])
             guard_cond = "[p >= " + str(prev_acc_sum) + " andalso p < " + str(100 - next_acc_sum) + "]"
@@ -575,8 +641,9 @@ class CPNExportService:
 
     # arc element containg arc layout information
     def create_arc_element_for_page(
-        self, arc, document,
-            is_decision_prob_arc=False, is_next_case_id_arc=False, arrival_rate=None, is_init_arc=False, is_res_cap_arc=False):
+            self, arc, document,
+            is_decision_prob_arc=False, is_next_case_id_arc=False, arrival_rate=None, is_init_arc=False,
+            is_res_cap_arc=False, is_openEL_arc=False):
         # identify the place and transition ends of the arc
         is_target_trans = isinstance(
             arc.target, pm4py.objects.petri_net.obj.PetriNet.Transition)
@@ -699,7 +766,7 @@ class CPNExportService:
                 text_tag.appendChild(document.createTextNode(
                     str(
                         constants.DECLARATION_COLOR_CASE_ID_VARIABLE +
-                        "+1@+Exp(" + str(arrival_rate) + ")"
+                        "+1@+round(norm_r_at_delay(" + str(arrival_rate) + "))"
                     )
                 ))
             else:
@@ -714,6 +781,13 @@ class CPNExportService:
                         constants.DECLARATION_COLOR_CASE_ID_VARIABLE
                     )
                 ))
+        elif is_openEL_arc:
+            textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DEFAULT_LINE_COLOR)
+            text_tag.appendChild(document.createTextNode(
+                str(
+                    constants.DECLARATION_COLOR_CASE_ID_VARIABLE
+                )
+            ))
         elif is_decision_prob_arc:
             textattr_tag.setAttribute("colour", constants.CPN_MODEL_ARC_DECISION_PROB_ANNOT_TEXT_COLOR)
             if is_target_place:
@@ -770,7 +844,7 @@ class CPNExportService:
         arcs_from_place_to_trans = {}
         for arc in petri_net.arcs:
             if isinstance(arc.source, pm4py.objects.petri_net.obj.PetriNet.Place) and \
-               arc.source.name != constants.PLACE_NAME_SOURCE:
+                    arc.source.name != constants.PLACE_NAME_SOURCE:
                 arcs_from_place_to_trans.setdefault(str(arc.source.name), []).append(arc)
 
         # find places in arcs that have multiple arcs
@@ -812,24 +886,32 @@ class CPNExportService:
 
         # <trans>, setup for transition rectangles
         trans_dict = {}
+        group_name = ""
+        resource_groups = petri_net.properties[constants.DICT_KEY_RESOURCE_POOLING]
+        non_silent_trans = petri_net.properties[constants.DICT_KEY_TRANS_NAMES]
         for index, trans in enumerate(petri_net.transitions):
-            # strore the transition index
+            # store the transition index
+            for name, group in resource_groups.items():
+                res_activities = group[constants.DICT_KEY_RESOURCE_TRANS]
+                if str(trans) in res_activities:
+                    group_name = name
+                    break
             trans.properties[constants.DICT_KEY_TRANS_INDEX_PETRI] = index
-
-            trans_tag = self.create_trans_element_for_page(trans, document)
+            trans_tag = self.create_trans_element_for_page(trans, document, non_silent_trans, group_name)
             trans_dict[str(trans.name)] = trans_tag
             page_tag.appendChild(trans_tag)
 
         # adding resource pooling places
-        resource_groups = petri_net.properties[constants.DICT_KEY_RESOURCE_POOLING]
         for name, group in resource_groups.items():
             transitions = petri_net.transitions
             trans_group, trans_group_x, trans_group_y = [], [], []
             for trans in transitions:
                 if trans.label in group[constants.DICT_KEY_RESOURCE_TRANS]:
                     trans_group.append(trans)
-                    trans_group_x.append(trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X])
-                    trans_group_y.append(trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y])
+                    trans_group_x.append(
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X])
+                    trans_group_y.append(
+                        trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y])
 
             res_capacity_place = pm4py.objects.petri_net.obj.PetriNet.Place(
                 name, None, None, properties={
@@ -860,7 +942,8 @@ class CPNExportService:
                                                                      constants.DICT_KEY_LAYOUT_X]
                                                          ) / 2,
                             constants.DICT_KEY_LAYOUT_Y: ((
-                                                                  trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                  trans.properties[
+                                                                      constants.DICT_KEY_LAYOUT_INFO_PETRI][
                                                                       constants.DICT_KEY_LAYOUT_Y] +
                                                                   res_capacity_place.properties[
                                                                       constants.DICT_KEY_LAYOUT_INFO_PETRI][
@@ -869,7 +952,8 @@ class CPNExportService:
                         }
                     }
                 )
-                arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document, is_res_cap_arc=True)
+                arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document,
+                                                                          is_res_cap_arc=True)
                 page_tag.appendChild(arc_place_to_trans_tag)
 
                 # create arc from transition to resource capacity <place>
@@ -912,9 +996,11 @@ class CPNExportService:
             properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: (
-                        source_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 100
+                            source_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_X] - 100
                     ),
-                    constants.DICT_KEY_LAYOUT_Y: source_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y],
+                    constants.DICT_KEY_LAYOUT_Y: source_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                        constants.DICT_KEY_LAYOUT_Y],
                     constants.DICT_KEY_LAYOUT_HEIGHT: 10,
                     constants.DICT_KEY_LAYOUT_WIDTH: 25
                 },
@@ -924,14 +1010,17 @@ class CPNExportService:
                 }
             }
         )
-        init_trans_tag = self.create_trans_element_for_page(init_trans, document, is_init_trans=True)
+        init_trans_tag = self.create_trans_element_for_page(init_trans, document, non_silent_trans, group_name,
+                                                            is_init_trans=True)
         page_tag.appendChild(init_trans_tag)
         # create <arc> from 'Init' to 'source'
         arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
             init_trans, source_place, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                    constants.DICT_KEY_LAYOUT_X: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 50,
-                    constants.DICT_KEY_LAYOUT_Y: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y],
+                    constants.DICT_KEY_LAYOUT_X: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                     constants.DICT_KEY_LAYOUT_X] + 50,
+                    constants.DICT_KEY_LAYOUT_Y: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                        constants.DICT_KEY_LAYOUT_Y],
                 }
             }
         )
@@ -943,52 +1032,144 @@ class CPNExportService:
         next_case_id_place = pm4py.objects.petri_net.obj.PetriNet.Place(
             "next_CASE_ID", None, None, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                    constants.DICT_KEY_LAYOUT_X: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
+                    constants.DICT_KEY_LAYOUT_X: init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                        constants.DICT_KEY_LAYOUT_X],
                     constants.DICT_KEY_LAYOUT_Y: (
-                        init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] + 50
+                            init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_Y] + 50
                     ),
                     constants.DICT_KEY_LAYOUT_HEIGHT: 15,
                     constants.DICT_KEY_LAYOUT_WIDTH: 40
                 }
             }
         )
-        next_case_id_place_tag = self.create_place_element_for_page(next_case_id_place, {}, {}, document, is_next_case_id_place=True)
+        next_case_id_place_tag = self.create_place_element_for_page(next_case_id_place, {}, {}, document,
+                                                                    is_next_case_id_place=True)
         page_tag.appendChild(next_case_id_place_tag)
         # create arc_1
         arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
             next_case_id_place, init_trans, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: (
-                        next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 5
+                            next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_X] - 5
                     ),
                     constants.DICT_KEY_LAYOUT_Y: (
-                        next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                        init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                    ) / 2
+                                                         next_case_id_place.properties[
+                                                             constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                             constants.DICT_KEY_LAYOUT_Y] +
+                                                         init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                             constants.DICT_KEY_LAYOUT_Y]
+                                                 ) / 2
                 }
             }
         )
-        arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document, is_next_case_id_arc=True)
+        arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document,
+                                                                  is_next_case_id_arc=True)
         page_tag.appendChild(arc_place_to_trans_tag)
         # create arc_2
         arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
             init_trans, next_case_id_place, weight=1, properties={
                 constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                     constants.DICT_KEY_LAYOUT_X: (
-                        next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 5
+                            next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_X] + 5
                     ),
                     constants.DICT_KEY_LAYOUT_Y: (
-                        next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                        init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                    ) / 2
+                                                         next_case_id_place.properties[
+                                                             constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                             constants.DICT_KEY_LAYOUT_Y] +
+                                                         init_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                             constants.DICT_KEY_LAYOUT_Y]
+                                                 ) / 2
                 }
             }
         )
+
         arrival_rate = float(petri_net.properties[constants.PetriNetDictKeys.arrivalrate])
         arc_trans_to_place_tag = self.create_arc_element_for_page(
             arc_trans_to_place, document, is_next_case_id_arc=True, arrival_rate=arrival_rate
         )
         page_tag.appendChild(arc_trans_to_place_tag)
+
+        # ------------------------------------------
+        # setup 'Openfile' <trans>
+        openfile_trans = pm4py.objects.petri_net.obj.PetriNet.Transition(
+            "Openfile",
+            "Openfile",
+            None, None,
+            properties={
+                constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                    constants.DICT_KEY_LAYOUT_X: (
+                        next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                            constants.DICT_KEY_LAYOUT_X] + 100
+                    ),
+                    constants.DICT_KEY_LAYOUT_Y: next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                     constants.DICT_KEY_LAYOUT_Y],
+                    constants.DICT_KEY_LAYOUT_HEIGHT: 10,
+                    constants.DICT_KEY_LAYOUT_WIDTH: 25
+                },
+                constants.DICT_KEY_PERF_INFO_PETRI: {
+                    constants.DICT_KEY_PERF_MEAN: 0.0,
+                    constants.DICT_KEY_PERF_STDEV: 0.0
+                }
+            }
+        )
+        openfile_trans_tag = self.create_trans_element_for_page(openfile_trans, document, non_silent_trans, group_name,
+                                                                is_init_trans=True, is_openfile_trans=True)
+        page_tag.appendChild(openfile_trans_tag)
+
+        # create <arc> from 'Openfile' to 'next_CASE_ID'
+        arc_optrans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
+            openfile_trans, next_case_id_place, weight=1, properties={
+                constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                    constants.DICT_KEY_LAYOUT_X: next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                     constants.DICT_KEY_LAYOUT_X] + 50,
+                    constants.DICT_KEY_LAYOUT_Y: next_case_id_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                        constants.DICT_KEY_LAYOUT_Y],
+                }
+            }
+        )
+
+        arc_optrans_to_place_tag = self.create_arc_element_for_page(arc_optrans_to_place, document, is_openEL_arc=True)
+        page_tag.appendChild(arc_optrans_to_place_tag)
+        # ------------------------------------------
+
+        # -----------------------------------
+        # setup OpenEL place
+        # create <place>
+        openEL_place = pm4py.objects.petri_net.obj.PetriNet.Place(
+            "OpenEL", None, None, properties={
+                constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                    constants.DICT_KEY_LAYOUT_X: openfile_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                        constants.DICT_KEY_LAYOUT_X],
+                    constants.DICT_KEY_LAYOUT_Y: (
+                            openfile_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                constants.DICT_KEY_LAYOUT_Y] + 50
+                    ),
+                    constants.DICT_KEY_LAYOUT_HEIGHT: 15,
+                    constants.DICT_KEY_LAYOUT_WIDTH: 40
+                }
+            }
+        )
+        openEL_place_tag = self.create_place_element_for_page(openEL_place, {}, {}, document,
+                                                              is_openEL_place=True)
+        page_tag.appendChild(openEL_place_tag)
+        # create <arc> from 'OpenEL' to 'Openfile'
+        arc_opplace_to_optrans = pm4py.objects.petri_net.obj.PetriNet.Arc(
+            openEL_place, openfile_trans, weight=1, properties={
+                constants.DICT_KEY_LAYOUT_INFO_PETRI: {
+                    constants.DICT_KEY_LAYOUT_X: openfile_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                     constants.DICT_KEY_LAYOUT_X] + 50,
+                    constants.DICT_KEY_LAYOUT_Y: openfile_trans.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                        constants.DICT_KEY_LAYOUT_Y],
+                }
+            }
+        )
+
+        arc_opplace_to_optrans_tag = self.create_arc_element_for_page(arc_opplace_to_optrans, document, is_openEL_arc=True)
+        page_tag.appendChild(arc_opplace_to_optrans_tag)
+        # -----------------------------------
 
         # setup probability places
         arcs_with_prob = self.get_arcs_with_prob_info(petri_net)
@@ -1004,8 +1185,10 @@ class CPNExportService:
                     transition_lower = arc.target
 
                 trans_y = arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                transition_upper_y = transition_upper.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                transition_lower_y = transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
+                transition_upper_y = transition_upper.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                    constants.DICT_KEY_LAYOUT_Y]
+                transition_lower_y = transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                    constants.DICT_KEY_LAYOUT_Y]
 
                 if trans_y > transition_upper_y:
                     transition_upper = arc.target
@@ -1018,9 +1201,9 @@ class CPNExportService:
                         arc.target.name,
                         arc.target.properties[constants.DICT_KEY_PROBA_INFO_PETRI]
                     )
-                )  
+                )
 
-            # sort the probabilities list of souurce place
+                # sort the probabilities list of souurce place
             probs_of_source_place.sort(key=lambda tup: tup[1], reverse=True)
 
             # create <place>
@@ -1031,11 +1214,16 @@ class CPNExportService:
                 str(transition_lower.properties[constants.DICT_KEY_TRANS_INDEX_PETRI]),
                 None, None, properties={
                     constants.DICT_KEY_LAYOUT_INFO_PETRI: {
-                        constants.DICT_KEY_LAYOUT_X: transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X],
+                        constants.DICT_KEY_LAYOUT_X: transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                            constants.DICT_KEY_LAYOUT_X],
                         constants.DICT_KEY_LAYOUT_Y: (
-                            transition_upper.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                            transition_lower.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                        ) / 2,
+                                                             transition_upper.properties[
+                                                                 constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                 constants.DICT_KEY_LAYOUT_Y] +
+                                                             transition_lower.properties[
+                                                                 constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                 constants.DICT_KEY_LAYOUT_Y]
+                                                     ) / 2,
                         constants.DICT_KEY_LAYOUT_HEIGHT: 10,
                         constants.DICT_KEY_LAYOUT_WIDTH: 28
                     }
@@ -1046,11 +1234,15 @@ class CPNExportService:
 
             for arc in arcs:
                 if arc.target == transition_lower:
-                    arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 5
-                    arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 20
+                    arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                      constants.DICT_KEY_LAYOUT_X] - 5
+                    arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                      constants.DICT_KEY_LAYOUT_X] + 20
                 else:
-                    arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] + 5
-                    arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_X] - 20
+                    arc_place_to_trans_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                      constants.DICT_KEY_LAYOUT_X] + 5
+                    arc_trans_to_place_layout_x = prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                      constants.DICT_KEY_LAYOUT_X] - 20
 
                 # create arc_1
                 arc_place_to_trans = pm4py.objects.petri_net.obj.PetriNet.Arc(
@@ -1058,13 +1250,18 @@ class CPNExportService:
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: arc_place_to_trans_layout_x,
                             constants.DICT_KEY_LAYOUT_Y: (
-                                prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                            ) / 2.06
+                                                                 prob_place.properties[
+                                                                     constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                     constants.DICT_KEY_LAYOUT_Y] +
+                                                                 arc.target.properties[
+                                                                     constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                     constants.DICT_KEY_LAYOUT_Y]
+                                                         ) / 2.06
                         }
                     }
                 )
-                arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document, is_decision_prob_arc=True)
+                arc_place_to_trans_tag = self.create_arc_element_for_page(arc_place_to_trans, document,
+                                                                          is_decision_prob_arc=True)
                 page_tag.appendChild(arc_place_to_trans_tag)
                 # create arc_2
                 arc_trans_to_place = pm4py.objects.petri_net.obj.PetriNet.Arc(
@@ -1072,13 +1269,18 @@ class CPNExportService:
                         constants.DICT_KEY_LAYOUT_INFO_PETRI: {
                             constants.DICT_KEY_LAYOUT_X: arc_trans_to_place_layout_x,
                             constants.DICT_KEY_LAYOUT_Y: (
-                                prob_place.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y] +
-                                arc.target.properties[constants.DICT_KEY_LAYOUT_INFO_PETRI][constants.DICT_KEY_LAYOUT_Y]
-                            ) / 2.06
+                                                                 prob_place.properties[
+                                                                     constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                     constants.DICT_KEY_LAYOUT_Y] +
+                                                                 arc.target.properties[
+                                                                     constants.DICT_KEY_LAYOUT_INFO_PETRI][
+                                                                     constants.DICT_KEY_LAYOUT_Y]
+                                                         ) / 2.06
                         }
                     }
                 )
-                arc_trans_to_place_tag = self.create_arc_element_for_page(arc_trans_to_place, document, is_decision_prob_arc=True)
+                arc_trans_to_place_tag = self.create_arc_element_for_page(arc_trans_to_place, document,
+                                                                          is_decision_prob_arc=True)
                 page_tag.appendChild(arc_trans_to_place_tag)
 
                 # update trans element with guard condition
@@ -1164,7 +1366,6 @@ class CPNExportService:
         with open(cpn_file_path, "wb") as file:
             file.write(xml_str)
 
-
     def get_cpn_zip_file_path(self, event_log_id):
         cpn_file_path = self.get_cpn_file_path(event_log_id)
         sml_file_path = self.get_sml_file_path()
@@ -1178,7 +1379,6 @@ class CPNExportService:
         os.remove(cpn_file_path)
 
         return cpn_zip_path
-
 
     def get_sml_file_path(self):
         sml_file_extension = 'sml'
