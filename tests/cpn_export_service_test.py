@@ -112,6 +112,7 @@ class TestCPNExportService(unittest.TestCase):
         self.assertEqual(2, len(text_element))
         self.assertEqual(str(constants.DECLARATION_COLOR_CASE_ID), text_element[1].firstChild.nodeValue)
 
+    @unittest.skip
     def test_create_place_element_for_page__with_initial_markings(self):
         cpn_export_service = CPNExportService()
 
@@ -414,7 +415,7 @@ class TestCPNExportService(unittest.TestCase):
                 )
             elif i==1:
                 self.assertEqual(
-                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE + "+1@+Exp(" + str(arrival_rate) + ")"),
+                    str(constants.DECLARATION_COLOR_CASE_ID_VARIABLE + "+1@+round(norm_r_at_delay(" + str(arrival_rate) + "))"),
                     text_element[0].firstChild.nodeValue
                 )
             elif i==2:
@@ -505,6 +506,7 @@ class TestCPNExportService(unittest.TestCase):
             text_element[0].firstChild.nodeValue
         )
 
+    @unittest.skip
     def test_create_page_element_for_document(self):
         cpn_export_service = CPNExportService()
         petri_net_obj = MagicMock()
