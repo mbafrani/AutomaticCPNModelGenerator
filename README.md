@@ -1,4 +1,4 @@
-# Process Discovery Using Python - CPN Model WS2020
+# Automatic CPN Model Generator 
 
 [![CI Pipeline](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/workflows/CI%20Pipeline/badge.svg)](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/actions)
 [![codecov](https://codecov.io/gh/Younesmueller/CPN-Model-Process-Discovery-WS-20/graph/badge.svg?token=XLC4HPXXCG)](https://codecov.io/gh/Younesmueller/CPN-Model-Process-Discovery-WS-20)
