@@ -3,10 +3,23 @@
 [![CI Pipeline](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/workflows/CI%20Pipeline/badge.svg)](https://github.com/Younesmueller/CPN-Model-Process-Discovery-WS-20/actions)
 [![codecov](https://codecov.io/gh/Younesmueller/CPN-Model-Process-Discovery-WS-20/graph/badge.svg?token=XLC4HPXXCG)](https://codecov.io/gh/Younesmueller/CPN-Model-Process-Discovery-WS-20)
 
-Implement the discovery and simulation of CPN models in pm4py.
+Automatic generation of CPN models from event logs of processes. The models can be run directly in the CPN Tools. To use the tool as a web application please use the link below:
 
 https://cpn-model-process-discovery-1.herokuapp.com/generate-cpn-model/
 
+## Screencast of the Tool 
+Please note, in order to watch the video on Github, you must first download it. 
+
+## User Manual 
+- Upload an event log in the form of XES or CSV. 
+  - Note that the attributes name should follow the XES Standard.
+- Check the extracted model.
+- Change the parameters for running different scenarios.
+- Download the CPN model and the SML file as a zip file.
+- Extract both files in one location.
+- Make sure you have CPN Tools installed.
+- Open the file .CPN and execute. 
+- Results are stored in the form of an event log next to the original files in the CSV format. 
 ## Getting started
 ```bash
 $ cd src
