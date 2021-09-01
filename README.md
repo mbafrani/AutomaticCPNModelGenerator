@@ -8,7 +8,7 @@ Automatic generation of CPN models from event logs of processes. The models can 
 https://cpn-model-process-discovery-1.herokuapp.com/generate-cpn-model/
 
 ## Screencast of the Tool 
-Please note, in order to watch the video on Github, you must first download it. 
+Please note, in order to watch the [introduction video](GenCPNIntro.mp4) on Github, you need to download it.  
 
 ## User Manual 
 - Upload an event log in the form of XES or CSV. 
