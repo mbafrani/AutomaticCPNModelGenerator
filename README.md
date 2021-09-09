@@ -8,7 +8,9 @@ Automatic generation of CPN models from event logs of processes. The models can 
 https://cpn-model-process-discovery-1.herokuapp.com/generate-cpn-model/
 
 ## Screencast of the Tool 
-Please note, in order to watch the [introduction video](GenCPNIntro.mp4) on Github, you need to download it.  
+Please note, in order to watch the [introduction video (4 minutes)](GenCPNIntro.mp4) on Github, you need to download it.  
+
+Please note, in order to watch the [complete introduction video (5 minutes)](GenCPNIntro5min.mp4) on Github, you need to download it.  
 
 ## User Manual 
 - Upload an event log in the form of XES or CSV. 
@@ -20,6 +22,19 @@ Please note, in order to watch the [introduction video](GenCPNIntro.mp4) on Gith
 - Make sure you have CPN Tools installed.
 - Open the file .CPN and execute. 
 - Results are stored in the form of an event log next to the original files in the CSV format. 
+## Tool Features
+- Input: an event log in the form of XES or CSV (with the XES attribute naming standard)
+- Output: a ready to execute CPN model using CPN tools along with all the required functions (generating simulated event logs) 
+- Automatically discovered process model (Colored Petri net)
+- Enriched model with the performance information including:
+  - activity duration
+  - resource pooling (shared resources)
+  - probability of choices in the process model
+  - capacity of the resources and activities
+- Business hours
+- Intensity functions and delay function for different arrival rate 
+- Timestamp converter function for start time and complete time 
+- Required SML files (function) for capturing the execution of tokens in the form of event logs  
 ## Getting started
 ```bash
 $ cd src
